@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 import com.helger.commons.debug.GlobalDebug;
 import com.helger.commons.state.EHandled;
 import com.helger.commons.string.StringHelper;
-import com.helger.peppol.sharedui.config.ShareUIConfig;
+import com.helger.peppol.sharedui.config.SharedUIConfig;
 import com.helger.photon.api.AbstractAPIExceptionMapper;
 import com.helger.photon.api.InvokableAPIDescriptor;
 import com.helger.servlet.response.UnifiedResponse;
@@ -45,7 +45,7 @@ public class APIExceptionMapper extends AbstractAPIExceptionMapper
 
   private static void _logRestException (@Nonnull final String sMsg, @Nonnull final Throwable t)
   {
-    if (ShareUIConfig.isRestLogExceptions ())
+    if (SharedUIConfig.isRestLogExceptions ())
       LOGGER.error (sMsg, t);
     else
       LOGGER.error (sMsg +
@@ -58,7 +58,7 @@ public class APIExceptionMapper extends AbstractAPIExceptionMapper
                                               final int nStatusCode,
                                               @Nullable final String sContent)
   {
-    if (ShareUIConfig.isRestExceptionsWithPayload ())
+    if (SharedUIConfig.isRestExceptionsWithPayload ())
     {
       // With payload
       setSimpleTextResponse (aUnifiedResponse, nStatusCode, sContent);

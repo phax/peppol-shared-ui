@@ -31,14 +31,14 @@ import com.helger.scope.singleton.AbstractGlobalSingleton;
  *
  * @author Philip Helger
  */
-public final class ShareUIConfig extends AbstractGlobalSingleton
+public final class SharedUIConfig extends AbstractGlobalSingleton
 {
   /** The name of the file containing the settings */
   private static final IConfig CONFIG = ConfigFactory.getDefaultConfig ();
 
   @Deprecated
   @UsedViaReflection
-  private ShareUIConfig ()
+  private SharedUIConfig ()
   {}
 
   @Nonnull
