@@ -22,6 +22,9 @@ import com.helger.html.hc.html.textlevel.HCCode;
 import com.helger.html.hc.html.textlevel.HCSmall;
 import com.helger.html.hc.impl.HCNodeList;
 import com.helger.html.hc.impl.HCTextNode;
+import com.helger.html.jquery.JQueryAjaxBuilder;
+import com.helger.html.jscode.JSAssocArray;
+import com.helger.peppol.sharedui.api.CSharedUIAjax;
 import com.helger.peppol.sharedui.domain.NiceNameEntry;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
@@ -30,14 +33,28 @@ import com.helger.peppolid.peppol.EPeppolCodeListItemState;
 import com.helger.peppolid.peppol.PeppolIdentifierHelper;
 import com.helger.photon.bootstrap4.badge.BootstrapBadge;
 import com.helger.photon.bootstrap4.badge.EBootstrapBadgeType;
+import com.helger.photon.bootstrap4.ext.BootstrapSystemMessage;
+import com.helger.photon.bootstrap4.uictrls.datatables.BootstrapDataTables;
+import com.helger.photon.core.requestparam.RequestParameterHandlerURLPathNamed;
+import com.helger.photon.core.requestparam.RequestParameterManager;
 import com.helger.photon.uicore.css.CPageParam;
 import com.helger.photon.uicore.page.IWebPageExecutionContext;
+import com.helger.photon.uictrls.datatables.DataTablesLengthMenu;
+import com.helger.photon.uictrls.datatables.EDataTablesFilterType;
+import com.helger.photon.uictrls.datatables.ajax.AjaxExecutorDataTables;
+import com.helger.photon.uictrls.datatables.ajax.AjaxExecutorDataTablesI18N;
+import com.helger.photon.uictrls.datatables.plugins.DataTablesPluginSearchHighlight;
+import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 
-public final class SharedUI
+public final class SharedCommonUI
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (SharedUI.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (SharedCommonUI.class);
   private static final ICommonsMap <String, NiceNameEntry> DOCTYPE_NAMES = new CommonsHashMap <> ();
   private static final ICommonsMap <String, NiceNameEntry> PROCESS_NAMES = new CommonsHashMap <> ();
+  private static final DataTablesLengthMenu LENGTH_MENU = new DataTablesLengthMenu ().addItem (25)
+                                                                                     .addItem (50)
+                                                                                     .addItem (100)
+                                                                                     .addItemAll ();
 
   @Nonnull
   private static String _ensurePrefix (@Nonnull final String sPrefix, @Nonnull final String s)
@@ -71,8 +88,28 @@ public final class SharedUI
                                           new CommonsArrayList <> (PIF.createProcessIdentifierWithDefaultScheme ("urn:www.cenbii.eu:profile:bii05:ver1.0"))));
   }
 
-  private SharedUI ()
+  private SharedCommonUI ()
   {}
+
+  public static void init ()
+  {
+    RequestParameterManager.getInstance ().setParameterHandler (new RequestParameterHandlerURLPathNamed ());
+
+    BootstrapDataTables.setConfigurator ( (aLEC, aTable, aDataTables) -> {
+      final IRequestWebScopeWithoutResponse aRequestScope = aLEC.getRequestScope ();
+      aDataTables.setAutoWidth (false)
+                 .setLengthMenu (LENGTH_MENU)
+                 .setAjaxBuilder (new JQueryAjaxBuilder ().url (CSharedUIAjax.DATATABLES.getInvocationURL (aRequestScope))
+                                                          .data (new JSAssocArray ().add (AjaxExecutorDataTables.OBJECT_ID,
+                                                                                          aTable.getID ())))
+                 .setServerFilterType (EDataTablesFilterType.ALL_TERMS_PER_ROW)
+                 .setTextLoadingURL (CSharedUIAjax.DATATABLES_I18N.getInvocationURL (aRequestScope),
+                                     AjaxExecutorDataTablesI18N.REQUEST_PARAM_LANGUAGE_ID)
+                 .addPlugin (new DataTablesPluginSearchHighlight ());
+    });
+    // By default allow markdown in system message
+    BootstrapSystemMessage.setDefaultUseMarkdown (true);
+  }
 
   @Nonnull
   public static ISimpleURL getViewLink (@Nonnull final IWebPageExecutionContext aWPEC,
