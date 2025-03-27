@@ -23,7 +23,6 @@ public final class CSharedUI
   public static final String ROLE_CONFIG_NAME = "Config user";
   public static final String ROLE_CONFIG_DESCRIPTION = null;
   public static final ICommonsMap <String, String> ROLE_CONFIG_CUSTOMATTRS = null;
-
   @CodingStyleguideUnaware
   public static final List <String> REQUIRED_ROLE_IDS_CONFIG = new CommonsArrayList <> (ROLE_CONFIG_ID).getAsUnmodifiable ();
 
