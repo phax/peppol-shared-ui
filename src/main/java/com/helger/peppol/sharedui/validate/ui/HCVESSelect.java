@@ -29,14 +29,14 @@ import com.helger.commons.compare.IComparator;
 import com.helger.commons.compare.NaturalNumericOrderComparator;
 import com.helger.diver.api.coord.DVRCoordinate;
 import com.helger.html.request.IHCRequestField;
-import com.helger.peppol.sharedui.validate.ExtValidationKeyRegistry;
+import com.helger.peppol.sharedui.validate.VESRegistry;
 import com.helger.phive.api.executorset.IValidationExecutorSet;
 import com.helger.phive.peppol.legacy.PeppolValidation3_10_0;
 import com.helger.phive.xml.source.IValidationSourceXML;
 import com.helger.photon.uicore.html.select.HCExtSelect;
 
 @SuppressWarnings ("deprecation")
-public final class ExtValidationKeySelect extends HCExtSelect
+public final class HCVESSelect extends HCExtSelect
 {
   // Explicit exclude certain artefacts (because the same artefacts are
   // registered with a different name - e.g. "order" instead of "t01")
@@ -56,7 +56,7 @@ public final class ExtValidationKeySelect extends HCExtSelect
   public static ICommonsList <IValidationExecutorSet <IValidationSourceXML>> getAllSortedCorrect (@Nonnull final Locale aDisplayLocale)
   {
     final ICommonsList <IValidationExecutorSet <IValidationSourceXML>> aAll = new CommonsArrayList <> ();
-    for (final IValidationExecutorSet <IValidationSourceXML> aEntry : ExtValidationKeyRegistry.getAll ())
+    for (final IValidationExecutorSet <IValidationSourceXML> aEntry : VESRegistry.getAll ())
       if (!LEGACY_IDS.contains (aEntry.getID ()))
         aAll.add (aEntry);
 
@@ -68,7 +68,7 @@ public final class ExtValidationKeySelect extends HCExtSelect
     });
   }
 
-  public ExtValidationKeySelect (@Nonnull final IHCRequestField aRF, @Nonnull final Locale aDisplayLocale)
+  public HCVESSelect (@Nonnull final IHCRequestField aRF, @Nonnull final Locale aDisplayLocale)
   {
     super (aRF);
 

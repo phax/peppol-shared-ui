@@ -65,7 +65,7 @@ import com.helger.phive.zugferd.ZugferdValidation;
 
 @SuppressWarnings ("deprecation")
 @Immutable
-public final class ExtValidationKeyRegistry
+public final class VESRegistry
 {
   public static final ValidationExecutorSetRegistry <IValidationSourceXML> VES_REGISTRY = new ValidationExecutorSetRegistry <> ();
   static
@@ -99,7 +99,7 @@ public final class ExtValidationKeyRegistry
     ZugferdValidation.initZugferd (VES_REGISTRY);
   }
 
-  private ExtValidationKeyRegistry ()
+  private VESRegistry ()
   {}
 
   @Nonnull
@@ -144,7 +144,7 @@ public final class ExtValidationKeyRegistry
   public static IJsonArray getAllAsJson ()
   {
     final IJsonArray aJsonArray = new JsonArray ();
-    for (final IValidationExecutorSet <IValidationSourceXML> aVES : ExtValidationKeyRegistry.getAll ())
+    for (final IValidationExecutorSet <IValidationSourceXML> aVES : VESRegistry.getAll ())
     {
       aJsonArray.add (new JsonObject ().add ("vesid", aVES.getID ().getAsSingleID ())
                                        .add ("name", aVES.getDisplayName ())

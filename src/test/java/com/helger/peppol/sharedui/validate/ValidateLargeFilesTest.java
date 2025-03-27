@@ -46,7 +46,7 @@ public final class ValidateLargeFilesTest
   {
     final IReadableResource aRes = new ClassPathResource ("external/validation/Large_Invoice_sample1.xml");
     assertTrue (aRes.exists ());
-    final IValidationExecutorSet <IValidationSourceXML> aVES = ExtValidationKeyRegistry.getFromIDOrNull (DVRCoordinate.parseOrThrow ("eu.peppol.bis3:invoice:2023.11"));
+    final IValidationExecutorSet <IValidationSourceXML> aVES = VESRegistry.getFromIDOrNull (DVRCoordinate.parseOrThrow ("eu.peppol.bis3:invoice:2023.11"));
     // Start validating #1
     final StopWatch aSW = StopWatch.createdStarted ();
     LOGGER.info ("Start validating");
