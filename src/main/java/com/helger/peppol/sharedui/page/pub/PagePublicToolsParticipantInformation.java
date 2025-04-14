@@ -770,7 +770,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                 if (aURL != null)
                 {
                   if (!"http".equals (aURL.getProtocol ()))
-                    aLI.addChild (div (badgeDanger ("Peppol SMP URLs MUST be using http an not " +
+                    aLI.addChild (div (badgeDanger ("Peppol SMP URLs MUST be using http and not " +
                                                     aURL.getProtocol ())));
                   if (aURL.getPort () >= 0 && aURL.getPort () <= 0)
                     aLI.addChild (div (badgeDanger ("Peppol SMP URLs MUST be using port 80 and not " +
