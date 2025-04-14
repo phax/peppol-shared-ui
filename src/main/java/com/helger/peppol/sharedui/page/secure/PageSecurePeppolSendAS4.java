@@ -42,7 +42,6 @@ import com.helger.html.hc.impl.HCNodeList;
 import com.helger.peppol.sharedui.config.SharedUIConfig;
 import com.helger.peppol.sharedui.ui.SharedCommonUI;
 import com.helger.peppol.sml.ESML;
-import com.helger.peppol.utils.EPeppolCertificateCheckResult;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
@@ -73,6 +72,7 @@ import com.helger.photon.uicore.css.CPageParam;
 import com.helger.photon.uicore.page.WebPageExecutionContext;
 import com.helger.photon.uictrls.prism.EPrismLanguage;
 import com.helger.photon.uictrls.prism.PrismPluginLineNumbers;
+import com.helger.security.certificate.ECertificateCheckResult;
 import com.helger.security.keystore.EKeyStoreType;
 import com.helger.security.keystore.IKeyStoreType;
 import com.helger.security.keystore.KeyStoreHelper;
@@ -264,7 +264,7 @@ public class PageSecurePeppolSendAS4 extends AbstractBootstrapWebPage <WebPageEx
           // What to remember
           final Wrapper <String> aEndpointURL = new Wrapper <> ();
           final Wrapper <X509Certificate> aEndpointCert = new Wrapper <> ();
-          final Wrapper <EPeppolCertificateCheckResult> aEndpointCertCheck = new Wrapper <> ();
+          final Wrapper <ECertificateCheckResult> aEndpointCertCheck = new Wrapper <> ();
           final Wrapper <Phase4Exception> aSendEx = new Wrapper <> ();
           final Wrapper <byte []> aResponseBytes = new Wrapper <> ();
           final Wrapper <Ebms3SignalMessage> aResponseMsg = new Wrapper <> ();

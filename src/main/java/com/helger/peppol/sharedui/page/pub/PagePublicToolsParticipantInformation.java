@@ -94,6 +94,7 @@ import com.helger.peppol.businesscard.generic.PDIdentifier;
 import com.helger.peppol.businesscard.generic.PDName;
 import com.helger.peppol.businesscard.helper.PDBusinessCardHelper;
 import com.helger.peppol.businesscard.helper.PDBusinessCardHelper.EBusinessCardVersion;
+import com.helger.peppol.security.PeppolTrustStores;
 import com.helger.peppol.servicedomain.EPeppolNetwork;
 import com.helger.peppol.sharedui.domain.ISMLConfiguration;
 import com.helger.peppol.sharedui.domain.SMPQueryParams;
@@ -105,9 +106,6 @@ import com.helger.peppol.sharedui.ui.select.SMLConfigurationSelect;
 import com.helger.peppol.sml.ESMPAPIType;
 import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppol.smp.ESMPTransportProfileState;
-import com.helger.peppol.utils.EPeppolCertificateCheckResult;
-import com.helger.peppol.utils.PeppolCAChecker;
-import com.helger.peppol.utils.PeppolKeyStoreHelper;
 import com.helger.peppolid.CIdentifier;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
@@ -137,6 +135,8 @@ import com.helger.photon.uictrls.famfam.EFamFamFlagIcon;
 import com.helger.photon.uictrls.prism.EPrismLanguage;
 import com.helger.photon.uictrls.prism.HCPrismJS;
 import com.helger.security.certificate.CertificateHelper;
+import com.helger.security.certificate.ECertificateCheckResult;
+import com.helger.security.certificate.TrustedCAChecker;
 import com.helger.smpclient.bdxr1.BDXRClientReadOnly;
 import com.helger.smpclient.bdxr2.BDXR2ClientReadOnly;
 import com.helger.smpclient.exception.SMPClientBadResponseException;
@@ -317,9 +317,10 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
   }
 
   // Contain AP + eB2B
-  private static final PeppolCAChecker PEPPOL_CA_AP_FULL = new PeppolCAChecker (PeppolKeyStoreHelper.Config2018.CERTIFICATE_PILOT_AP,
-                                                                                PeppolKeyStoreHelper.Config2018.CERTIFICATE_PRODUCTION_AP,
-                                                                                PeppolKeyStoreHelper.Config2018.CERTIFICATE_PILOT_EB2B_AP);
+  private static final TrustedCAChecker PEPPOL_CA_AP_FULL = new TrustedCAChecker (PeppolTrustStores.Config2018.CERTIFICATE_PILOT_AP,
+                                                                                  PeppolTrustStores.Config2018.CERTIFICATE_PRODUCTION_AP,
+                                                                                  PeppolTrustStores.Config2018.CERTIFICATE_PILOT_EB2B_AP,
+                                                                                  PeppolTrustStores.Config2018.CERTIFICATE_PRODUCTION_EB2B_AP);
 
   private void _queryParticipant (@Nonnull final WebPageExecutionContext aWPEC,
                                   final String sParticipantIDScheme,
@@ -1098,10 +1099,10 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                 // Check Peppol certificate status
                 // * Do not cache
                 // * Use global certificate check mode
-                final EPeppolCertificateCheckResult eCertStatus = PEPPOL_CA_AP_FULL.checkCertificate (aEndpointCert,
-                                                                                                      aNowDateTime,
-                                                                                                      ETriState.FALSE,
-                                                                                                      null);
+                final ECertificateCheckResult eCertStatus = PEPPOL_CA_AP_FULL.checkCertificate (aEndpointCert,
+                                                                                                aNowDateTime,
+                                                                                                ETriState.FALSE,
+                                                                                                null);
                 if (eCertStatus.isValid ())
                   aLICert.addChild (success ("The Endpoint Certificate appears to be a valid Peppol certificate."));
                 else
