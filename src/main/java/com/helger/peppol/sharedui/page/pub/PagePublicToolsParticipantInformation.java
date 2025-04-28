@@ -852,6 +852,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
             {
               case PEPPOL:
               {
+                // Get all endpoints - no wildcard interpretation needed
                 final com.helger.xsds.peppol.smp1.SignedServiceMetadataType aSSM = aSMPClient.getServiceMetadataOrNull (aParticipantID,
                                                                                                                         aDocTypeID);
                 aSWGetDetails.stop ();
