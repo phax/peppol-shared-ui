@@ -144,6 +144,9 @@ import com.helger.smpclient.exception.SMPClientException;
 import com.helger.smpclient.httpclient.SMPHttpClientSettings;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.smpclient.peppol.utils.W3CEndpointReferenceHelper;
+import com.helger.smpclient.url.PeppolConfigurableURLProvider;
+import com.helger.smpclient.url.PeppolNaptrURLProvider;
+import com.helger.smpclient.url.SMPDNSResolutionException;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xsds.bdxr.smp2.bc.IDType;
@@ -455,6 +458,22 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                                         : badgeWarn ("test SML")));
 
         aUL.addItem (div ("Query API: ").addChild (code (aRealSMLConfiguration.getSMPAPIType ().getDisplayName ())));
+
+        if (aSMPQueryParams.getSMPAPIType () == ESMPAPIType.PEPPOL)
+        {
+          // Only if NAPTR is used
+          if (PeppolConfigurableURLProvider.USE_NATPR.get ())
+            try
+            {
+              aUL.addItem (div ("DNS NAPTR domain: ").addChild (code (PeppolNaptrURLProvider.INSTANCE.getDNSNameOfParticipant (aParticipantID,
+                                                                                                                               aSMPQueryParams.getPeppolNetwork ()
+                                                                                                                                              .getSMLInfo ()))));
+            }
+            catch (final SMPDNSResolutionException ex)
+            {
+              // Ignore
+            }
+        }
 
         final String sURL1 = aSMPHost.toExternalForm ();
         aUL.addItem (div ("Resolved name: ").addChild (code (sURL1)),
