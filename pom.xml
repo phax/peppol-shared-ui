@@ -119,7 +119,7 @@
       <dependency>
         <groupId>com.helger.peppol</groupId>
         <artifactId>peppol-commons-parent-pom</artifactId>
-        <version>10.3.0</version>
+        <version>10.3.2</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -147,7 +147,7 @@
       <dependency>
         <groupId>com.helger.phase4</groupId>
         <artifactId>phase4-parent-pom</artifactId>
-        <version>3.1.0-beta2</version>
+        <version>3.1.0-rc1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
