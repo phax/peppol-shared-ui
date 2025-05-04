@@ -563,7 +563,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
               }
               else
               {
-                final String sURL2 = aInetAddress.getHostAddress ();
+                final String sURL2 = "[" + aInetAddress.getHostAddress () + "]";
                 final InetAddress aNice = InetAddress.getByAddress (aInetAddress.getAddress ());
                 final String sURL3 = aNice.getCanonicalHostName ();
 
