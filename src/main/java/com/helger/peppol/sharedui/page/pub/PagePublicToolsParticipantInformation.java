@@ -16,6 +16,7 @@
  */
 package com.helger.peppol.sharedui.page.pub;
 
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
@@ -543,22 +544,40 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
           {
             aInetAddresses = InetAddress.getAllByName (aSMPHost.getHost ());
             for (final InetAddress aInetAddress : aInetAddresses)
-            {
-              final String sURL2 = new IPV4Addr (aInetAddress).getAsString ();
-              final InetAddress aNice = InetAddress.getByAddress (aInetAddress.getAddress ());
-              final String sURL3 = aNice.getCanonicalHostName ();
+              if (aInetAddress instanceof Inet4Address)
+              {
+                final String sURL2 = new IPV4Addr (aInetAddress).getAsString ();
+                final InetAddress aNice = InetAddress.getByAddress (aInetAddress.getAddress ());
+                final String sURL3 = aNice.getCanonicalHostName ();
 
-              final HCLI aItem = aUL.addItem ();
-              aItem.addChild (div ("IP address: ").addChild (code (sURL2))
-                                                  .addChild (" - reverse lookup: ")
-                                                  .addChild (code (sURL3)));
-              final HCDiv aButtons = div (_createOpenInBrowser ("http://" + sURL2, "Open IP in browser [may fail]"));
-              if (!sURL2.equals (sURL3))
-                aButtons.addChild (" ")
-                        .addChild (_createOpenInBrowser ("http://" + sURL3,
-                                                         "Open reverse lookup in browser [may fail]"));
-              aItem.addChild (aButtons);
-            }
+                final HCLI aItem = aUL.addItem ();
+                aItem.addChild (div ("IP v4 address: ").addChild (code (sURL2))
+                                                       .addChild (" - reverse lookup: ")
+                                                       .addChild (code (sURL3)));
+                final HCDiv aButtons = div (_createOpenInBrowser ("http://" + sURL2, "Open IP in browser [may fail]"));
+                if (!sURL2.equals (sURL3))
+                  aButtons.addChild (" ")
+                          .addChild (_createOpenInBrowser ("http://" + sURL3,
+                                                           "Open reverse lookup in browser [may fail]"));
+                aItem.addChild (aButtons);
+              }
+              else
+              {
+                final String sURL2 = aInetAddress.getHostAddress ();
+                final InetAddress aNice = InetAddress.getByAddress (aInetAddress.getAddress ());
+                final String sURL3 = aNice.getCanonicalHostName ();
+
+                final HCLI aItem = aUL.addItem ();
+                aItem.addChild (div ("IP v6 address: ").addChild (code (sURL2))
+                                                       .addChild (" - reverse lookup: ")
+                                                       .addChild (code (sURL3)));
+                final HCDiv aButtons = div (_createOpenInBrowser ("http://" + sURL2, "Open IP in browser [may fail]"));
+                if (!sURL2.equals (sURL3))
+                  aButtons.addChild (" ")
+                          .addChild (_createOpenInBrowser ("http://" + sURL3,
+                                                           "Open reverse lookup in browser [may fail]"));
+                aItem.addChild (aButtons);
+              }
 
             // Show only once
             final String sURL4 = sURL1 + (sURL1.endsWith ("/") ? "" : "/") + sParticipantIDUriEncoded;
