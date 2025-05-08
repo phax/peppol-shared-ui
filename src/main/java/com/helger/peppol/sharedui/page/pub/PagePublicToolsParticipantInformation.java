@@ -480,7 +480,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
 
             try
             {
-              @SuppressWarnings ("unused")
+              @SuppressWarnings ("removal")
               final IPeppolURLProvider aOldURLProvider = PeppolURLProvider.INSTANCE;
               aUL.addItem (div ("Old DNS CNAME domain: ").addChild (code (aOldURLProvider.getDNSNameOfParticipant (aParticipantID,
                                                                                                                    aSMPQueryParams.getPeppolNetwork ()
