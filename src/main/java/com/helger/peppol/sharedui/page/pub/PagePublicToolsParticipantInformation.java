@@ -145,8 +145,10 @@ import com.helger.smpclient.exception.SMPClientException;
 import com.helger.smpclient.httpclient.SMPHttpClientSettings;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.smpclient.peppol.utils.W3CEndpointReferenceHelper;
+import com.helger.smpclient.url.IPeppolURLProvider;
 import com.helger.smpclient.url.PeppolConfigurableURLProvider;
 import com.helger.smpclient.url.PeppolNaptrURLProvider;
+import com.helger.smpclient.url.PeppolURLProvider;
 import com.helger.smpclient.url.SMPDNSResolutionException;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 import com.helger.xml.serialize.write.XMLWriter;
@@ -464,6 +466,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
         {
           // Only if NAPTR is used
           if (PeppolConfigurableURLProvider.USE_NATPR.get ())
+          {
             try
             {
               aUL.addItem (div ("DNS NAPTR domain: ").addChild (code (PeppolNaptrURLProvider.INSTANCE.getDNSNameOfParticipant (aParticipantID,
@@ -474,6 +477,20 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
             {
               // Ignore
             }
+
+            try
+            {
+              @SuppressWarnings ("unused")
+              final IPeppolURLProvider aOldURLProvider = PeppolURLProvider.INSTANCE;
+              aUL.addItem (div ("Old DNS CNAME domain: ").addChild (code (aOldURLProvider.getDNSNameOfParticipant (aParticipantID,
+                                                                                                                   aSMPQueryParams.getPeppolNetwork ()
+                                                                                                                                  .getSMLInfo ()))));
+            }
+            catch (final SMPDNSResolutionException ex)
+            {
+              // Ignore
+            }
+          }
         }
 
         final String sURL1 = aSMPHost.toExternalForm ();
