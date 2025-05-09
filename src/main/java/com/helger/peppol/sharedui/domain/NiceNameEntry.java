@@ -16,8 +16,6 @@
  */
 package com.helger.peppol.sharedui.domain;
 
-import java.io.Serializable;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -29,7 +27,7 @@ import com.helger.commons.string.ToStringGenerator;
 import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.peppol.EPeppolCodeListItemState;
 
-public final class NiceNameEntry implements Serializable
+public final class NiceNameEntry
 {
   private final String m_sName;
   private final EPeppolCodeListItemState m_eState;
@@ -87,6 +85,12 @@ public final class NiceNameEntry implements Serializable
   public String getWarning ()
   {
     return m_sWarning;
+  }
+
+  @Nonnull
+  public NiceNameEntry withNewName (@Nonnull @Nonempty final String sNewName)
+  {
+    return new NiceNameEntry (sNewName, m_eState, m_aProcIDs, m_sWarning);
   }
 
   @Override

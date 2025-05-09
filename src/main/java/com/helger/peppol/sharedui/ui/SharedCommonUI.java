@@ -253,21 +253,43 @@ public final class SharedCommonUI
                                bInDetails);
   }
 
+  private static boolean _isPintDocType (@Nonnull final IDocumentTypeIdentifier aDocTypeID)
+  {
+    return PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_PEPPOL_DOCTYPE_WILDCARD.equals (aDocTypeID.getScheme ());
+  }
+
+  private static boolean _isWildcardDocType (@Nonnull final IDocumentTypeIdentifier aDocTypeID)
+  {
+    return aDocTypeID.getValue ().indexOf ('*') > 0;
+  }
+
+  @Nullable
+  private static NiceNameEntry _getPintEnabledNN (@Nonnull final IDocumentTypeIdentifier aDocTypeID)
+  {
+    final boolean bIsPint = _isPintDocType (aDocTypeID);
+    final boolean bIsWildcard = _isWildcardDocType (aDocTypeID);
+
+    NiceNameEntry aNN = DOCTYPE_NAMES.get (aDocTypeID.getURIEncoded ());
+    if (aNN == null && bIsPint && bIsWildcard)
+    {
+      // Try version without the star
+      aNN = DOCTYPE_NAMES.get (StringHelper.removeAll (aDocTypeID.getURIEncoded (), '*'));
+    }
+    if (aNN != null && bIsPint)
+    {
+      // Append something to the name
+      // New logic since 15.5.2025 (PFUOI 4.3.0)
+      aNN = aNN.withNewName (aNN.getName () + (bIsWildcard ? " (PINT wildcard match)" : " (PINT exact match)"));
+    }
+
+    return aNN;
+  }
+
   @Nonnull
   public static IHCNode createDocTypeID (@Nonnull final IDocumentTypeIdentifier aDocTypeID, final boolean bInDetails)
   {
-    final String sURI = aDocTypeID.getURIEncoded ();
-    NiceNameEntry aNiceName = DOCTYPE_NAMES.get (sURI);
-    if (aNiceName == null &&
-        PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_PEPPOL_DOCTYPE_WILDCARD.equals (aDocTypeID.getScheme ()))
-    {
-      // TODO make this nicer when official
-      aNiceName = new NiceNameEntry ("PINT Document Type",
-                                     EPeppolCodeListItemState.ACTIVE,
-                                     null,
-                                     sURI.indexOf ('*') > 0 ? null : "The required star is missing in the ID");
-    }
-    return _createID (sURI, aNiceName, bInDetails);
+    final NiceNameEntry aNN = _getPintEnabledNN (aDocTypeID);
+    return _createID (aDocTypeID.getURIEncoded (), aNN, bInDetails);
   }
 
   @Nonnull
@@ -277,18 +299,20 @@ public final class SharedCommonUI
     final String sURI = aProcessID.getURIEncoded ();
     final boolean bInDetails = true;
 
-    // Check direct match first
-    NiceNameEntry aNN = PROCESS_NAMES.get (sURI);
-    if (aNN != null)
-      return _createID (sURI, aNN, bInDetails);
-
-    aNN = DOCTYPE_NAMES.get (aDocTypeID.getURIEncoded ());
+    // Check in relation ship to Document Type first
+    NiceNameEntry aNN = _getPintEnabledNN (aDocTypeID);
     if (aNN != null)
     {
       if (aNN.containsProcessID (aProcessID))
         return _createFormattedID (sURI, "Matching Process Identifier", EBootstrapBadgeType.SUCCESS, null, bInDetails);
-      return _createFormattedID (sURI, "Unexpected Process Identifier", EBootstrapBadgeType.WARNING, null, bInDetails);
+      return _createFormattedID (sURI, "Unexpected Process Identifier", EBootstrapBadgeType.DANGER, null, bInDetails);
     }
+
+    // Check direct match first
+    aNN = PROCESS_NAMES.get (sURI);
+    if (aNN != null)
+      return _createID (sURI, aNN, bInDetails);
+
     return _createFormattedID (sURI, null, null, null, bInDetails);
   }
 
