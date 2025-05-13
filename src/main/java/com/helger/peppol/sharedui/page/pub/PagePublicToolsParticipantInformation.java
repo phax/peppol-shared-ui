@@ -324,9 +324,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
 
   // Contain AP + eB2B
   private static final TrustedCAChecker PEPPOL_CA_AP_FULL = new TrustedCAChecker (PeppolTrustStores.Config2018.CERTIFICATE_PILOT_AP,
-                                                                                  PeppolTrustStores.Config2018.CERTIFICATE_PRODUCTION_AP,
-                                                                                  PeppolTrustStores.Config2018.CERTIFICATE_PILOT_EB2B_AP,
-                                                                                  PeppolTrustStores.Config2018.CERTIFICATE_PRODUCTION_EB2B_AP);
+                                                                                  PeppolTrustStores.Config2018.CERTIFICATE_PRODUCTION_AP);
 
   private void _queryParticipant (@Nonnull final WebPageExecutionContext aWPEC,
                                   final String sParticipantIDScheme,
