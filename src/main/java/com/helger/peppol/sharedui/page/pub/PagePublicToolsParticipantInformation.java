@@ -143,6 +143,7 @@ import com.helger.smpclient.bdxr2.BDXR2ClientReadOnly;
 import com.helger.smpclient.exception.SMPClientBadResponseException;
 import com.helger.smpclient.exception.SMPClientException;
 import com.helger.smpclient.httpclient.SMPHttpClientSettings;
+import com.helger.smpclient.peppol.ISMPFollowRedirectCallback;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.smpclient.peppol.utils.W3CEndpointReferenceHelper;
 import com.helger.smpclient.url.IPeppolURLProvider;
@@ -669,13 +670,12 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
             aSMPClient.setMarshallerCustomizer (aSMPMarshallerCustomizer);
 
             // Get all HRefs and sort them by decoded URL
-            final com.helger.xsds.peppol.smp1.ServiceGroupType aSG = aSMPClient.getServiceGroupOrNull (aParticipantID);
+            final var aSG = aSMPClient.getServiceGroupOrNull (aParticipantID);
             if (aSG != null)
             {
               // Map from cleaned URL to original URL
               if (aSG.getServiceMetadataReferenceCollection () != null)
-                for (final com.helger.xsds.peppol.smp1.ServiceMetadataReferenceType aSMR : aSG.getServiceMetadataReferenceCollection ()
-                                                                                              .getServiceMetadataReference ())
+                for (final var aSMR : aSG.getServiceMetadataReferenceCollection ().getServiceMetadataReference ())
                 {
                   // Decoded href is important for unification
                   final String sHref = CIdentifier.createPercentDecoded (aSMR.getHref ());
@@ -711,13 +711,12 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
               }
 
             // Get all HRefs and sort them by decoded URL
-            final com.helger.xsds.bdxr.smp1.ServiceGroupType aSG = aBDXR1Client.getServiceGroupOrNull (aParticipantID);
+            final var aSG = aBDXR1Client.getServiceGroupOrNull (aParticipantID);
             // Map from cleaned URL to original URL
             if (aSG != null)
             {
               if (aSG.getServiceMetadataReferenceCollection () != null)
-                for (final com.helger.xsds.bdxr.smp1.ServiceMetadataReferenceType aSMR : aSG.getServiceMetadataReferenceCollection ()
-                                                                                            .getServiceMetadataReference ())
+                for (final var aSMR : aSG.getServiceMetadataReferenceCollection ().getServiceMetadataReference ())
                 {
                   // Decoded href is important for unification
                   final String sHref = CIdentifier.createPercentDecoded (aSMR.getHref ());
@@ -727,7 +726,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
               if (aSG.getExtensionCount () > 0)
               {
                 final HCUL aNL2 = new HCUL ();
-                for (final com.helger.xsds.bdxr.smp1.ExtensionType aExt : aSG.getExtension ())
+                for (final var aExt : aSG.getExtension ())
                   if (aExt.getAny () != null)
                   {
                     if (aExt.getAny () instanceof Element)
@@ -761,11 +760,11 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
               }
 
             // Get all HRefs and sort them by decoded URL
-            final com.helger.xsds.bdxr.smp2.ServiceGroupType aSG = aBDXR2Client.getServiceGroupOrNull (aParticipantID);
+            final var aSG = aBDXR2Client.getServiceGroupOrNull (aParticipantID);
             // Map from cleaned URL to original URL
             if (aSG != null)
             {
-              for (final com.helger.xsds.bdxr.smp2.ac.ServiceReferenceType aSR : aSG.getServiceReference ())
+              for (final var aSR : aSG.getServiceReference ())
               {
                 final IDType aDocTypeID = aSR.getID ();
 
@@ -802,7 +801,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
         final String sPathStart = "/" + aParticipantID.getURIEncoded () + "/services/";
 
         // Show all ServiceGroup hrefs
-        for (final Map.Entry <String, String> aEntry : aSGHrefs.entrySet ())
+        for (final var aEntry : aSGHrefs.entrySet ())
         {
           final String sHref = aEntry.getKey ();
           final String sOriginalHref = aEntry.getValue ();
@@ -905,9 +904,18 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
             {
               case PEPPOL:
               {
+                final ISMPFollowRedirectCallback aRedirectCB = (bFollow, sHref) -> {
+                  if (bFollow)
+                  {
+                    final HCUL aSubUL = aLIDocTypeID.addAndReturnChild (new HCUL ());
+                    aSubUL.addItem (div ().addChild (badgeInfo ("SMP Redirect"))
+                                          .addChild (" to ")
+                                          .addChild (code (sHref)));
+                  }
+                };
+
                 // Get all endpoints - no wildcard interpretation needed
-                final com.helger.xsds.peppol.smp1.SignedServiceMetadataType aSSM = aSMPClient.getServiceMetadataOrNull (aParticipantID,
-                                                                                                                        aDocTypeID);
+                final var aSSM = aSMPClient.getServiceMetadataOrNull (aParticipantID, aDocTypeID, aRedirectCB);
                 aSWGetDetails.stop ();
                 if (aSSM != null)
                 {
@@ -930,16 +938,14 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                     }
                   }
 
-                  final com.helger.xsds.peppol.smp1.ServiceMetadataType aSM = aSSM.getServiceMetadata ();
+                  final var aSM = aSSM.getServiceMetadata ();
                   if (aSM.getRedirect () != null)
-                    aLIDocTypeID.addChild (div ("Redirect to " + aSM.getRedirect ().getHref ()));
+                    aLIDocTypeID.addChild (div ("Redirect to ").addChild (aSM.getRedirect ().getHref ()));
                   else
                   {
                     // For all processes
                     final HCUL aULProcessID = new HCUL ();
-                    for (final com.helger.xsds.peppol.smp1.ProcessType aProcess : aSM.getServiceInformation ()
-                                                                                     .getProcessList ()
-                                                                                     .getProcess ())
+                    for (final var aProcess : aSM.getServiceInformation ().getProcessList ().getProcess ())
                       if (aProcess.getProcessIdentifier () != null)
                       {
                         final IHCLI <?> aLIProcessID = aULProcessID.addItem ();
@@ -947,8 +953,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                                                               SimpleProcessIdentifier.wrap (aProcess.getProcessIdentifier ()))));
                         final HCUL aULEndpoint = new HCUL ();
                         // For all endpoints of the process
-                        for (final com.helger.xsds.peppol.smp1.EndpointType aEndpoint : aProcess.getServiceEndpointList ()
-                                                                                                .getEndpoint ())
+                        for (final var aEndpoint : aProcess.getServiceEndpointList ().getEndpoint ())
                         {
                           final IHCLI <?> aLIEndpoint = aULEndpoint.addItem ();
 
@@ -991,21 +996,18 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
               }
               case OASIS_BDXR_V1:
               {
-                final com.helger.xsds.bdxr.smp1.SignedServiceMetadataType aSSM = aBDXR1Client.getServiceMetadataOrNull (aParticipantID,
-                                                                                                                        aDocTypeID);
+                final var aSSM = aBDXR1Client.getServiceMetadataOrNull (aParticipantID, aDocTypeID);
                 aSWGetDetails.stop ();
                 if (aSSM != null)
                 {
-                  final com.helger.xsds.bdxr.smp1.ServiceMetadataType aSM = aSSM.getServiceMetadata ();
+                  final var aSM = aSSM.getServiceMetadata ();
                   if (aSM.getRedirect () != null)
-                    aLIDocTypeID.addChild (div ("Redirect to " + aSM.getRedirect ().getHref ()));
+                    aLIDocTypeID.addChild (div ("Redirect to ").addChild (code (aSM.getRedirect ().getHref ())));
                   else
                   {
                     // For all processes
                     final HCUL aULProcessID = new HCUL ();
-                    for (final com.helger.xsds.bdxr.smp1.ProcessType aProcess : aSM.getServiceInformation ()
-                                                                                   .getProcessList ()
-                                                                                   .getProcess ())
+                    for (final var aProcess : aSM.getServiceInformation ().getProcessList ().getProcess ())
                       if (aProcess.getProcessIdentifier () != null)
                       {
                         final IHCLI <?> aLIProcessID = aULProcessID.addItem ();
@@ -1116,6 +1118,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
         if (bShowTime)
           aNodeList.addChild (div ("Overall time: ").addChild (_createTimingNode (nTotalDurationMillis)));
 
+        // Show certificate details
         aNodeList.addChild (h3 ("Endpoint Certificate details"));
         if (aAllUsedEndpointCertifiactes.isEmpty ())
         {
