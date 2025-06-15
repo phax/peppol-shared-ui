@@ -311,9 +311,8 @@ public enum EIDType implements IHasID <String>, IHasDisplayName
         }
 
         // Document type specific check
-        // PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_PEPPOL_DOCTYPE_WILDCARD
-        // is PfuoI 4.2
-        if (!sScheme.equals (PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_BUSDOX_DOCID_QNS))
+        if (!sScheme.equals (PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_BUSDOX_DOCID_QNS) &&
+            !sScheme.equals (PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_PEPPOL_DOCTYPE_WILDCARD))
           aErrorList.add (_error ("The identifier scheme '" +
                                   sScheme +
                                   "' is not a known Peppol document type identifier scheme"));
