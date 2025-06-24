@@ -496,7 +496,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
         aUL.addItem (div ("Resolved name: ").addChild (code (sURL1)),
                      div (_createOpenInBrowser (sURL1, "Open in browser [may fail]")));
 
-        // Explicit query with the Dnsjava lookup
+        // Explicit query with the dnsjava lookup
         // Hidden feature to show more details
         if (aWPEC.params ().hasStringValue ("dnsjava", "true"))
         {
@@ -517,9 +517,10 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
           if (aRecords != null)
             for (final Record aRecord : aRecords)
             {
+              boolean bIPV4 = aRecord instanceof ARecord;
               final String sURL2 = aRecord.rdataToString ();
               final String sURL3;
-              if (aRecord instanceof ARecord)
+              if (bIPV4)
               {
                 final ARecord aARec = (ARecord) aRecord;
                 final InetAddress aNice = aARec.getAddress ();
@@ -532,7 +533,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                 sURL3 = aNice != null ? aNice.getCanonicalHostName () : null;
               }
 
-              final HCDiv aDiv1 = div ("[dnsjava] IP address: ").addChild (code (sURL2));
+              final HCDiv aDiv1 = div ("[dnsjava] IP" + (bIPV4 ? "v4" : "v6") + " address: ").addChild (code (sURL2));
               if (sURL3 != null)
                 aDiv1.addChild (" - reverse lookup: ").addChild (code (sURL3));
               else
