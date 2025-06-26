@@ -1095,7 +1095,8 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
             if (LOGGER.isDebugEnabled ())
               LOGGER.debug ("Participant Information Error", ex);
             else
-              LOGGER.warn ("Participant Information Error: " + ex.getClass ().getName () + " - " + ex.getMessage ());
+              LOGGER.warn ("Participant Information Error: " + ex.getClass ().getName () + " - " + ex.getMessage (),
+                           ex);
 
             final BootstrapErrorBox aErrorBox = error (div ("Error querying SMP.")).addChild (SharedCommonUI.getTechnicalDetailsUI (ex,
                                                                                                                                     false));
