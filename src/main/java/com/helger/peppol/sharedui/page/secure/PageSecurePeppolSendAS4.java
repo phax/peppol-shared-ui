@@ -391,6 +391,8 @@ public class PageSecurePeppolSendAS4 extends AbstractBootstrapWebPage <WebPageEx
                                                  .setCtrl (new HCEdit (new RequestField (FIELD_DOCTYPE_ID,
                                                                                          DEFAULT_DOCTYPE_ID)))
                                                  .setHelpText (span ("The Peppol document type identifier. Must include the ").addChild (code (PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_BUSDOX_DOCID_QNS))
+                                                                                                                              .addChild (" or ")
+                                                                                                                              .addChild (code (PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_PEPPOL_DOCTYPE_WILDCARD))
                                                                                                                               .addChild (" prefix."))
                                                  .setErrorList (aFormErrors.getListOfField (FIELD_DOCTYPE_ID)));
     aForm.addFormGroup (new BootstrapFormGroup ().setLabelMandatory ("Process ID")
