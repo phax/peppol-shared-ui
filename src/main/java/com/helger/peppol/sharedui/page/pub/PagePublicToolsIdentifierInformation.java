@@ -84,7 +84,13 @@ public class PagePublicToolsIdentifierInformation extends AbstractAppWebPage
 
   public PagePublicToolsIdentifierInformation (@Nonnull @Nonempty final String sID)
   {
-    super (sID, "ID Information");
+    this (sID, "ID Information");
+  }
+
+  public PagePublicToolsIdentifierInformation (@Nonnull @Nonempty final String sID,
+                                               @Nonnull @Nonempty final String sName)
+  {
+    super (sID, sName);
   }
 
   @Override
