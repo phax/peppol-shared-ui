@@ -59,7 +59,12 @@ public final class PagePublicToolsDDD extends AbstractBootstrapWebPage <WebPageE
 
   public PagePublicToolsDDD (@Nonnull @Nonempty final String sID)
   {
-    super (sID, "Run DDD");
+    this (sID, "Run DDD");
+  }
+
+  public PagePublicToolsDDD (@Nonnull @Nonempty final String sID, @Nonnull String sName)
+  {
+    super (sID, sName);
   }
 
   @Override
@@ -120,16 +125,15 @@ public final class PagePublicToolsDDD extends AbstractBootstrapWebPage <WebPageE
                                                                                      : em ("not found")));
             aUL.addItem (span ("Business Document ID: ").addChild (aDocDetails.hasBusinessDocumentID () ? code (aDocDetails.getBusinessDocumentID ())
                                                                                                         : em ("not found")));
-            aUL.addItem (span ("VESID: ").addChild (aDocDetails.hasVESID () ? code (aDocDetails.getVESID ())
-                                                                            : em ("not found")));
+            aUL.addItem (span ("VESID: ").addChild (aDocDetails.hasVESID () ? code (aDocDetails.getVESID ()) : em (
+                                                                                                                   "not found")));
             aNodeList.addChild (success ("DDD results:").addChild (aUL));
           }
           else
           {
             final HCUL aUL = new HCUL ();
             for (final var e : CollectionHelper.getSortedByValue (DDD_SL.getAllSyntaxes (),
-                                                                  Comparator.comparing (DDDSyntax::getName))
-                                               .values ())
+                                                                  Comparator.comparing (DDDSyntax::getName)).values ())
               aUL.addItem (e.getName ());
 
             aNodeList.addChild (warn (div ("The payload XML is not known by this DDD version. Supported syntaxes are:").addChild (aUL)));
