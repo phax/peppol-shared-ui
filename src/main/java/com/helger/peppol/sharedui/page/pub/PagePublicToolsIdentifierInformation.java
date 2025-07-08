@@ -80,7 +80,7 @@ public class PagePublicToolsIdentifierInformation extends AbstractAppWebPage
   private static final IMutableStatisticsHandlerCounter STATS_COUNT = StatisticsManager.getCounterHandler ("id.information");
   private static final IMutableStatisticsHandlerCounter STATS_COUNT_SUCCESS = StatisticsManager.getCounterHandler ("id.information.success");
   private static final IMutableStatisticsHandlerKeyedCounter STATS_ID_TYPE = StatisticsManager.getKeyedCounterHandler ("id.information.idtype");
-  private static final String IDENTIFIER_POLICY_VERSION = "4.2";
+  private static final String IDENTIFIER_POLICY_VERSION = "4.3";
 
   public PagePublicToolsIdentifierInformation (@Nonnull @Nonempty final String sID)
   {
