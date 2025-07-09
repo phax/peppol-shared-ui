@@ -234,6 +234,8 @@ public class PagePublicToolsIdentifierInformation extends AbstractAppWebPage
                                                    .setHelpText (div ("The identifier value to be checked for consistency. It MUST contain the scheme (like ").addChild (code (PeppolIdentifierHelper.PARTICIPANT_SCHEME_ISO6523_ACTORID_UPIS))
                                                                                                                                                               .addChild (", ")
                                                                                                                                                               .addChild (code (PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_BUSDOX_DOCID_QNS))
+                                                                                                                                                              .addChild (", ")
+                                                                                                                                                              .addChild (code (PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_PEPPOL_DOCTYPE_WILDCARD))
                                                                                                                                                               .addChild (" or ")
                                                                                                                                                               .addChild (code (PeppolIdentifierHelper.PROCESS_SCHEME_CENBII_PROCID_UBL))
                                                                                                                                                               .addChild (") AND the value as one long string"))
