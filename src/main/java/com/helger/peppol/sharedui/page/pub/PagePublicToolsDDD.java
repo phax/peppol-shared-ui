@@ -62,7 +62,7 @@ public final class PagePublicToolsDDD extends AbstractBootstrapWebPage <WebPageE
     this (sID, "Run DDD");
   }
 
-  public PagePublicToolsDDD (@Nonnull @Nonempty final String sID, @Nonnull String sName)
+  public PagePublicToolsDDD (@Nonnull @Nonempty final String sID, @Nonnull @Nonempty final String sName)
   {
     super (sID, sName);
   }

@@ -352,7 +352,7 @@ public enum EIDType implements IHasID <String>, IHasDisplayName
                                   sValue +
                                   "' must not contain characters from outside ISO-8859-1"));
 
-        final IPeppolPredefinedDocumentTypeIdentifier aPredefined = PredefinedDocumentTypeIdentifierManager.getDocumentTypeIdentifierOfID (sValue);
+        final IPeppolPredefinedDocumentTypeIdentifier aPredefined = PredefinedDocumentTypeIdentifierManager.getDocumentTypeIdentifierOfID (sID);
         if (aPredefined == null)
         {
           aErrorList.add (_error ("The identifier value '" +
@@ -483,7 +483,7 @@ public enum EIDType implements IHasID <String>, IHasDisplayName
         if (RegExHelper.stringMatchesPattern (sRegEx, sValue))
           aErrorList.add (_error ("The identifier value '" + sValue + "' must not contain whitespace characters"));
 
-        final IPeppolPredefinedProcessIdentifier aPredefined = PredefinedProcessIdentifierManager.getProcessIdentifierOfID (sValue);
+        final IPeppolPredefinedProcessIdentifier aPredefined = PredefinedProcessIdentifierManager.getProcessIdentifierOfID (sID);
         if (aPredefined == null)
           aErrorList.add (_error ("The identifier value '" +
                                   sValue +

@@ -65,7 +65,12 @@ public class PagePublicToolsParticipantCheck extends AbstractAppWebPage
 
   public PagePublicToolsParticipantCheck (@Nonnull @Nonempty final String sID)
   {
-    super (sID, "Participant Check");
+    this (sID, "Participant Check");
+  }
+
+  public PagePublicToolsParticipantCheck (@Nonnull @Nonempty final String sID, @Nonnull @Nonempty final String sName)
+  {
+    super (sID, sName);
   }
 
   private boolean _checkParticipant (@Nonnull final WebPageExecutionContext aWPEC,

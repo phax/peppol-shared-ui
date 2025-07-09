@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.state.EValidity;
 import com.helger.commons.state.IValidityIndicator;
 import com.helger.commons.string.StringHelper;
@@ -154,9 +155,14 @@ public class PageSecurePeppolSendAS4 extends AbstractBootstrapWebPage <WebPageEx
     }
   }
 
-  public PageSecurePeppolSendAS4 (final String sID)
+  public PageSecurePeppolSendAS4 (@Nonnull @Nonempty final String sID)
   {
-    super (sID, "Send Peppol AS4 message");
+    this (sID, "Send Peppol AS4 message");
+  }
+
+  public PageSecurePeppolSendAS4 (@Nonnull @Nonempty final String sID, @Nonnull @Nonempty final String sName)
+  {
+    super (sID, sName);
   }
 
   @Override

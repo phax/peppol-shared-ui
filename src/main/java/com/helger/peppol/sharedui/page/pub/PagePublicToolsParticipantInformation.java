@@ -179,7 +179,14 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
   public PagePublicToolsParticipantInformation (@Nonnull @Nonempty final String sID,
                                                 @Nonnull @Nonempty final String sUserAgent)
   {
-    super (sID, "Participant Information");
+    this (sID, "Participant Information", sUserAgent);
+  }
+
+  public PagePublicToolsParticipantInformation (@Nonnull @Nonempty final String sID,
+                                                @Nonnull @Nonempty final String sName,
+                                                @Nonnull @Nonempty final String sUserAgent)
+  {
+    super (sID, sName);
     m_sUserAgent = sUserAgent;
   }
 

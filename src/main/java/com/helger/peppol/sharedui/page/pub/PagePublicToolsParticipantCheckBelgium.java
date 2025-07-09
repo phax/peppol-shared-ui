@@ -56,7 +56,13 @@ public class PagePublicToolsParticipantCheckBelgium extends AbstractAppWebPage
 
   public PagePublicToolsParticipantCheckBelgium (@Nonnull @Nonempty final String sID)
   {
-    super (sID, "Belgium Participant Check");
+    this (sID, "Belgium Participant Check");
+  }
+
+  public PagePublicToolsParticipantCheckBelgium (@Nonnull @Nonempty final String sID,
+                                                 @Nonnull @Nonempty final String sName)
+  {
+    super (sID, sName);
   }
 
   private void _checkParticipant (@Nonnull final WebPageExecutionContext aWPEC,

@@ -61,7 +61,8 @@ import com.helger.photon.uicore.page.WebPageExecutionContext;
 import com.helger.photon.uictrls.datatables.DataTables;
 import com.helger.photon.uictrls.datatables.column.DTCol;
 
-public class PageSecureSMLConfiguration extends AbstractBootstrapWebPageForm <ISMLConfiguration, WebPageExecutionContext>
+public class PageSecureSMLConfiguration extends
+                                        AbstractBootstrapWebPageForm <ISMLConfiguration, WebPageExecutionContext>
 {
   private static final String FIELD_ID = "id";
   private static final String FIELD_DISPLAY_NAME = "displayname";
@@ -76,7 +77,12 @@ public class PageSecureSMLConfiguration extends AbstractBootstrapWebPageForm <IS
 
   public PageSecureSMLConfiguration (@Nonnull @Nonempty final String sID)
   {
-    super (sID, "SML configuration");
+    this (sID, "SML configuration");
+  }
+
+  public PageSecureSMLConfiguration (@Nonnull @Nonempty final String sID, @Nonnull @Nonempty final String sName)
+  {
+    super (sID, sName);
     setDeleteHandler (new AbstractBootstrapWebPageActionHandlerDelete <ISMLConfiguration, WebPageExecutionContext> ()
     {
       @Override
@@ -92,7 +98,8 @@ public class PageSecureSMLConfiguration extends AbstractBootstrapWebPageForm <IS
       }
 
       @Override
-      protected void performAction (@Nonnull final WebPageExecutionContext aWPEC, @Nonnull final ISMLConfiguration aSelectedObject)
+      protected void performAction (@Nonnull final WebPageExecutionContext aWPEC,
+                                    @Nonnull final ISMLConfiguration aSelectedObject)
       {
         final ISMLConfigurationManager aSMLConfigurationMgr = SharedUIMetaManager.getSMLConfigurationMgr ();
         if (aSMLConfigurationMgr.removeSMLInfo (aSelectedObject.getID ()).isChanged ())
@@ -102,13 +109,16 @@ public class PageSecureSMLConfiguration extends AbstractBootstrapWebPageForm <IS
                                                   aSelectedObject.getID () +
                                                   "' was successfully deleted!"));
         else
-          aWPEC.postRedirectGetInternal (error ("The SML configuration '" + aSelectedObject.getDisplayName () + "' could not be deleted!"));
+          aWPEC.postRedirectGetInternal (error ("The SML configuration '" +
+                                                aSelectedObject.getDisplayName () +
+                                                "' could not be deleted!"));
       }
     });
   }
 
   @Override
-  protected ISMLConfiguration getSelectedObject (@Nonnull final WebPageExecutionContext aWPEC, @Nullable final String sID)
+  protected ISMLConfiguration getSelectedObject (@Nonnull final WebPageExecutionContext aWPEC,
+                                                 @Nullable final String sID)
   {
     final ISMLConfigurationManager aSMLConfigurationMgr = SharedUIMetaManager.getSMLConfigurationMgr ();
     return aSMLConfigurationMgr.getSMLInfoOfID (sID);
@@ -123,7 +133,8 @@ public class PageSecureSMLConfiguration extends AbstractBootstrapWebPageForm <IS
   }
 
   @Override
-  protected void showSelectedObject (@Nonnull final WebPageExecutionContext aWPEC, @Nonnull final ISMLConfiguration aSelectedObject)
+  protected void showSelectedObject (@Nonnull final WebPageExecutionContext aWPEC,
+                                     @Nonnull final ISMLConfiguration aSelectedObject)
   {
     final Locale aDisplayLocale = aWPEC.getDisplayLocale ();
     final HCNodeList aNodeList = aWPEC.getNodeList ();
@@ -136,7 +147,8 @@ public class PageSecureSMLConfiguration extends AbstractBootstrapWebPageForm <IS
     aForm.addFormGroup (new BootstrapFormGroup ().setLabel ("ID").setCtrl (aSelectedObject.getID ()));
     aForm.addFormGroup (new BootstrapFormGroup ().setLabel ("Name").setCtrl (aSelectedObject.getDisplayName ()));
     aForm.addFormGroup (new BootstrapFormGroup ().setLabel ("DNS Zone").setCtrl (aSelectedObject.getDNSZone ()));
-    aForm.addFormGroup (new BootstrapFormGroup ().setLabel ("Publisher DNS Zone").setCtrl (aSelectedObject.getPublisherDNSZone ()));
+    aForm.addFormGroup (new BootstrapFormGroup ().setLabel ("Publisher DNS Zone")
+                                                 .setCtrl (aSelectedObject.getPublisherDNSZone ()));
     aForm.addFormGroup (new BootstrapFormGroup ().setLabel ("Management Service URL")
                                                  .setCtrl (HCA.createLinkedWebsite (aSelectedObject.getManagementServiceURL ())));
     aForm.addFormGroup (new BootstrapFormGroup ().setLabel ("Manage Service Metadata Endpoint")
@@ -148,11 +160,13 @@ public class PageSecureSMLConfiguration extends AbstractBootstrapWebPageForm <IS
     aForm.addFormGroup (new BootstrapFormGroup ().setLabel ("Client certificate required?")
                                                  .setCtrl (EPhotonCoreText.getYesOrNo (aSelectedObject.isClientCertificateRequired (),
                                                                                        aDisplayLocale)));
-    aForm.addFormGroup (new BootstrapFormGroup ().setLabel ("SMP API type").setCtrl (aSelectedObject.getSMPAPIType ().getDisplayName ()));
+    aForm.addFormGroup (new BootstrapFormGroup ().setLabel ("SMP API type")
+                                                 .setCtrl (aSelectedObject.getSMPAPIType ().getDisplayName ()));
     aForm.addFormGroup (new BootstrapFormGroup ().setLabel ("SMP identifier type")
                                                  .setCtrl (aSelectedObject.getSMPIdentifierType ().getDisplayName ()));
     aForm.addFormGroup (new BootstrapFormGroup ().setLabel ("Production SML?")
-                                                 .setCtrl (EPhotonCoreText.getYesOrNo (aSelectedObject.isProduction (), aDisplayLocale)));
+                                                 .setCtrl (EPhotonCoreText.getYesOrNo (aSelectedObject.isProduction (),
+                                                                                       aDisplayLocale)));
 
     aNodeList.addChild (aForm);
   }
@@ -168,26 +182,30 @@ public class PageSecureSMLConfiguration extends AbstractBootstrapWebPageForm <IS
     final Locale aDisplayLocale = aWPEC.getDisplayLocale ();
     final boolean bEdit = eFormAction.isEdit ();
 
-    aForm.addChild (getUIHandler ().createActionHeader (bEdit ? "Edit SML configuration '" + aSelectedObject.getDisplayName () + "'"
-                                                              : "Create new SML configuration"));
+    aForm.addChild (getUIHandler ().createActionHeader (bEdit ? "Edit SML configuration '" +
+                                                                aSelectedObject.getDisplayName () +
+                                                                "'" : "Create new SML configuration"));
 
     aForm.addFormGroup (new BootstrapFormGroup ().setLabelMandatory ("ID")
                                                  .setCtrl (new HCEdit (new RequestField (FIELD_ID,
-                                                                                         aSelectedObject != null ? aSelectedObject.getID ()
+                                                                                         aSelectedObject != null
+                                                                                                                 ? aSelectedObject.getID ()
                                                                                                                  : null)).setReadOnly (bEdit))
                                                  .setHelpText ("The internal ID of the SML configuration. This value cannot be edited.")
                                                  .setErrorList (aFormErrors.getListOfField (FIELD_ID)));
 
     aForm.addFormGroup (new BootstrapFormGroup ().setLabelMandatory ("Name")
                                                  .setCtrl (new HCEdit (new RequestField (FIELD_DISPLAY_NAME,
-                                                                                         aSelectedObject != null ? aSelectedObject.getDisplayName ()
+                                                                                         aSelectedObject != null
+                                                                                                                 ? aSelectedObject.getDisplayName ()
                                                                                                                  : null)))
                                                  .setHelpText ("The name of the SML configuration. This is for informational purposes only and has no effect on the functionality.")
                                                  .setErrorList (aFormErrors.getListOfField (FIELD_DISPLAY_NAME)));
 
     aForm.addFormGroup (new BootstrapFormGroup ().setLabelMandatory ("DNS Zone")
                                                  .setCtrl (new HCEdit (new RequestField (FIELD_DNS_ZONE,
-                                                                                         aSelectedObject != null ? aSelectedObject.getDNSZone ()
+                                                                                         aSelectedObject != null
+                                                                                                                 ? aSelectedObject.getDNSZone ()
                                                                                                                  : null)))
                                                  .setHelpText (new HCTextNode ("The name of the DNS Zone that this SML is working upon (e.g. "),
                                                                new HCCode ().addChild ("sml.peppolcentral.org"),
@@ -196,7 +214,8 @@ public class PageSecureSMLConfiguration extends AbstractBootstrapWebPageForm <IS
 
     aForm.addFormGroup (new BootstrapFormGroup ().setLabelMandatory ("Management Service URL")
                                                  .setCtrl (new HCEdit (new RequestField (FIELD_MANAGEMENT_ADDRESS_URL,
-                                                                                         aSelectedObject != null ? aSelectedObject.getManagementServiceURL ()
+                                                                                         aSelectedObject != null
+                                                                                                                 ? aSelectedObject.getManagementServiceURL ()
                                                                                                                  : null)))
                                                  .setHelpText ("The service URL where the SML management application is running on including the host name. It may not contain the '" +
                                                                CSMLDefault.MANAGEMENT_SERVICE_METADATA +
@@ -207,22 +226,25 @@ public class PageSecureSMLConfiguration extends AbstractBootstrapWebPageForm <IS
 
     aForm.addFormGroup (new BootstrapFormGroup ().setLabel ("Client Certificate required?")
                                                  .setCtrl (new HCCheckBox (new RequestFieldBoolean (FIELD_CLIENT_CERTIFICATE_REQUIRED,
-                                                                                                    aSelectedObject != null ? aSelectedObject.isClientCertificateRequired ()
-                                                                                                                            : DEFAULT_CLIENT_CERTIFICATE_REQUIRED)))
+                                                                                                    aSelectedObject !=
+                                                                                                                                       null ? aSelectedObject.isClientCertificateRequired ()
+                                                                                                                                            : DEFAULT_CLIENT_CERTIFICATE_REQUIRED)))
                                                  .setHelpText ("Check this if this SML requires a client certificate for access. Both Peppol production SML and SMK require a client certificate. Only a locally running SML software may not require a client certificate.")
                                                  .setErrorList (aFormErrors.getListOfField (FIELD_CLIENT_CERTIFICATE_REQUIRED)));
 
     aForm.addFormGroup (new BootstrapFormGroup ().setLabelMandatory ("SMP API type")
                                                  .setCtrl (new SMPAPITypeSelect (new RequestField (FIELD_SMP_API_TYPE,
-                                                                                                   aSelectedObject != null ? aSelectedObject.getSMPAPIType ()
-                                                                                                                                            .getID ()
-                                                                                                                           : null),
+                                                                                                   aSelectedObject !=
+                                                                                                                       null ? aSelectedObject.getSMPAPIType ()
+                                                                                                                                             .getID ()
+                                                                                                                            : null),
                                                                                  aDisplayLocale))
                                                  .setErrorList (aFormErrors.getListOfField (FIELD_SMP_API_TYPE)));
 
     aForm.addFormGroup (new BootstrapFormGroup ().setLabelMandatory ("SMP identifier type")
                                                  .setCtrl (new SMPIdentifierTypeSelect (new RequestField (FIELD_SMP_ID_TYPE,
-                                                                                                          aSelectedObject != null ? aSelectedObject.getSMPIdentifierType ()
+                                                                                                          aSelectedObject !=
+                                                                                                                             null ? aSelectedObject.getSMPIdentifierType ()
                                                                                                                                                    .getID ()
                                                                                                                                   : null),
                                                                                         aDisplayLocale))
@@ -230,8 +252,9 @@ public class PageSecureSMLConfiguration extends AbstractBootstrapWebPageForm <IS
 
     aForm.addFormGroup (new BootstrapFormGroup ().setLabel ("Production SML?")
                                                  .setCtrl (new HCCheckBox (new RequestFieldBoolean (FIELD_PRODUCTION,
-                                                                                                    aSelectedObject != null ? aSelectedObject.isProduction ()
-                                                                                                                            : true)))
+                                                                                                    aSelectedObject !=
+                                                                                                                      null ? aSelectedObject.isProduction ()
+                                                                                                                           : true)))
                                                  .setHelpText ("Check this if this SML is a production SML. Don't check e.g. for SMK.")
                                                  .setErrorList (aFormErrors.getListOfField (FIELD_PRODUCTION)));
   }
@@ -329,7 +352,9 @@ public class PageSecureSMLConfiguration extends AbstractBootstrapWebPageForm <IS
                                             eSMPAPIType,
                                             eSMPIdentifierType,
                                             bProduction);
-        aWPEC.postRedirectGetInternal (success ("The SML configuration '" + sDisplayName + "' was successfully edited."));
+        aWPEC.postRedirectGetInternal (success ("The SML configuration '" +
+                                                sDisplayName +
+                                                "' was successfully edited."));
       }
       else
       {
@@ -341,7 +366,9 @@ public class PageSecureSMLConfiguration extends AbstractBootstrapWebPageForm <IS
                                             eSMPAPIType,
                                             eSMPIdentifierType,
                                             bProduction);
-        aWPEC.postRedirectGetInternal (success ("The new SML configuration '" + sDisplayName + "' was successfully created."));
+        aWPEC.postRedirectGetInternal (success ("The new SML configuration '" +
+                                                sDisplayName +
+                                                "' was successfully created."));
       }
     }
   }
@@ -386,10 +413,11 @@ public class PageSecureSMLConfiguration extends AbstractBootstrapWebPageForm <IS
                     new HCTextNode (" "),
                     createCopyLink (aWPEC, aCurObject, "Copy " + aCurObject.getID ()),
                     new HCTextNode (" "),
-                    isActionAllowed (aWPEC,
-                                     EWebPageFormAction.DELETE,
-                                     aCurObject) ? createDeleteLink (aWPEC, aCurObject, "Delete " + aCurObject.getDisplayName ())
-                                                 : createEmptyAction ());
+                    isActionAllowed (aWPEC, EWebPageFormAction.DELETE, aCurObject) ? createDeleteLink (aWPEC,
+                                                                                                       aCurObject,
+                                                                                                       "Delete " +
+                                                                                                                   aCurObject.getDisplayName ())
+                                                                                   : createEmptyAction ());
     }
 
     final DataTables aDataTables = BootstrapDataTables.createDefaultDataTables (aWPEC, aTable);
