@@ -387,10 +387,10 @@ public enum EIDType implements IHasID <String>, IHasDisplayName
         {
           // Policy 20
           final IPeppolDocumentTypeIdentifierParts aParts = PeppolDocumentTypeIdentifierParts.extractFromString (sValue);
-          aDetails.add (new KVPair ("Document element namespace URI", aParts.getRootNS ()));
-          aDetails.add (new KVPair ("Document element local name", aParts.getLocalName ()));
-          aDetails.add (new KVPair ("Customization ID", aParts.getCustomizationID ()));
-          aDetails.add (new KVPair ("Version", aParts.getVersion ()));
+          aDetails.add (new KVPair ("Document element namespace URI", aParts.getRootNS (), 1));
+          aDetails.add (new KVPair ("Document element local name", aParts.getLocalName (), 1));
+          aDetails.add (new KVPair ("Customization ID", aParts.getCustomizationID (), 1));
+          aDetails.add (new KVPair ("Syntax Version", aParts.getVersion (), 1));
         }
         catch (final RuntimeException ex)
         {

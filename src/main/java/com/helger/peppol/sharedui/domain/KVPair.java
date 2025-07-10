@@ -32,11 +32,18 @@ public final class KVPair
 {
   private final String m_sKey;
   private final String m_sValue;
+  private final int m_nIndent;
 
   public KVPair (@Nonnull final String sKey, @Nullable final String sValue)
   {
+    this (sKey, sValue, 0);
+  }
+
+  public KVPair (@Nonnull final String sKey, @Nullable final String sValue, final int nIndent)
+  {
     m_sKey = sKey;
     m_sValue = sValue;
+    m_nIndent = nIndent;
   }
 
   @Nonnull
@@ -54,5 +61,10 @@ public final class KVPair
   public String getValue ()
   {
     return m_sValue;
+  }
+
+  public int getIndent ()
+  {
+    return m_nIndent;
   }
 }
