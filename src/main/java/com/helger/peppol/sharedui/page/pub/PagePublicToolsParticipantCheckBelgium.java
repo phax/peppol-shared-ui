@@ -25,6 +25,7 @@ import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.url.ISimpleURL;
 import com.helger.commons.url.SimpleURL;
+import com.helger.html.hc.IHCNode;
 import com.helger.html.hc.html.forms.EHCFormMethod;
 import com.helger.html.hc.html.forms.HCEdit;
 import com.helger.html.hc.impl.HCNodeList;
@@ -63,6 +64,14 @@ public class PagePublicToolsParticipantCheckBelgium extends AbstractAppWebPage
                                                  @Nonnull @Nonempty final String sName)
   {
     super (sID, sName);
+  }
+
+  @Nonnull
+  static IHCNode createPeppolDirectoryButton (@Nonnull final IParticipantIdentifier aPID)
+  {
+    final ISimpleURL aDirectoryURL = new SimpleURL ("https://directory.peppol.eu/participant/" +
+                                                    aPID.getURIPercentEncoded ());
+    return new BootstrapLinkButton ().addChild ("Peppol Directory Lookup").setHref (aDirectoryURL).setTargetBlank ();
   }
 
   private void _checkParticipant (@Nonnull final WebPageExecutionContext aWPEC,
@@ -105,11 +114,7 @@ public class PagePublicToolsParticipantCheckBelgium extends AbstractAppWebPage
                                                                    .add (CPageParam.PARAM_ACTION,
                                                                          CPageParam.ACTION_PERFORM)));
 
-        final ISimpleURL aDirectoryURL = new SimpleURL ("https://directory.peppol.eu/participant/" +
-                                                        aPID.getURIPercentEncoded ());
-        aToolbar.addChild (new BootstrapLinkButton ().addChild ("Peppol Directory Lookup")
-                                                     .setHref (aDirectoryURL)
-                                                     .setTargetBlank ());
+        aToolbar.addChild (createPeppolDirectoryButton (aPID));
         aNodeList.addChild (aToolbar);
       }
       if (bIsVAT)
@@ -130,11 +135,7 @@ public class PagePublicToolsParticipantCheckBelgium extends AbstractAppWebPage
                                                                    .add (CPageParam.PARAM_ACTION,
                                                                          CPageParam.ACTION_PERFORM)));
 
-        final ISimpleURL aDirectoryURL = new SimpleURL ("https://directory.peppol.eu/participant/" +
-                                                        aPID.getURIPercentEncoded ());
-        aToolbar.addChild (new BootstrapLinkButton ().addChild ("Peppol Directory Lookup")
-                                                     .setHref (aDirectoryURL)
-                                                     .setTargetBlank ());
+        aToolbar.addChild (createPeppolDirectoryButton (aPID));
         aNodeList.addChild (aToolbar);
       }
     }

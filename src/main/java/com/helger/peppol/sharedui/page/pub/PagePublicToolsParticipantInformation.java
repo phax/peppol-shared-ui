@@ -1411,6 +1411,10 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
 
     String sParticipantIDScheme = DEFAULT_ID_SCHEME;
     String sParticipantIDValue = null;
+    boolean bQueryBusinessCard = DEFAULT_QUERY_BUSINESS_CARD;
+    boolean bShowTime = DEFAULT_SHOW_TIME;
+    boolean bXSDValidation = DEFAULT_XSD_VALIDATION;
+    boolean bVerifySignatures = DEFAULT_VERIFY_SIGNATURES;
     if (aWPEC.hasAction (CPageParam.ACTION_PERFORM))
     {
       // Validate fields
@@ -1419,13 +1423,10 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
       final String sSMLID = StringHelper.trim (aWPEC.params ().getAsString (FIELD_SML));
       final ISMLConfiguration aSMLConfiguration = aSMLConfigurationMgr.getSMLInfoOfID (sSMLID);
       final boolean bSMLAutoDetect = ISMLConfigurationManager.ID_AUTO_DETECT.equals (sSMLID);
-      final boolean bQueryBusinessCard = aWPEC.params ()
-                                              .isCheckBoxChecked (PARAM_QUERY_BUSINESS_CARD,
-                                                                  DEFAULT_QUERY_BUSINESS_CARD);
-      final boolean bShowTime = aWPEC.params ().isCheckBoxChecked (PARAM_SHOW_TIME, DEFAULT_SHOW_TIME);
-      final boolean bXSDValidation = aWPEC.params ().isCheckBoxChecked (PARAM_XSD_VALIDATION, DEFAULT_XSD_VALIDATION);
-      final boolean bVerifySignatures = aWPEC.params ()
-                                             .isCheckBoxChecked (PARAM_VERIFY_SIGNATURES, DEFAULT_VERIFY_SIGNATURES);
+      bQueryBusinessCard = aWPEC.params ().isCheckBoxCheckedNoHiddenField (PARAM_QUERY_BUSINESS_CARD);
+      bShowTime = aWPEC.params ().isCheckBoxCheckedNoHiddenField (PARAM_SHOW_TIME);
+      bXSDValidation = aWPEC.params ().isCheckBoxCheckedNoHiddenField (PARAM_XSD_VALIDATION);
+      bVerifySignatures = aWPEC.params ().isCheckBoxCheckedNoHiddenField (PARAM_VERIFY_SIGNATURES);
       final IIdentifierFactory aIF = aSMLConfiguration != null ? aSMLConfiguration.getSMPIdentifierType ()
                                                                                   .getIdentifierFactory ()
                                                                : SimpleIdentifierFactory.INSTANCE;
@@ -1499,19 +1500,23 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                    .setErrorList (aFormErrors.getListOfField (FIELD_SML)));
       aForm.addFormGroup (new BootstrapFormGroup ().setLabel ("Query Business Card?")
                                                    .setCtrl (new HCCheckBox (new RequestFieldBoolean (PARAM_QUERY_BUSINESS_CARD,
-                                                                                                      DEFAULT_QUERY_BUSINESS_CARD)).setEmitHiddenField (false))
+                                                                                                      bQueryBusinessCard)).setValue ("yes")
+                                                                                                                          .setEmitHiddenField (false))
                                                    .setErrorList (aFormErrors.getListOfField (PARAM_QUERY_BUSINESS_CARD)));
       aForm.addFormGroup (new BootstrapFormGroup ().setLabel ("Show query duration?")
                                                    .setCtrl (new HCCheckBox (new RequestFieldBoolean (PARAM_SHOW_TIME,
-                                                                                                      DEFAULT_SHOW_TIME)).setEmitHiddenField (false))
+                                                                                                      bShowTime)).setValue ("yes")
+                                                                                                                 .setEmitHiddenField (false))
                                                    .setErrorList (aFormErrors.getListOfField (PARAM_SHOW_TIME)));
       aForm.addFormGroup (new BootstrapFormGroup ().setLabel ("Enable XML Schema validation of responses?")
                                                    .setCtrl (new HCCheckBox (new RequestFieldBoolean (PARAM_XSD_VALIDATION,
-                                                                                                      DEFAULT_XSD_VALIDATION)).setEmitHiddenField (false))
+                                                                                                      bXSDValidation)).setValue ("yes")
+                                                                                                                      .setEmitHiddenField (false))
                                                    .setErrorList (aFormErrors.getListOfField (PARAM_XSD_VALIDATION)));
       aForm.addFormGroup (new BootstrapFormGroup ().setLabel ("Verify signatures of SMP responses?")
                                                    .setCtrl (new HCCheckBox (new RequestFieldBoolean (PARAM_VERIFY_SIGNATURES,
-                                                                                                      DEFAULT_VERIFY_SIGNATURES)).setEmitHiddenField (false))
+                                                                                                      bVerifySignatures)).setValue ("yes")
+                                                                                                                         .setEmitHiddenField (false))
                                                    .setErrorList (aFormErrors.getListOfField (PARAM_VERIFY_SIGNATURES)));
 
       final BootstrapButtonToolbar aToolbar = aForm.addAndReturnChild (new BootstrapButtonToolbar (aWPEC));
