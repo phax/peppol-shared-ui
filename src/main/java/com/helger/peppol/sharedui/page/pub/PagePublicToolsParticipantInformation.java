@@ -330,9 +330,11 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
     return aSB.toString ();
   }
 
-  // Contain AP + eB2B
+  // Contain AP G2 and AP G3
   private static final TrustedCAChecker PEPPOL_CA_AP_FULL = new TrustedCAChecker (PeppolTrustStores.Config2018.CERTIFICATE_PILOT_AP,
-                                                                                  PeppolTrustStores.Config2018.CERTIFICATE_PRODUCTION_AP);
+                                                                                  PeppolTrustStores.Config2018.CERTIFICATE_PRODUCTION_AP,
+                                                                                  PeppolTrustStores.Config2025.CERTIFICATE_TEST_AP,
+                                                                                  PeppolTrustStores.Config2025.CERTIFICATE_PRODUCTION_AP);
 
   private void _queryParticipant (@Nonnull final WebPageExecutionContext aWPEC,
                                   final String sParticipantIDScheme,
