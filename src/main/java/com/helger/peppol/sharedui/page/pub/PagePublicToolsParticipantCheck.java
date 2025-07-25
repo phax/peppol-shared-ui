@@ -75,14 +75,13 @@ public class PagePublicToolsParticipantCheck extends AbstractAppWebPage
 
   private boolean _checkParticipant (@Nonnull final WebPageExecutionContext aWPEC,
                                      @Nonnull final ISMLConfiguration aSMLConfiguration,
-                                     @Nonnull final SMPQueryParams aSMPQueryParams,
+                                     @Nonnull final IParticipantIdentifier aPID,
+                                     final boolean bIsRegisteredInDNS,
                                      final boolean bIsProdSML)
   {
     final HCNodeList aNodeList = aWPEC.getNodeList ();
-    final IParticipantIdentifier aPID = aSMPQueryParams.getParticipantID ();
 
-    final boolean bFoundAny = aSMPQueryParams.isSMPRegisteredInDNS ();
-    if (bFoundAny)
+    if (bIsRegisteredInDNS)
     {
       aNodeList.addChild (success ("The Peppol Participant ID ").addChild (code (aPID.getURIEncoded ()))
                                                                 .addChild (" is registered in the Peppol ")
@@ -120,7 +119,7 @@ public class PagePublicToolsParticipantCheck extends AbstractAppWebPage
                                                                                             : "Test/Pilot"))
                                                               .addChild (" Network"));
     }
-    return bFoundAny;
+    return bIsRegisteredInDNS;
   }
 
   @Override
@@ -188,15 +187,17 @@ public class PagePublicToolsParticipantCheck extends AbstractAppWebPage
           }
           else
           {
+            bQueried = true;
+            // Returns null if NAPTR resolution fails
             final SMPQueryParams aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aSMLConfiguration,
                                                                                       sParticipantIDScheme,
                                                                                       sPIDValue,
                                                                                       true);
-            if (aSMPQueryParams != null)
-            {
-              _checkParticipant (aWPEC, aSMLConfiguration, aSMPQueryParams, bIsProdSML);
-              bQueried = true;
-            }
+            _checkParticipant (aWPEC,
+                               aSMLConfiguration,
+                               aPID,
+                               aSMPQueryParams != null && aSMPQueryParams.isSMPRegisteredInDNS (),
+                               bIsProdSML);
           }
         }
       }
@@ -221,7 +222,8 @@ public class PagePublicToolsParticipantCheck extends AbstractAppWebPage
       aForm.addFormGroup (new BootstrapFormGroup ().setLabelMandatory ("Identifier value")
                                                    .setCtrl (new HCEdit (new RequestField (FIELD_ID_VALUE,
                                                                                            sParticipantIDValue)).setPlaceholder ("Identifier value"))
-                                                   .setHelpText (div ("The identifier value must look like ").addChild (code ("9915:test")))
+                                                   .setHelpText (div ("The identifier value must look like ").addChild (code ("9915:test"))
+                                                                                                             .addChild (". Multiple values may be provided, separated by spaces."))
                                                    .setErrorList (aFormErrors.getListOfField (FIELD_ID_VALUE)));
       {
         final HCRadioButton aRB1 = new HCRadioButton (new RequestFieldBooleanMultiValue (FIELD_SML, SML_PROD, true));
