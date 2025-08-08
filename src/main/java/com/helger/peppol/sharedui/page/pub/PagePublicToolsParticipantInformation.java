@@ -363,7 +363,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
 
     try
     {
-      // Determine the SML if it auto dectect is enabled
+      // Determine the SML if it auto detect is enabled
       // Determine the SMP query parameters
       SMPQueryParams aSMPQueryParams = null;
       ISMLConfiguration aRealSMLConfiguration = aSelectedSMLConfiguration;
