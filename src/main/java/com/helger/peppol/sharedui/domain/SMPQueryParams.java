@@ -216,7 +216,7 @@ public final class SMPQueryParams
     {
       ret.m_aSMPHostURI = _getURLProvider (ret.m_eSMPAPIType).getSMPURIOfParticipant (ret.m_aParticipantID,
                                                                                       aCurSML.getDNSZone ());
-      if (ret.m_eSMPAPIType != ESMPAPIType.PEPPOL && "https".equals (ret.m_aSMPHostURI.getScheme ()))
+      if ("https".equals (ret.m_aSMPHostURI.getScheme ()))
         ret.m_bTrustAllCerts = true;
     }
     catch (final SMPDNSResolutionException ex)

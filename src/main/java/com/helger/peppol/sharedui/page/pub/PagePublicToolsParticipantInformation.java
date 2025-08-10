@@ -667,6 +667,8 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
         final HCUL aSGUL = new HCUL ();
         final ICommonsSortedMap <String, String> aSGHrefs = new CommonsTreeMap <> ();
         IHCNode aSGExtension = null;
+        // Defaulting to true per 10.8.2025
+        boolean bUseSMPSecureValidation = true;
 
         switch (aSMPQueryParams.getSMPAPIType ())
         {
@@ -674,10 +676,19 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
           {
             aSMPClient = new SMPClientReadOnly (aSMPQueryParams.getSMPHostURI ());
             aSMPClient.withHttpClientSettings (aHCSModifier);
-            aSMPClient.setSecureValidation (false);
+            aSMPClient.setSecureValidation (bUseSMPSecureValidation);
             aSMPClient.setXMLSchemaValidation (bXSDValidation);
             aSMPClient.setVerifySignature (bVerifySignatures);
             aSMPClient.setMarshallerCustomizer (aSMPMarshallerCustomizer);
+            if (aSMPQueryParams.isTrustAllCertificates ())
+              try
+              {
+                aSMPClient.httpClientSettings ().setSSLContextTrustAll ();
+              }
+              catch (final GeneralSecurityException ex)
+              {
+                // Ignore
+              }
 
             // Get all HRefs and sort them by decoded URL
             final var aSG = aSMPClient.getServiceGroupOrNull (aParticipantID);
@@ -705,7 +716,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
           {
             aBDXR1Client = new BDXRClientReadOnly (aSMPQueryParams.getSMPHostURI ());
             aBDXR1Client.withHttpClientSettings (aHCSModifier);
-            aBDXR1Client.setSecureValidation (false);
+            aBDXR1Client.setSecureValidation (bUseSMPSecureValidation);
             aBDXR1Client.setXMLSchemaValidation (bXSDValidation);
             aBDXR1Client.setVerifySignature (bVerifySignatures);
             aBDXR1Client.setMarshallerCustomizer (aSMPMarshallerCustomizer);
@@ -713,7 +724,6 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
               try
               {
                 aBDXR1Client.httpClientSettings ().setSSLContextTrustAll ();
-                LOGGER.warn ("Disabled certificate verification on TLS when querying the SMP.");
               }
               catch (final GeneralSecurityException ex)
               {
@@ -754,7 +764,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
           {
             aBDXR2Client = new BDXR2ClientReadOnly (aSMPQueryParams.getSMPHostURI ());
             aBDXR2Client.withHttpClientSettings (aHCSModifier);
-            aBDXR2Client.setSecureValidation (false);
+            aBDXR2Client.setSecureValidation (bUseSMPSecureValidation);
             aBDXR2Client.setXMLSchemaValidation (bXSDValidation);
             aBDXR2Client.setVerifySignature (bVerifySignatures);
             aBDXR2Client.setMarshallerCustomizer (aSMPMarshallerCustomizer);
