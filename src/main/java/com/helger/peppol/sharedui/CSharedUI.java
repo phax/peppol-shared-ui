@@ -42,6 +42,8 @@ public final class CSharedUI
   @CodingStyleguideUnaware
   public static final List <String> REQUIRED_ROLE_IDS_CONFIG = new CommonsArrayList <> (ROLE_CONFIG_ID).getAsUnmodifiable ();
 
+  public static final boolean DEFAULT_SMP_USE_SECURE_VALIDATION = true;
+
   private CSharedUI ()
   {}
 }

@@ -31,7 +31,6 @@ import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.state.EValidity;
 import com.helger.commons.state.IValidityIndicator;
 import com.helger.commons.string.StringHelper;
-import com.helger.commons.system.EJavaVersion;
 import com.helger.commons.wrapper.Wrapper;
 import com.helger.config.IConfig;
 import com.helger.css.property.CCSSProperties;
@@ -40,6 +39,7 @@ import com.helger.html.hc.html.forms.HCHiddenField;
 import com.helger.html.hc.html.forms.HCTextArea;
 import com.helger.html.hc.html.grouping.HCDiv;
 import com.helger.html.hc.impl.HCNodeList;
+import com.helger.peppol.sharedui.CSharedUI;
 import com.helger.peppol.sharedui.config.SharedUIConfig;
 import com.helger.peppol.sharedui.ui.SharedCommonUI;
 import com.helger.peppol.sml.ESML;
@@ -261,11 +261,7 @@ public class PageSecurePeppolSendAS4 extends AbstractBootstrapWebPage <WebPageEx
           final SMPClientReadOnly aSMPClient = new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                       aReceiverID,
                                                                       ESML.DIGIT_TEST);
-          if (EJavaVersion.getCurrentVersion ().isNewerOrEqualsThan (EJavaVersion.JDK_17))
-          {
-            // Disable SHA-1 error when running with Java 17 or higher
-            aSMPClient.setSecureValidation (false);
-          }
+          aSMPClient.setSecureValidation (CSharedUI.DEFAULT_SMP_USE_SECURE_VALIDATION);
 
           // What to remember
           final Wrapper <String> aEndpointURL = new Wrapper <> ();

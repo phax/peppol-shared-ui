@@ -97,6 +97,7 @@ import com.helger.peppol.businesscard.helper.PDBusinessCardHelper;
 import com.helger.peppol.businesscard.helper.PDBusinessCardHelper.EBusinessCardVersion;
 import com.helger.peppol.security.PeppolTrustStores;
 import com.helger.peppol.servicedomain.EPeppolNetwork;
+import com.helger.peppol.sharedui.CSharedUI;
 import com.helger.peppol.sharedui.domain.ISMLConfiguration;
 import com.helger.peppol.sharedui.domain.SMPQueryParams;
 import com.helger.peppol.sharedui.mgr.ISMLConfigurationManager;
@@ -668,7 +669,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
         final ICommonsSortedMap <String, String> aSGHrefs = new CommonsTreeMap <> ();
         IHCNode aSGExtension = null;
         // Defaulting to true per 10.8.2025
-        boolean bUseSMPSecureValidation = true;
+        boolean bUseSMPSecureValidation = CSharedUI.DEFAULT_SMP_USE_SECURE_VALIDATION;
 
         switch (aSMPQueryParams.getSMPAPIType ())
         {
