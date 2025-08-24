@@ -111,6 +111,12 @@ public class PagePublicToolsParticipantCheckBelgium extends AbstractAppWebPage
                                                                          aPID.getValue ())
                                                                    .add (PagePublicToolsParticipantInformation.FIELD_SML,
                                                                          aSMLConfiguration.getID ())
+                                                                   .add (PagePublicToolsParticipantInformation.PARAM_QUERY_BUSINESS_CARD,
+                                                                         true)
+                                                                   .add (PagePublicToolsParticipantInformation.PARAM_VERIFY_SIGNATURES,
+                                                                         true)
+                                                                   .add (PagePublicToolsParticipantInformation.PARAM_XSD_VALIDATION,
+                                                                         true)
                                                                    .add (CPageParam.PARAM_ACTION,
                                                                          CPageParam.ACTION_PERFORM)));
 
@@ -164,6 +170,8 @@ public class PagePublicToolsParticipantCheckBelgium extends AbstractAppWebPage
     {
       // Validate fields
       sParticipantIDValue = StringHelper.trim (aWPEC.params ().getAsString (FIELD_ID_VALUE));
+      // CBE values may contain "." chars
+      sParticipantIDValue = StringHelper.removeAll (sParticipantIDValue, '.');
 
       if (StringHelper.hasNoText (sParticipantIDValue))
         aFormErrors.addFieldError (FIELD_ID_VALUE, "Please provide an value to check");
