@@ -134,7 +134,7 @@ public final class SMLConfigurationManager extends AbstractPhotonMapBasedWALDAO 
   @Nullable
   public EChange removeSMLInfo (@Nullable final String sSMLInfoID)
   {
-    if (StringHelper.hasNoText (sSMLInfoID))
+    if (StringHelper.isEmpty (sSMLInfoID))
       return EChange.UNCHANGED;
 
     m_aRWLock.writeLock ().lock ();

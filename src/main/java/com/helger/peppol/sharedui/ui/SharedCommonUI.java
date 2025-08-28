@@ -239,7 +239,7 @@ public final class SharedCommonUI
     else
       if (aNiceName.getState ().isDeprecated ())
         aWarnings.addChild (new BootstrapBadge (EBootstrapBadgeType.WARNING).addChild ("Identifier is deprecated"));
-    if (StringHelper.hasText (aNiceName.getWarning ()))
+    if (StringHelper.isNotEmpty (aNiceName.getWarning ()))
     {
       if (aWarnings.hasChildren ())
         aWarnings.addChild (" ");

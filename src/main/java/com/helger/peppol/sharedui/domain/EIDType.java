@@ -127,7 +127,7 @@ public enum EIDType implements IHasID <String>, IHasDisplayName
       final String sScheme = aSplitted.get (0);
       aDetails.add (new KVPair ("Identifier scheme", sScheme));
 
-      if (StringHelper.hasNoText (sScheme))
+      if (StringHelper.isEmpty (sScheme))
         aErrorList.add (_error ("The identifier scheme part must not be empty"));
       else
       {
@@ -175,7 +175,7 @@ public enum EIDType implements IHasID <String>, IHasDisplayName
       final String sValue = aSplitted.get (1);
       aDetails.add (new KVPair ("Identifier value", sValue));
 
-      if (StringHelper.hasNoText (sValue))
+      if (StringHelper.isEmpty (sValue))
         aErrorList.add (_error ("The identifier value part must not be empty"));
       else
       {
@@ -187,7 +187,7 @@ public enum EIDType implements IHasID <String>, IHasDisplayName
           final String sIssuingAgency = aSplittedValue.get (0);
           aDetails.add (new KVPair ("Issuing agency", sIssuingAgency));
 
-          if (StringHelper.hasNoText (sIssuingAgency))
+          if (StringHelper.isEmpty (sIssuingAgency))
             aErrorList.add (_error ("The issuing agency part must not be empty"));
           else
           {
@@ -233,7 +233,7 @@ public enum EIDType implements IHasID <String>, IHasDisplayName
 
           final String sEffectiveValue = aSplittedValue.get (1);
           aDetails.add (new KVPair ("Effective value", sEffectiveValue));
-          if (StringHelper.hasNoText (sEffectiveValue))
+          if (StringHelper.isEmpty (sEffectiveValue))
           {
             // POLICY 1
             aErrorList.add (_error ("The effective value part must not be empty"));
@@ -291,7 +291,7 @@ public enum EIDType implements IHasID <String>, IHasDisplayName
       final String sScheme = aSplitted.get (0);
       aDetails.add (new KVPair ("Identifier scheme", sScheme));
 
-      if (StringHelper.hasNoText (sScheme))
+      if (StringHelper.isEmpty (sScheme))
         aErrorList.add (_error ("The identifier scheme part must not be empty"));
       else
       {
@@ -329,7 +329,7 @@ public enum EIDType implements IHasID <String>, IHasDisplayName
       final String sValue = aSplitted.get (1);
       aDetails.add (new KVPair ("Identifier value", sValue));
 
-      if (StringHelper.hasNoText (sValue))
+      if (StringHelper.isEmpty (sValue))
       {
         // POLICY 1
         aErrorList.add (_error ("The identifier value part must not be empty"));
@@ -424,7 +424,7 @@ public enum EIDType implements IHasID <String>, IHasDisplayName
       final String sScheme = aSplitted.get (0);
       aDetails.add (new KVPair ("Identifier scheme", sScheme));
 
-      if (StringHelper.hasNoText (sScheme))
+      if (StringHelper.isEmpty (sScheme))
         aErrorList.add (_error ("The identifier scheme part must not be empty"));
       else
       {
@@ -457,7 +457,7 @@ public enum EIDType implements IHasID <String>, IHasDisplayName
       final String sValue = aSplitted.get (1);
       aDetails.add (new KVPair ("Identifier value", sValue));
 
-      if (StringHelper.hasNoText (sValue))
+      if (StringHelper.isEmpty (sValue))
       {
         // POLICY 1
         aErrorList.add (_error ("The identifier value part must not be empty"));

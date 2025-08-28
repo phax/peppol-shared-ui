@@ -56,7 +56,7 @@ public final class SharedUIHelper
   @Nullable
   public static EPredefinedParticipantIdentifierScheme getParticipantIdentifierSchemeOfID (@Nullable final String sSchemeID)
   {
-    if (StringHelper.hasText (sSchemeID))
+    if (StringHelper.isNotEmpty (sSchemeID))
       for (final EPredefinedParticipantIdentifierScheme eAgency : EPredefinedParticipantIdentifierScheme.values ())
         if (eAgency.getISO6523Code ().equals (sSchemeID) || eAgency.getSchemeID ().equals (sSchemeID))
           return eAgency;

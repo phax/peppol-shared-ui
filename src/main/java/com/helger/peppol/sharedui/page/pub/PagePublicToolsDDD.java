@@ -83,7 +83,7 @@ public final class PagePublicToolsDDD extends AbstractBootstrapWebPage <WebPageE
     if (aWPEC.hasAction (CPageParam.ACTION_PERFORM))
     {
       final String sPayload = aWPEC.params ().getAsStringTrimmed (FIELD_PAYLOAD);
-      if (StringHelper.hasNoText (sPayload))
+      if (StringHelper.isEmpty (sPayload))
         aFormErrors.addFieldError (FIELD_PAYLOAD, "No payload was provided");
       else
       {

@@ -133,8 +133,8 @@ public final class PagePublicContact extends AbstractAppWebPage
 
     final String sRecaptchWebKey = SharedUIConfig.getRecaptchaWebKey ();
     final String sRecaptchSecretKey = SharedUIConfig.getRecaptchaSecretKey ();
-    final boolean bRecaptchaEnabled = StringHelper.hasText (sRecaptchWebKey) &&
-                                      StringHelper.hasText (sRecaptchSecretKey);
+    final boolean bRecaptchaEnabled = StringHelper.isNotEmpty (sRecaptchWebKey) &&
+                                      StringHelper.isNotEmpty (sRecaptchSecretKey);
 
     aNodeList.addChild (p ("If you have general questions concerning Peppol technology, you may contact me using the form below. Please be aware, that I run this page on a voluntary basis and that the answers you may receive are my personal answers and not official OpenPeppol answers."));
 
@@ -149,18 +149,18 @@ public final class PagePublicContact extends AbstractAppWebPage
       final String sText = aWPEC.params ().getAsStringTrimmed (FIELD_TEXT);
       final String sReCaptchaResponse = aWPEC.params ().getAsStringTrimmed (HCReCaptchaV3.RESPONSE_PARAMETER_NAME);
 
-      if (StringHelper.hasNoText (sName))
+      if (StringHelper.isEmpty (sName))
         aFormErrors.addFieldError (FIELD_NAME, "Your name must be provided.");
-      if (StringHelper.hasNoText (sEmail))
+      if (StringHelper.isEmpty (sEmail))
         aFormErrors.addFieldError (FIELD_EMAIL, "Your email address must be provided.");
       else
         if (!EmailAddressHelper.isValid (sEmail))
           aFormErrors.addFieldError (FIELD_EMAIL, "The provided email address is invalid.");
-      if (StringHelper.hasNoText (sText))
+      if (StringHelper.isEmpty (sText))
         aFormErrors.addFieldError (FIELD_TEXT, "A message text must be provided.");
 
       if (bRecaptchaEnabled)
-        if (aFormErrors.isEmpty () || StringHelper.hasText (sReCaptchaResponse))
+        if (aFormErrors.isEmpty () || StringHelper.isNotEmpty (sReCaptchaResponse))
         {
           if (!CaptchaStateSessionSingleton.getInstance ().isChecked ())
           {
@@ -175,7 +175,7 @@ public final class PagePublicContact extends AbstractAppWebPage
 
       if (aFormErrors.isEmpty ())
       {
-        if (StringHelper.hasText (sHoneyPot))
+        if (StringHelper.isNotEmpty (sHoneyPot))
         {
           LOGGER.warn ("The Honeypot field was filled out - not sending an email from the contact page");
           if (GlobalDebug.isDebugMode ())

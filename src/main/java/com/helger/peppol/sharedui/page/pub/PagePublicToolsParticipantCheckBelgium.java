@@ -173,7 +173,7 @@ public class PagePublicToolsParticipantCheckBelgium extends AbstractAppWebPage
       // CBE values may contain "." chars
       sParticipantIDValue = StringHelper.removeAll (sParticipantIDValue, '.');
 
-      if (StringHelper.hasNoText (sParticipantIDValue))
+      if (StringHelper.isEmpty (sParticipantIDValue))
         aFormErrors.addFieldError (FIELD_ID_VALUE, "Please provide an value to check");
 
       if (aFormErrors.isEmpty ())

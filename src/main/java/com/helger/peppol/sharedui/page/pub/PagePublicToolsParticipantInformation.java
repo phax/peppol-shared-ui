@@ -216,11 +216,11 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                   final String sEndpointRef,
                                   final boolean bIsPeppol)
   {
-    aLIEndpoint.addChild (div ("Endpoint URL: ").addChild (StringHelper.hasNoText (sEndpointRef) ? em ("none") : code (
+    aLIEndpoint.addChild (div ("Endpoint URL: ").addChild (StringHelper.isEmpty (sEndpointRef) ? em ("none") : code (
                                                                                                                        sEndpointRef)));
     if (bIsPeppol)
     {
-      if (StringHelper.hasNoText (sEndpointRef))
+      if (StringHelper.isEmpty (sEndpointRef))
         aLIEndpoint.addChild (div (badgeDanger ("The endpoint URL is missing")));
       else
       {
@@ -297,12 +297,12 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
   private void _printTecInfo (@Nonnull final IHCLI <?> aLIEndpoint, final String sTecInfo, final String sTecContact)
   {
     final HCDiv aDiv = div ("Technical info: ");
-    if (StringHelper.hasText (sTecInfo))
+    if (StringHelper.isNotEmpty (sTecInfo))
     {
       final boolean bIsEmail = EmailAddressHelper.isValid (sTecInfo);
       aDiv.addChild (bIsEmail ? HCA_MailTo.createLinkedEmail (sTecInfo) : new HCTextNode (sTecInfo));
     }
-    if (StringHelper.hasText (sTecContact))
+    if (StringHelper.isNotEmpty (sTecContact))
     {
       if (aDiv.getChildCount () > 1)
         aDiv.addChild (" / ");
@@ -1258,7 +1258,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
               aNodeList.addChild (div (_createTimingNode (aSWGetBC.getMillis ())));
 
             final String sBC = new String (aData, StandardCharsets.UTF_8);
-            if (StringHelper.hasText (sBC))
+            if (StringHelper.isNotEmpty (sBC))
               aNodeList.addChild (new HCPrismJS (EPrismLanguage.MARKUP).addChild (sBC));
             LOGGER.error ("Failed to parse BC:\n" + sBC);
           }
@@ -1335,7 +1335,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                   for (final PDIdentifier aItem : aEntity.identifiers ())
                   {
                     // Avoid empty rows
-                    if (StringHelper.hasText (aItem.getScheme ()) || StringHelper.hasText (aItem.getValue ()))
+                    if (StringHelper.isNotEmpty (aItem.getScheme ()) || StringHelper.isNotEmpty (aItem.getValue ()))
                       aIDTab.addBodyRow ().addCells (aItem.getScheme (), aItem.getValue ());
                   }
                   if (aIDTab.hasBodyRows ())
@@ -1346,7 +1346,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                 {
                   final HCNodeList aWebsites = new HCNodeList ();
                   for (final String sItem : aEntity.websiteURIs ())
-                    if (StringHelper.hasText (sItem))
+                    if (StringHelper.isNotEmpty (sItem))
                       aWebsites.addChild (div (HCA.createLinkedWebsite (sItem)));
                   if (aWebsites.hasChildren ())
                     aLI.addChild (div ("Website URLs: ").addChild (aWebsites));
@@ -1359,10 +1359,10 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                   for (final PDContact aItem : aEntity.contacts ())
                   {
                     // Avoid empty rows
-                    if (StringHelper.hasText (aItem.getType ()) ||
-                        StringHelper.hasText (aItem.getName ()) ||
-                        StringHelper.hasText (aItem.getPhoneNumber ()) ||
-                        StringHelper.hasText (aItem.getEmail ()))
+                    if (StringHelper.isNotEmpty (aItem.getType ()) ||
+                        StringHelper.isNotEmpty (aItem.getName ()) ||
+                        StringHelper.isNotEmpty (aItem.getPhoneNumber ()) ||
+                        StringHelper.isNotEmpty (aItem.getEmail ()))
                       aContactTab.addBodyRow ()
                                  .addCell (aItem.getType ())
                                  .addCell (aItem.getName ())
@@ -1453,14 +1453,14 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                               StringHelper.trim (aWPEC.params ().getAsString ("idvalue"));
       }
 
-      if (StringHelper.hasNoText (sParticipantIDScheme))
+      if (StringHelper.isEmpty (sParticipantIDScheme))
         aFormErrors.addFieldError (FIELD_ID_SCHEME, "Please provide an identifier scheme");
       else
         if (!aIF.isParticipantIdentifierSchemeValid (sParticipantIDScheme))
           aFormErrors.addFieldError (FIELD_ID_SCHEME,
                                      "The participant identifier scheme '" + sParticipantIDScheme + "' is not valid!");
 
-      if (StringHelper.hasNoText (sParticipantIDValue))
+      if (StringHelper.isEmpty (sParticipantIDValue))
         aFormErrors.addFieldError (FIELD_ID_VALUE, "Please provide an identifier value");
       else
         if (!aIF.isParticipantIdentifierValueValid (sParticipantIDScheme, sParticipantIDValue))

@@ -117,13 +117,13 @@ public class PagePublicToolsIdentifierInformation extends AbstractAppWebPage
         sIDValue = URLHelper.urlDecodeOrDefault (sIDValue, sIDValue);
       }
 
-      if (StringHelper.hasNoText (sIDType))
+      if (StringHelper.isEmpty (sIDType))
         aFormErrors.addFieldError (FIELD_ID_TYPE, "An identifier type must be selected");
       else
         if (eIDType == null)
           aFormErrors.addFieldError (FIELD_ID_TYPE, "An identifier type must be selected");
 
-      if (StringHelper.hasNoText (sIDValue))
+      if (StringHelper.isEmpty (sIDValue))
         aFormErrors.addFieldError (FIELD_ID_VALUE, "An identifier value must be provided");
 
       if (aFormErrors.isEmpty ())

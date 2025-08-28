@@ -157,7 +157,7 @@ public class PagePublicToolsParticipantCheck extends AbstractAppWebPage
                                                                                   .getIdentifierFactory ()
                                                                : SimpleIdentifierFactory.INSTANCE;
 
-      if (StringHelper.hasNoText (sParticipantIDScheme))
+      if (StringHelper.isEmpty (sParticipantIDScheme))
         aFormErrors.addFieldError (FIELD_ID_SCHEME, "Please provide an identifier scheme");
       else
         if (!aIF.isParticipantIdentifierSchemeValid (sParticipantIDScheme))

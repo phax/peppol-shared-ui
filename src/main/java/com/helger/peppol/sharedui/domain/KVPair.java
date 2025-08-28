@@ -54,7 +54,7 @@ public final class KVPair
 
   public boolean hasValue ()
   {
-    return StringHelper.hasText (m_sValue);
+    return StringHelper.isNotEmpty (m_sValue);
   }
 
   @Nullable

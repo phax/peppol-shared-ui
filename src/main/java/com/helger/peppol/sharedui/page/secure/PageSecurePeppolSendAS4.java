@@ -202,31 +202,31 @@ public class PageSecurePeppolSendAS4 extends AbstractBootstrapWebPage <WebPageEx
       final String sPayload = aWPEC.params ().getAsStringTrimmed (FIELD_PAYLOAD);
       final Document aPayloadDoc = DOMReader.readXMLDOM (sPayload);
 
-      if (StringHelper.hasNoText (sSenderID))
+      if (StringHelper.isEmpty (sSenderID))
         aFormErrors.addFieldError (FIELD_SENDER_ID, "A sending participant ID must be provided.");
       else
         if (aSenderID == null)
           aFormErrors.addFieldError (FIELD_SENDER_ID, "The sending participant ID could not be parsed.");
 
-      if (StringHelper.hasNoText (sReceiverID))
+      if (StringHelper.isEmpty (sReceiverID))
         aFormErrors.addFieldError (FIELD_RECEIVER_ID, "A receiving participant ID must be provided.");
       else
         if (aReceiverID == null)
           aFormErrors.addFieldError (FIELD_RECEIVER_ID, "The receiving participant ID could not be parsed.");
 
-      if (StringHelper.hasNoText (sDocTypeID))
+      if (StringHelper.isEmpty (sDocTypeID))
         aFormErrors.addFieldError (FIELD_DOCTYPE_ID, "A document type ID must be provided.");
       else
         if (aDocTypeID == null)
           aFormErrors.addFieldError (FIELD_DOCTYPE_ID, "The document type ID could not be parsed.");
 
-      if (StringHelper.hasNoText (sProcessID))
+      if (StringHelper.isEmpty (sProcessID))
         aFormErrors.addFieldError (FIELD_PROCESS_ID, "A process ID must be provided.");
       else
         if (aProcessID == null)
           aFormErrors.addFieldError (FIELD_PROCESS_ID, "The process ID could not be parsed.");
 
-      if (StringHelper.hasNoText (sPayload))
+      if (StringHelper.isEmpty (sPayload))
         aFormErrors.addFieldError (FIELD_PAYLOAD, "A payload must be provided.");
       else
         if (aPayloadDoc == null)
@@ -333,7 +333,7 @@ public class PageSecurePeppolSendAS4 extends AbstractBootstrapWebPage <WebPageEx
             // "SignalMessage" element
             final String sSignalMessage = new Ebms3SignalMessageMarshaller ().setFormattedOutput (true)
                                                                              .getAsString (aResponseMsg.get ());
-            if (StringHelper.hasText (sSignalMessage))
+            if (StringHelper.isNotEmpty (sSignalMessage))
             {
               // Show payload
               aNL.addChild (div ("Response ebMS Signal Message"));
