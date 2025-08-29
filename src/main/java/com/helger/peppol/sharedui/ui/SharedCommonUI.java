@@ -16,22 +16,19 @@
  */
 package com.helger.peppol.sharedui.ui;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.CommonsHashMap;
-import com.helger.commons.collection.impl.ICommonsMap;
-import com.helger.commons.lang.ClassHelper;
-import com.helger.commons.string.StringHelper;
-import com.helger.commons.type.ITypedObject;
-import com.helger.commons.url.ISimpleURL;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.style.ReturnsMutableCopy;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.lang.clazz.ClassHelper;
+import com.helger.base.string.StringHelper;
+import com.helger.base.string.StringRemove;
+import com.helger.base.type.ITypedObject;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.CommonsHashMap;
+import com.helger.collection.commons.ICommonsMap;
 import com.helger.html.hc.IHCNode;
 import com.helger.html.hc.html.grouping.HCDiv;
 import com.helger.html.hc.html.textlevel.HCCode;
@@ -60,7 +57,11 @@ import com.helger.photon.uictrls.datatables.EDataTablesFilterType;
 import com.helger.photon.uictrls.datatables.ajax.AjaxExecutorDataTables;
 import com.helger.photon.uictrls.datatables.ajax.AjaxExecutorDataTablesI18N;
 import com.helger.photon.uictrls.datatables.plugins.DataTablesPluginSearchHighlight;
+import com.helger.url.ISimpleURL;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 public final class SharedCommonUI
 {
@@ -273,7 +274,7 @@ public final class SharedCommonUI
     if (aNN == null && bIsPint && bIsWildcard)
     {
       // Try version without the star
-      aNN = DOCTYPE_NAMES.get (StringHelper.removeAll (aDocTypeID.getURIEncoded (), '*'));
+      aNN = DOCTYPE_NAMES.get (StringRemove.removeAll (aDocTypeID.getURIEncoded (), '*'));
     }
     if (aNN != null && bIsPint)
     {

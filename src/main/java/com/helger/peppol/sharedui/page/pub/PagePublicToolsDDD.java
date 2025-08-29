@@ -18,16 +18,13 @@ package com.helger.peppol.sharedui.page.pub;
 
 import java.util.Comparator;
 
-import javax.annotation.Nonnull;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.collection.CollectionHelper;
-import com.helger.commons.string.StringHelper;
-import com.helger.commons.url.SimpleURL;
+import com.helger.annotation.Nonempty;
+import com.helger.base.string.StringHelper;
+import com.helger.collection.helper.CollectionSort;
 import com.helger.ddd.DDDVersion;
 import com.helger.ddd.DocumentDetails;
 import com.helger.ddd.DocumentDetailsDeterminator;
@@ -47,7 +44,10 @@ import com.helger.photon.core.form.FormErrorList;
 import com.helger.photon.core.form.RequestField;
 import com.helger.photon.uicore.css.CPageParam;
 import com.helger.photon.uicore.page.WebPageExecutionContext;
+import com.helger.url.SimpleURL;
 import com.helger.xml.serialize.read.DOMReader;
+
+import jakarta.annotation.Nonnull;
 
 public final class PagePublicToolsDDD extends AbstractBootstrapWebPage <WebPageExecutionContext>
 {
@@ -132,8 +132,8 @@ public final class PagePublicToolsDDD extends AbstractBootstrapWebPage <WebPageE
           else
           {
             final HCUL aUL = new HCUL ();
-            for (final var e : CollectionHelper.getSortedByValue (DDD_SL.getAllSyntaxes (),
-                                                                  Comparator.comparing (DDDSyntax::getName)).values ())
+            for (final var e : CollectionSort.getSortedByValue (DDD_SL.getAllSyntaxes (),
+                                                                Comparator.comparing (DDDSyntax::getName)).values ())
               aUL.addItem (e.getName ());
 
             aNodeList.addChild (warn (div ("The payload XML is not known by this DDD version. Supported syntaxes are:").addChild (aUL)));

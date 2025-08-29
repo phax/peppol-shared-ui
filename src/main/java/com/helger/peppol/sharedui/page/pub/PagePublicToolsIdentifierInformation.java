@@ -19,24 +19,17 @@ package com.helger.peppol.sharedui.page.pub;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.CommonsLinkedHashMap;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.collection.impl.ICommonsOrderedMap;
-import com.helger.commons.error.IError;
-import com.helger.commons.error.list.ErrorList;
-import com.helger.commons.statistics.IMutableStatisticsHandlerCounter;
-import com.helger.commons.statistics.IMutableStatisticsHandlerKeyedCounter;
-import com.helger.commons.statistics.StatisticsManager;
-import com.helger.commons.string.StringHelper;
-import com.helger.commons.url.SimpleURL;
-import com.helger.commons.url.URLHelper;
+import com.helger.annotation.Nonempty;
+import com.helger.base.string.StringHelper;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.CommonsLinkedHashMap;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.collection.commons.ICommonsOrderedMap;
+import com.helger.diagnostics.error.IError;
+import com.helger.diagnostics.error.list.ErrorList;
 import com.helger.html.hc.IHCNode;
 import com.helger.html.hc.html.forms.EHCFormMethod;
 import com.helger.html.hc.html.forms.HCCheckBox;
@@ -63,6 +56,13 @@ import com.helger.photon.core.form.RequestFieldBoolean;
 import com.helger.photon.uicore.css.CPageParam;
 import com.helger.photon.uicore.html.select.HCExtSelect;
 import com.helger.photon.uicore.page.WebPageExecutionContext;
+import com.helger.statistics.api.IMutableStatisticsHandlerCounter;
+import com.helger.statistics.api.IMutableStatisticsHandlerKeyedCounter;
+import com.helger.statistics.impl.StatisticsManager;
+import com.helger.url.SimpleURL;
+import com.helger.url.codec.URLCoder;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * Verify identifiers according to some predefined rules.
@@ -114,7 +114,7 @@ public class PagePublicToolsIdentifierInformation extends AbstractAppWebPage
       if (bDecodeValue)
       {
         // Try decoding - else stick with the original
-        sIDValue = URLHelper.urlDecodeOrDefault (sIDValue, sIDValue);
+        sIDValue = URLCoder.urlDecodeOrDefault (sIDValue, sIDValue);
       }
 
       if (StringHelper.isEmpty (sIDType))

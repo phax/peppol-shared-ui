@@ -21,17 +21,15 @@ import java.security.KeyStore.PrivateKeyEntry;
 import java.security.cert.X509Certificate;
 import java.util.function.Supplier;
 
-import javax.annotation.Nonnull;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.state.EValidity;
-import com.helger.commons.state.IValidityIndicator;
-import com.helger.commons.string.StringHelper;
-import com.helger.commons.wrapper.Wrapper;
+import com.helger.annotation.Nonempty;
+import com.helger.base.state.EValidity;
+import com.helger.base.state.IValidityIndicator;
+import com.helger.base.string.StringHelper;
+import com.helger.base.wrapper.Wrapper;
 import com.helger.config.IConfig;
 import com.helger.css.property.CCSSProperties;
 import com.helger.html.hc.html.forms.HCEdit;
@@ -83,6 +81,8 @@ import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.smpclient.url.SMPDNSResolutionException;
 import com.helger.xml.serialize.read.DOMReader;
 import com.helger.xml.serialize.write.XMLWriter;
+
+import jakarta.annotation.Nonnull;
 
 public class PageSecurePeppolSendAS4 extends AbstractBootstrapWebPage <WebPageExecutionContext>
 {

@@ -16,7 +16,7 @@
  */
 package com.helger.peppol.sharedui.config;
 
-import com.helger.commons.annotation.IsSPIImplementation;
+import com.helger.annotation.style.IsSPIImplementation;
 import com.helger.peppol.sharedui.domain.SMLConfiguration;
 import com.helger.peppol.sharedui.domain.SMLConfigurationMicroTypeConverter;
 import com.helger.xml.microdom.convert.IMicroTypeConverterRegistrarSPI;

@@ -18,15 +18,11 @@ package com.helger.peppol.sharedui.validate.ui;
 
 import java.util.Locale;
 
-import javax.annotation.Nonnull;
-
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.CommonsHashSet;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.collection.impl.ICommonsSet;
-import com.helger.commons.compare.IComparator;
-import com.helger.commons.compare.NaturalNumericOrderComparator;
+import com.helger.annotation.Nonempty;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.CommonsHashSet;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.collection.commons.ICommonsSet;
 import com.helger.diver.api.coord.DVRCoordinate;
 import com.helger.html.request.IHCRequestField;
 import com.helger.peppol.sharedui.validate.VESRegistry;
@@ -34,6 +30,10 @@ import com.helger.phive.api.executorset.IValidationExecutorSet;
 import com.helger.phive.peppol.legacy.PeppolValidation3_10_0;
 import com.helger.phive.xml.source.IValidationSourceXML;
 import com.helger.photon.uicore.html.select.HCExtSelect;
+import com.helger.text.compare.ComparatorHelper;
+import com.helger.text.compare.NaturalNumericOrderComparator;
+
+import jakarta.annotation.Nonnull;
 
 @SuppressWarnings ("deprecation")
 public final class HCVESSelect extends HCExtSelect
@@ -60,7 +60,7 @@ public final class HCVESSelect extends HCExtSelect
       if (!LEGACY_IDS.contains (aEntry.getID ()))
         aAll.add (aEntry);
 
-    final NaturalNumericOrderComparator aCS = new NaturalNumericOrderComparator (IComparator.getComparatorCollating (aDisplayLocale));
+    final NaturalNumericOrderComparator aCS = new NaturalNumericOrderComparator (ComparatorHelper.getComparatorCollating (aDisplayLocale));
     return aAll.getSortedInline ( (x, y) -> {
       if (false)
         return x.getID ().compareTo (y.getID ());

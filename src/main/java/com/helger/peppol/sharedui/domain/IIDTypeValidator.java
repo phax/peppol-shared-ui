@@ -18,10 +18,10 @@ package com.helger.peppol.sharedui.domain;
 
 import java.util.List;
 
-import javax.annotation.Nonnull;
+import com.helger.annotation.Nonempty;
+import com.helger.diagnostics.error.list.ErrorList;
 
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.error.list.ErrorList;
+import jakarta.annotation.Nonnull;
 
 /**
  * Callback interface

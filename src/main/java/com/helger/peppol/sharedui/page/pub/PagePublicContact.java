@@ -18,16 +18,14 @@ package com.helger.peppol.sharedui.page.pub;
 
 import java.util.Locale;
 
-import javax.annotation.Nonnull;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.debug.GlobalDebug;
-import com.helger.commons.email.EmailAddress;
-import com.helger.commons.email.EmailAddressHelper;
-import com.helger.commons.string.StringHelper;
+import com.helger.annotation.Nonempty;
+import com.helger.base.debug.GlobalDebug;
+import com.helger.base.email.EmailAddress;
+import com.helger.base.email.EmailAddressHelper;
+import com.helger.base.string.StringHelper;
 import com.helger.html.hc.html.forms.HCEdit;
 import com.helger.html.hc.html.forms.HCHiddenField;
 import com.helger.html.hc.impl.HCNodeList;
@@ -54,6 +52,8 @@ import com.helger.photon.uictrls.autosize.HCTextAreaAutosize;
 import com.helger.smtp.data.EEmailType;
 import com.helger.smtp.data.EmailData;
 import com.helger.smtp.scope.ScopedMailAPI;
+
+import jakarta.annotation.Nonnull;
 
 public final class PagePublicContact extends AbstractAppWebPage
 {

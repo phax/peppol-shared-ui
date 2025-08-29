@@ -16,15 +16,12 @@
  */
 package com.helger.peppol.sharedui.page.pub;
 
-import javax.annotation.Nonnull;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.string.StringHelper;
-import com.helger.commons.url.ISimpleURL;
-import com.helger.commons.url.SimpleURL;
+import com.helger.annotation.Nonempty;
+import com.helger.base.string.StringHelper;
+import com.helger.base.string.StringRemove;
 import com.helger.html.hc.IHCNode;
 import com.helger.html.hc.html.forms.EHCFormMethod;
 import com.helger.html.hc.html.forms.HCEdit;
@@ -48,6 +45,10 @@ import com.helger.photon.core.form.RequestField;
 import com.helger.photon.uicore.css.CPageParam;
 import com.helger.photon.uicore.page.WebPageExecutionContext;
 import com.helger.photon.uictrls.famfam.EFamFamIcon;
+import com.helger.url.ISimpleURL;
+import com.helger.url.SimpleURL;
+
+import jakarta.annotation.Nonnull;
 
 public class PagePublicToolsParticipantCheckBelgium extends AbstractAppWebPage
 {
@@ -171,7 +172,7 @@ public class PagePublicToolsParticipantCheckBelgium extends AbstractAppWebPage
       // Validate fields
       sParticipantIDValue = StringHelper.trim (aWPEC.params ().getAsString (FIELD_ID_VALUE));
       // CBE values may contain "." chars
-      sParticipantIDValue = StringHelper.removeAll (sParticipantIDValue, '.');
+      sParticipantIDValue = StringRemove.removeAll (sParticipantIDValue, '.');
 
       if (StringHelper.isEmpty (sParticipantIDValue))
         aFormErrors.addFieldError (FIELD_ID_VALUE, "Please provide an value to check");

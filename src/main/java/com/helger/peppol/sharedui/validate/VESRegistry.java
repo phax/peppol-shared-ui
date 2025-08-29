@@ -19,16 +19,13 @@ package com.helger.peppol.sharedui.validate;
 import java.util.Comparator;
 import java.util.Locale;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.Immutable;
-
-import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.collection.impl.CommonsHashMap;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.collection.impl.ICommonsMap;
-import com.helger.commons.collection.impl.ICommonsOrderedMap;
-import com.helger.commons.name.IHasDisplayName;
+import com.helger.annotation.concurrent.Immutable;
+import com.helger.annotation.style.ReturnsMutableCopy;
+import com.helger.base.name.IHasDisplayName;
+import com.helger.collection.commons.CommonsHashMap;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.collection.commons.ICommonsMap;
+import com.helger.collection.commons.ICommonsOrderedMap;
 import com.helger.diver.api.coord.DVRCoordinate;
 import com.helger.json.IJsonArray;
 import com.helger.json.JsonArray;
@@ -62,6 +59,10 @@ import com.helger.phive.xml.source.IValidationSourceXML;
 import com.helger.phive.xrechnung.XRechnungValidation;
 import com.helger.phive.zatca.ZATCAValidation;
 import com.helger.phive.zugferd.ZugferdValidation;
+import com.helger.text.compare.ComparatorHelper;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 @SuppressWarnings ("deprecation")
 @Immutable
@@ -109,7 +110,8 @@ public final class VESRegistry
     final ICommonsMap <DVRCoordinate, IValidationExecutorSet <IValidationSourceXML>> aMap = new CommonsHashMap <> (VES_REGISTRY.getAll (),
                                                                                                                    IValidationExecutorSet::getID,
                                                                                                                    x -> x);
-    return aMap.getSortedByValue (IHasDisplayName.getComparatorCollating (aDisplayLocale));
+    return aMap.getSortedByValue (ComparatorHelper.getComparatorCollating (IHasDisplayName::getDisplayName,
+                                                                           aDisplayLocale));
   }
 
   @Nonnull

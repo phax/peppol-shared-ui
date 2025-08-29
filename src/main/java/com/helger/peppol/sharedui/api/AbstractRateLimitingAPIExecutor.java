@@ -20,14 +20,12 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import javax.annotation.Nonnull;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.http.CHttp;
+import com.helger.annotation.Nonempty;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.http.CHttp;
 import com.helger.peppol.sharedui.config.SharedUIConfig;
 import com.helger.photon.api.IAPIDescriptor;
 import com.helger.photon.api.IAPIExecutor;
@@ -37,6 +35,7 @@ import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 
 import es.moki.ratelimitj.core.limiter.request.RequestLimitRule;
 import es.moki.ratelimitj.inmemory.request.InMemorySlidingWindowRequestRateLimiter;
+import jakarta.annotation.Nonnull;
 
 public abstract class AbstractRateLimitingAPIExecutor implements IAPIExecutor
 {

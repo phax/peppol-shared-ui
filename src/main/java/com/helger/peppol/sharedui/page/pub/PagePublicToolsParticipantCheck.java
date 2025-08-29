@@ -16,14 +16,10 @@
  */
 package com.helger.peppol.sharedui.page.pub;
 
-import javax.annotation.Nonnull;
-
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.regex.RegExHelper;
-import com.helger.commons.string.StringHelper;
-import com.helger.commons.url.ISimpleURL;
-import com.helger.commons.url.SimpleURL;
+import com.helger.annotation.Nonempty;
+import com.helger.base.string.StringHelper;
+import com.helger.cache.regex.RegExHelper;
+import com.helger.collection.commons.ICommonsList;
 import com.helger.html.hc.html.forms.EHCFormMethod;
 import com.helger.html.hc.html.forms.HCEdit;
 import com.helger.html.hc.html.forms.HCLabel;
@@ -52,6 +48,10 @@ import com.helger.photon.core.form.RequestFieldBooleanMultiValue;
 import com.helger.photon.uicore.css.CPageParam;
 import com.helger.photon.uicore.page.WebPageExecutionContext;
 import com.helger.photon.uictrls.famfam.EFamFamIcon;
+import com.helger.url.ISimpleURL;
+import com.helger.url.SimpleURL;
+
+import jakarta.annotation.Nonnull;
 
 public class PagePublicToolsParticipantCheck extends AbstractAppWebPage
 {

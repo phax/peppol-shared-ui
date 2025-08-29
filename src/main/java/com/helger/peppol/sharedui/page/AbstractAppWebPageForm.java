@@ -16,18 +16,17 @@
  */
 package com.helger.peppol.sharedui.page;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.id.IHasID;
-import com.helger.commons.name.IHasDisplayName;
+import com.helger.annotation.Nonempty;
+import com.helger.base.id.IHasID;
+import com.helger.base.name.IHasDisplayName;
 import com.helger.photon.bootstrap4.pages.AbstractBootstrapWebPageForm;
 import com.helger.photon.uicore.page.WebPageExecutionContext;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
+
 /**
- * Abstract implementation of {@link AbstractBootstrapWebPageForm} for this
- * program.
+ * Abstract implementation of {@link AbstractBootstrapWebPageForm} for this program.
  *
  * @author Philip Helger
  * @param <DATATYPE>

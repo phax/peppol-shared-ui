@@ -18,8 +18,7 @@ package com.helger.peppol.sharedui.api;
 
 import java.util.function.Predicate;
 
-import javax.annotation.concurrent.Immutable;
-
+import com.helger.annotation.concurrent.Immutable;
 import com.helger.peppol.sharedui.CSharedUI;
 import com.helger.photon.ajax.decl.AjaxFunctionDeclaration;
 import com.helger.photon.ajax.decl.IAjaxFunctionDeclaration;

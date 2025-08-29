@@ -31,9 +31,6 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,27 +42,25 @@ import org.xbill.DNS.Record;
 import org.xbill.DNS.TextParseException;
 import org.xbill.DNS.Type;
 
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.CommonsLinkedHashMap;
-import com.helger.commons.collection.impl.CommonsTreeMap;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.collection.impl.ICommonsOrderedMap;
-import com.helger.commons.collection.impl.ICommonsSortedMap;
-import com.helger.commons.datetime.PDTFactory;
-import com.helger.commons.datetime.PDTToString;
-import com.helger.commons.datetime.XMLOffsetDateTime;
-import com.helger.commons.email.EmailAddressHelper;
-import com.helger.commons.locale.country.CountryCache;
-import com.helger.commons.locale.language.LanguageCache;
-import com.helger.commons.mutable.MutableInt;
-import com.helger.commons.state.ETriState;
-import com.helger.commons.string.StringHelper;
-import com.helger.commons.timing.StopWatch;
-import com.helger.commons.url.SimpleURL;
-import com.helger.commons.url.URLHelper;
+import com.helger.annotation.Nonempty;
+import com.helger.base.email.EmailAddressHelper;
+import com.helger.base.numeric.mutable.MutableInt;
+import com.helger.base.state.ETriState;
+import com.helger.base.string.StringHelper;
+import com.helger.base.string.StringImplode;
+import com.helger.base.timing.StopWatch;
+import com.helger.base.url.URLHelper;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.CommonsLinkedHashMap;
+import com.helger.collection.commons.CommonsTreeMap;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.collection.commons.ICommonsOrderedMap;
+import com.helger.collection.commons.ICommonsSortedMap;
 import com.helger.css.property.CCSSProperties;
 import com.helger.css.propertyvalue.CCSSValue;
+import com.helger.datetime.format.PDTToString;
+import com.helger.datetime.helper.PDTFactory;
+import com.helger.datetime.xml.XMLOffsetDateTime;
 import com.helger.dns.ip.IPV4Addr;
 import com.helger.html.hc.IHCNode;
 import com.helger.html.hc.ext.HCA_MailTo;
@@ -152,10 +147,15 @@ import com.helger.smpclient.url.PeppolConfigurableURLProvider;
 import com.helger.smpclient.url.PeppolNaptrURLProvider;
 import com.helger.smpclient.url.PeppolURLProvider;
 import com.helger.smpclient.url.SMPDNSResolutionException;
+import com.helger.text.locale.country.CountryCache;
+import com.helger.text.locale.language.LanguageCache;
+import com.helger.url.SimpleURL;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xsds.bdxr.smp2.bc.IDType;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import jakarta.xml.bind.JAXBException;
 
 public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
@@ -217,7 +217,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                   final boolean bIsPeppol)
   {
     aLIEndpoint.addChild (div ("Endpoint URL: ").addChild (StringHelper.isEmpty (sEndpointRef) ? em ("none") : code (
-                                                                                                                       sEndpointRef)));
+                                                                                                                     sEndpointRef)));
     if (bIsPeppol)
     {
       if (StringHelper.isEmpty (sEndpointRef))
@@ -373,7 +373,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
         final ICommonsList <ISMLConfiguration> aSortedList = aSMLConfigurationMgr.getAllSorted ();
         if (LOGGER.isDebugEnabled ())
           LOGGER.debug ("Sorted SML Configs: " +
-                        StringHelper.getImplodedMapped (", ", aSortedList, ISMLConfiguration::getID));
+                        StringImplode.getImplodedMapped (", ", aSortedList, ISMLConfiguration::getID));
 
         for (final ISMLConfiguration aCurSML : aSortedList)
         {

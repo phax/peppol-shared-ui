@@ -16,13 +16,13 @@
  */
 package com.helger.peppol.sharedui.ui.select;
 
-import javax.annotation.Nonnull;
-
 import com.helger.peppol.sharedui.domain.ISMLConfiguration;
 import com.helger.peppol.sharedui.mgr.ISMLConfigurationManager;
 import com.helger.peppol.sharedui.mgr.SharedUIMetaManager;
 import com.helger.photon.core.form.RequestField;
 import com.helger.photon.uicore.html.select.HCExtSelect;
+
+import jakarta.annotation.Nonnull;
 
 public class SMLConfigurationSelect extends HCExtSelect
 {

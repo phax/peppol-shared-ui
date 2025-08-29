@@ -18,11 +18,11 @@ package com.helger.peppol.sharedui.ui.select;
 
 import java.util.Locale;
 
-import javax.annotation.Nonnull;
-
 import com.helger.peppolid.peppol.pidscheme.EPredefinedParticipantIdentifierScheme;
 import com.helger.photon.core.form.RequestField;
 import com.helger.photon.uicore.html.select.HCExtSelect;
+
+import jakarta.annotation.Nonnull;
 
 public class ParticipantIdentifierSchemeSelect extends HCExtSelect
 {

@@ -20,20 +20,16 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.error.IError;
-import com.helger.commons.error.SingleError;
-import com.helger.commons.error.list.ErrorList;
-import com.helger.commons.id.IHasID;
-import com.helger.commons.lang.EnumHelper;
-import com.helger.commons.name.IHasDisplayName;
-import com.helger.commons.regex.RegExHelper;
-import com.helger.commons.string.StringHelper;
-import com.helger.commons.version.Version;
+import com.helger.annotation.Nonempty;
+import com.helger.base.id.IHasID;
+import com.helger.base.lang.EnumHelper;
+import com.helger.base.name.IHasDisplayName;
+import com.helger.base.string.StringHelper;
+import com.helger.base.version.Version;
+import com.helger.cache.regex.RegExHelper;
+import com.helger.diagnostics.error.IError;
+import com.helger.diagnostics.error.SingleError;
+import com.helger.diagnostics.error.list.ErrorList;
 import com.helger.peppolid.CIdentifier;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.peppolid.peppol.EPeppolCodeListItemState;
@@ -47,6 +43,9 @@ import com.helger.peppolid.peppol.pidscheme.IPeppolParticipantIdentifierScheme;
 import com.helger.peppolid.peppol.pidscheme.PeppolParticipantIdentifierSchemeManager;
 import com.helger.peppolid.peppol.process.IPeppolPredefinedProcessIdentifier;
 import com.helger.peppolid.peppol.process.PredefinedProcessIdentifierManager;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Identifier type to validate
@@ -115,7 +114,7 @@ public enum EIDType implements IHasID <String>, IHasDisplayName
                                             @Nonnull final List <KVPair> aDetails)
   {
     // This is quicker than splitting with RegEx!
-    final ICommonsList <String> aSplitted = StringHelper.getExploded (CIdentifier.URL_SCHEME_VALUE_SEPARATOR, sID, 2);
+    final List <String> aSplitted = StringHelper.getExploded (CIdentifier.URL_SCHEME_VALUE_SEPARATOR, sID, 2);
     if (aSplitted.size () != 2)
       aErrorList.add (_error ("The separator '" +
                               CIdentifier.URL_SCHEME_VALUE_SEPARATOR +
@@ -179,7 +178,7 @@ public enum EIDType implements IHasID <String>, IHasDisplayName
         aErrorList.add (_error ("The identifier value part must not be empty"));
       else
       {
-        final ICommonsList <String> aSplittedValue = StringHelper.getExploded (':', sValue, 2);
+        final List <String> aSplittedValue = StringHelper.getExploded (':', sValue, 2);
         if (aSplittedValue.size () != 2)
           aErrorList.add (_error ("The separator ':' between issuing agency and effective value is missing"));
         else
@@ -279,7 +278,7 @@ public enum EIDType implements IHasID <String>, IHasDisplayName
                                         @Nonnull final List <KVPair> aDetails)
   {
     // This is quicker than splitting with RegEx!
-    final ICommonsList <String> aSplitted = StringHelper.getExploded (CIdentifier.URL_SCHEME_VALUE_SEPARATOR, sID, 2);
+    final List <String> aSplitted = StringHelper.getExploded (CIdentifier.URL_SCHEME_VALUE_SEPARATOR, sID, 2);
     if (aSplitted.size () != 2)
       aErrorList.add (_error ("The separator '" +
                               CIdentifier.URL_SCHEME_VALUE_SEPARATOR +
@@ -412,7 +411,7 @@ public enum EIDType implements IHasID <String>, IHasDisplayName
                                         @Nonnull final List <KVPair> aDetails)
   {
     // This is quicker than splitting with RegEx!
-    final ICommonsList <String> aSplitted = StringHelper.getExploded (CIdentifier.URL_SCHEME_VALUE_SEPARATOR, sID, 2);
+    final List <String> aSplitted = StringHelper.getExploded (CIdentifier.URL_SCHEME_VALUE_SEPARATOR, sID, 2);
     if (aSplitted.size () != 2)
       aErrorList.add (_error ("The separator '" +
                               CIdentifier.URL_SCHEME_VALUE_SEPARATOR +

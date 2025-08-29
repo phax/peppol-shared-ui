@@ -16,14 +16,11 @@
  */
 package com.helger.peppol.sharedui.mgr;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.state.EChange;
-import com.helger.commons.string.StringHelper;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.style.ReturnsMutableCopy;
+import com.helger.base.state.EChange;
+import com.helger.base.string.StringHelper;
+import com.helger.collection.commons.ICommonsList;
 import com.helger.dao.DAOException;
 import com.helger.peppol.sharedui.domain.ISMLConfiguration;
 import com.helger.peppol.sharedui.domain.SMLConfiguration;
@@ -34,7 +31,11 @@ import com.helger.peppolid.factory.ESMPIdentifierType;
 import com.helger.photon.audit.AuditHelper;
 import com.helger.photon.io.dao.AbstractPhotonMapBasedWALDAO;
 
-public final class SMLConfigurationManager extends AbstractPhotonMapBasedWALDAO <ISMLConfiguration, SMLConfiguration> implements
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
+
+public final class SMLConfigurationManager extends AbstractPhotonMapBasedWALDAO <ISMLConfiguration, SMLConfiguration>
+                                           implements
                                            ISMLConfigurationManager
 {
   public SMLConfigurationManager (@Nonnull @Nonempty final String sFilename) throws DAOException
@@ -62,12 +63,14 @@ public final class SMLConfigurationManager extends AbstractPhotonMapBasedWALDAO 
                                           @Nonnull final ESMPIdentifierType eSMPIdentifierType,
                                           final boolean bProduction)
   {
-    final SMLInfo aSMLInfo = new SMLInfo (sSMLInfoID, sDisplayName, sDNSZone, sManagementServiceURL, bClientCertificateRequired);
+    final SMLInfo aSMLInfo = new SMLInfo (sSMLInfoID,
+                                          sDisplayName,
+                                          sDNSZone,
+                                          sManagementServiceURL,
+                                          bClientCertificateRequired);
     final SMLConfiguration aExtSMLInfo = new SMLConfiguration (aSMLInfo, eSMPAPIType, eSMPIdentifierType, bProduction);
 
-    m_aRWLock.writeLocked ( () -> {
-      internalCreateItem (aExtSMLInfo);
-    });
+    m_aRWLock.writeLocked ( () -> { internalCreateItem (aExtSMLInfo); });
     AuditHelper.onAuditCreateSuccess (SMLInfo.OT,
                                       sSMLInfoID,
                                       sDisplayName,

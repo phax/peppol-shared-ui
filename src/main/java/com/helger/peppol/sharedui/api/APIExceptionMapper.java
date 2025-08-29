@@ -16,22 +16,21 @@
  */
 package com.helger.peppol.sharedui.api;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.apache.hc.client5.http.HttpResponseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.helger.commons.debug.GlobalDebug;
-import com.helger.commons.state.EHandled;
-import com.helger.commons.string.StringHelper;
+import com.helger.base.debug.GlobalDebug;
+import com.helger.base.state.EHandled;
+import com.helger.base.string.StringHelper;
 import com.helger.peppol.sharedui.config.SharedUIConfig;
 import com.helger.photon.api.AbstractAPIExceptionMapper;
 import com.helger.photon.api.InvokableAPIDescriptor;
 import com.helger.servlet.response.UnifiedResponse;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**

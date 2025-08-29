@@ -16,16 +16,16 @@
  */
 package com.helger.peppol.sharedui;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.Immutable;
-
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.string.StringHelper;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.concurrent.Immutable;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.string.StringHelper;
 import com.helger.peppol.sharedui.config.SharedUIConfig;
 import com.helger.peppol.smp.ISMPTransportProfile;
 import com.helger.peppolid.peppol.pidscheme.EPredefinedParticipantIdentifierScheme;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Misc utility methods

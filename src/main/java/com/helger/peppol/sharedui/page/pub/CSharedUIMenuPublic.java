@@ -16,7 +16,7 @@
  */
 package com.helger.peppol.sharedui.page.pub;
 
-import javax.annotation.concurrent.Immutable;
+import com.helger.annotation.concurrent.Immutable;
 
 /**
  * Menu items for the public application
