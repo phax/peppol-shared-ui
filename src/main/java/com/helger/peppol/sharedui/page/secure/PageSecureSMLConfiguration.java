@@ -39,6 +39,7 @@ import com.helger.peppol.sharedui.ui.select.SMPIdentifierTypeSelect;
 import com.helger.peppol.sml.CSMLDefault;
 import com.helger.peppol.sml.ESMPAPIType;
 import com.helger.peppolid.factory.ESMPIdentifierType;
+import com.helger.photon.bootstrap4.CBootstrapCSS;
 import com.helger.photon.bootstrap4.buttongroup.BootstrapButtonToolbar;
 import com.helger.photon.bootstrap4.form.BootstrapForm;
 import com.helger.photon.bootstrap4.form.BootstrapFormGroup;
@@ -54,8 +55,10 @@ import com.helger.photon.core.form.RequestFieldBoolean;
 import com.helger.photon.uicore.icon.EDefaultIcon;
 import com.helger.photon.uicore.page.EWebPageFormAction;
 import com.helger.photon.uicore.page.WebPageExecutionContext;
+import com.helger.photon.uictrls.autonumeric.HCAutoNumeric;
 import com.helger.photon.uictrls.datatables.DataTables;
 import com.helger.photon.uictrls.datatables.column.DTCol;
+import com.helger.photon.uictrls.datatables.column.EDTColType;
 import com.helger.url.ISimpleURL;
 
 import jakarta.annotation.Nonnull;
@@ -72,6 +75,7 @@ public class PageSecureSMLConfiguration extends
   private static final String FIELD_SMP_API_TYPE = "smpapitype";
   private static final String FIELD_SMP_ID_TYPE = "smpidype";
   private static final String FIELD_PRODUCTION = "production";
+  private static final String FIELD_PRIORITY = "priority";
 
   private static final boolean DEFAULT_CLIENT_CERTIFICATE_REQUIRED = true;
 
@@ -257,6 +261,16 @@ public class PageSecureSMLConfiguration extends
                                                                                                                            : true)))
                                                  .setHelpText ("Check this if this SML is a production SML. Don't check e.g. for SMK.")
                                                  .setErrorList (aFormErrors.getListOfField (FIELD_PRODUCTION)));
+
+    aForm.addFormGroup (new BootstrapFormGroup ().setLabelMandatory ("Query priority")
+                                                 .setCtrl (new HCAutoNumeric (new RequestField (FIELD_PRIORITY,
+                                                                                                aSelectedObject != null
+                                                                                                                        ? aSelectedObject.getPriority ()
+                                                                                                                        : ISMLConfiguration.PRIO_DEFAULT),
+                                                                              aDisplayLocale).setDecimalPlaces (0)
+                                                                                             .addClass (CBootstrapCSS.W_25))
+                                                 .setHelpText ("Set the query priority if SML auto detection is enabled. The higher the more prior.")
+                                                 .setErrorList (aFormErrors.getListOfField (FIELD_PRIORITY)));
   }
 
   @Override
@@ -280,6 +294,7 @@ public class PageSecureSMLConfiguration extends
     final String sSMPIdentifierType = aWPEC.params ().getAsString (FIELD_SMP_ID_TYPE);
     final ESMPIdentifierType eSMPIdentifierType = ESMPIdentifierType.getFromIDOrNull (sSMPIdentifierType);
     final boolean bProduction = aWPEC.params ().isCheckBoxChecked (FIELD_PRODUCTION, false);
+    final int nPriority = aWPEC.params ().getAsInt (FIELD_PRIORITY, ISMLConfiguration.PRIO_DEFAULT);
 
     // validations
     if (StringHelper.isEmpty (sID))
@@ -351,7 +366,8 @@ public class PageSecureSMLConfiguration extends
                                             bClientCertificateRequired,
                                             eSMPAPIType,
                                             eSMPIdentifierType,
-                                            bProduction);
+                                            bProduction,
+                                            nPriority);
         aWPEC.postRedirectGetInternal (success ("The SML configuration '" +
                                                 sDisplayName +
                                                 "' was successfully edited."));
@@ -365,7 +381,8 @@ public class PageSecureSMLConfiguration extends
                                             bClientCertificateRequired,
                                             eSMPAPIType,
                                             eSMPIdentifierType,
-                                            bProduction);
+                                            bProduction,
+                                            nPriority);
         aWPEC.postRedirectGetInternal (success ("The new SML configuration '" +
                                                 sDisplayName +
                                                 "' was successfully created."));
@@ -394,6 +411,7 @@ public class PageSecureSMLConfiguration extends
                                         new DTCol ("SMP API type"),
                                         new DTCol ("SMP ID type"),
                                         new DTCol ("Production?"),
+                                        new DTCol ("Priority").setDisplayType (EDTColType.INT, aDisplayLocale),
                                         new BootstrapDTColAction (aDisplayLocale)).setID (getID ());
     for (final ISMLConfiguration aCurObject : aSMLConfigurationMgr.getAll ())
     {
@@ -408,6 +426,7 @@ public class PageSecureSMLConfiguration extends
       aRow.addCell (aCurObject.getSMPAPIType ().getDisplayName ());
       aRow.addCell (aCurObject.getSMPIdentifierType ().getDisplayName ());
       aRow.addCell (EPhotonCoreText.getYesOrNo (aCurObject.isProduction (), aDisplayLocale));
+      aRow.addCell (Integer.toString (aCurObject.getPriority ()));
 
       aRow.addCell (createEditLink (aWPEC, aCurObject, "Edit " + aCurObject.getID ()),
                     new HCTextNode (" "),

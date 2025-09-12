@@ -16,6 +16,7 @@
  */
 package com.helger.peppol.sharedui.domain;
 
+import com.helger.annotation.misc.ContainsSoftMigration;
 import com.helger.peppol.sml.ESMPAPIType;
 import com.helger.peppol.sml.SMLInfo;
 import com.helger.peppolid.factory.ESMPIdentifierType;
@@ -35,6 +36,7 @@ public final class SMLConfigurationMicroTypeConverter implements IMicroTypeConve
   private static final IMicroQName ATTR_SMP_API_TYPE = new MicroQName ("smpapitype");
   private static final IMicroQName ATTR_SMP_IDENTIFIER_TYPE = new MicroQName ("smpidtype");
   private static final IMicroQName ATTR_PRODUCTION = new MicroQName ("prod");
+  private static final IMicroQName ATTR_PRIORITY = new MicroQName ("priority");
 
   @Nonnull
   public IMicroElement convertToMicroElement (@Nonnull final SMLConfiguration aObj,
@@ -46,10 +48,12 @@ public final class SMLConfigurationMicroTypeConverter implements IMicroTypeConve
     aElement.setAttribute (ATTR_SMP_API_TYPE, aObj.getSMPAPIType ().getID ());
     aElement.setAttribute (ATTR_SMP_IDENTIFIER_TYPE, aObj.getSMPIdentifierType ().getID ());
     aElement.setAttribute (ATTR_PRODUCTION, aObj.isProduction ());
+    aElement.setAttribute (ATTR_PRIORITY, aObj.getPriority ());
     return aElement;
   }
 
   @Nonnull
+  @ContainsSoftMigration
   public SMLConfiguration convertToNative (@Nonnull final IMicroElement aElement)
   {
     final IMicroElement eSMLInfo = aElement.getFirstChildElement (ELEMENT_SML_INFO);
@@ -57,6 +61,7 @@ public final class SMLConfigurationMicroTypeConverter implements IMicroTypeConve
     final ESMPAPIType eSMPAPIType;
     final ESMPIdentifierType eSMPIdentifierType;
     final boolean bProduction;
+    final int nPriority;
     if (eSMLInfo != null)
     {
       aSMLInfo = MicroTypeConverter.convertToNative (eSMLInfo, SMLInfo.class);
@@ -64,6 +69,8 @@ public final class SMLConfigurationMicroTypeConverter implements IMicroTypeConve
       eSMPIdentifierType = ESMPIdentifierType.getFromIDOrDefault (aElement.getAttributeValue (ATTR_SMP_IDENTIFIER_TYPE),
                                                                   ESMPIdentifierType.PEPPOL);
       bProduction = aElement.getAttributeValueAsBool (ATTR_PRODUCTION, false);
+      // Default to 0
+      nPriority = aElement.getAttributeValueAsInt (ATTR_PRIORITY, ISMLConfiguration.PRIO_DEFAULT);
     }
     else
     {
@@ -72,7 +79,9 @@ public final class SMLConfigurationMicroTypeConverter implements IMicroTypeConve
       eSMPAPIType = ESMPAPIType.PEPPOL;
       eSMPIdentifierType = ESMPIdentifierType.PEPPOL;
       bProduction = false;
+      // Default to 0
+      nPriority = ISMLConfiguration.PRIO_DEFAULT;
     }
-    return new SMLConfiguration (aSMLInfo, eSMPAPIType, eSMPIdentifierType, bProduction);
+    return new SMLConfiguration (aSMLInfo, eSMPAPIType, eSMPIdentifierType, bProduction, nPriority);
   }
 }

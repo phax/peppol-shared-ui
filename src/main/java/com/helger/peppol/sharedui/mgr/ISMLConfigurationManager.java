@@ -69,6 +69,8 @@ public interface ISMLConfigurationManager
    *        SMP identifier type. May not be <code>null</code>.
    * @param bProduction
    *        <code>true</code> if production SML, <code>false</code> if test
+   * @param nPriority
+   *        The priority to use. The higher the more prior it is.
    * @return Never <code>null</code>.
    */
   @Nonnull
@@ -79,7 +81,8 @@ public interface ISMLConfigurationManager
                                    boolean bClientCertificateRequired,
                                    @Nonnull ESMPAPIType eSMPAPIType,
                                    @Nonnull ESMPIdentifierType eSMPIdentifierType,
-                                   boolean bProduction);
+                                   boolean bProduction,
+                                   int nPriority);
 
   /**
    * Update an existing SML information.
@@ -108,6 +111,8 @@ public interface ISMLConfigurationManager
    *        SMP identifier type. May not be <code>null</code>.
    * @param bProduction
    *        <code>true</code> if production SML, <code>false</code> if test
+   * @param nPriority
+   *        The priority to use. The higher the more prior it is.
    * @return {@link EChange#CHANGED} if something was changed.
    */
   @Nonnull
@@ -118,7 +123,8 @@ public interface ISMLConfigurationManager
                          boolean bClientCertificateRequired,
                          @Nonnull ESMPAPIType eSMPAPIType,
                          @Nonnull ESMPIdentifierType eSMPIdentifierType,
-                         boolean bProduction);
+                         boolean bProduction,
+                         int nPriority);
 
   /**
    * Delete an existing SML information.

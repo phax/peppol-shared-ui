@@ -49,7 +49,7 @@ public final class SMLConfigurationManager extends AbstractPhotonMapBasedWALDAO 
   {
     // Add the default transport profiles
     for (final ESML e : ESML.values ())
-      internalCreateItem (SMLConfiguration.create (e));
+      internalCreateItem (SMLConfiguration.createForPeppol (e));
     return EChange.CHANGED;
   }
 
@@ -61,14 +61,19 @@ public final class SMLConfigurationManager extends AbstractPhotonMapBasedWALDAO 
                                           final boolean bClientCertificateRequired,
                                           @Nonnull final ESMPAPIType eSMPAPIType,
                                           @Nonnull final ESMPIdentifierType eSMPIdentifierType,
-                                          final boolean bProduction)
+                                          final boolean bProduction,
+                                          final int nPriority)
   {
     final SMLInfo aSMLInfo = new SMLInfo (sSMLInfoID,
                                           sDisplayName,
                                           sDNSZone,
                                           sManagementServiceURL,
                                           bClientCertificateRequired);
-    final SMLConfiguration aExtSMLInfo = new SMLConfiguration (aSMLInfo, eSMPAPIType, eSMPIdentifierType, bProduction);
+    final SMLConfiguration aExtSMLInfo = new SMLConfiguration (aSMLInfo,
+                                                               eSMPAPIType,
+                                                               eSMPIdentifierType,
+                                                               bProduction,
+                                                               nPriority);
 
     m_aRWLock.writeLocked ( () -> { internalCreateItem (aExtSMLInfo); });
     AuditHelper.onAuditCreateSuccess (SMLInfo.OT,
@@ -79,7 +84,8 @@ public final class SMLConfigurationManager extends AbstractPhotonMapBasedWALDAO 
                                       Boolean.valueOf (bClientCertificateRequired),
                                       eSMPAPIType,
                                       eSMPIdentifierType,
-                                      Boolean.valueOf (bProduction));
+                                      Boolean.valueOf (bProduction),
+                                      Integer.valueOf (nPriority));
     return aExtSMLInfo;
   }
 
@@ -91,7 +97,8 @@ public final class SMLConfigurationManager extends AbstractPhotonMapBasedWALDAO 
                                 final boolean bClientCertificateRequired,
                                 @Nonnull final ESMPAPIType eSMPAPIType,
                                 @Nonnull final ESMPIdentifierType eSMPIdentifierType,
-                                final boolean bProduction)
+                                final boolean bProduction,
+                                final int nPriority)
   {
     final SMLConfiguration aExtSMLInfo = getOfID (sSMLInfoID);
     if (aExtSMLInfo == null)
@@ -112,6 +119,7 @@ public final class SMLConfigurationManager extends AbstractPhotonMapBasedWALDAO 
       eChange = eChange.or (aExtSMLInfo.setSMPAPIType (eSMPAPIType));
       eChange = eChange.or (aExtSMLInfo.setSMPIdentifierType (eSMPIdentifierType));
       eChange = eChange.or (aExtSMLInfo.setProduction (bProduction));
+      eChange = eChange.or (aExtSMLInfo.setPriority (nPriority));
       if (eChange.isUnchanged ())
         return EChange.UNCHANGED;
 
@@ -130,7 +138,8 @@ public final class SMLConfigurationManager extends AbstractPhotonMapBasedWALDAO 
                                       Boolean.valueOf (bClientCertificateRequired),
                                       eSMPAPIType,
                                       eSMPIdentifierType,
-                                      Boolean.valueOf (bProduction));
+                                      Boolean.valueOf (bProduction),
+                                      Integer.valueOf (nPriority));
     return EChange.CHANGED;
   }
 
@@ -163,6 +172,20 @@ public final class SMLConfigurationManager extends AbstractPhotonMapBasedWALDAO 
   public ICommonsList <ISMLConfiguration> getAllSorted ()
   {
     return getAll ().getSortedInline ( (c1, c2) -> {
+      if (true)
+      {
+        // Higher priority before lower
+        int ret = c2.getPriority () - c1.getPriority ();
+        if (ret == 0)
+        {
+          // Production before test
+          final int nProd1 = c1.isProduction () ? -1 : +1;
+          final int nProd2 = c2.isProduction () ? -1 : +1;
+          ret = nProd1 - nProd2;
+        }
+        return ret;
+      }
+
       // Production before test
       final int nProd1 = c1.isProduction () ? -1 : +1;
       final int nProd2 = c2.isProduction () ? -1 : +1;

@@ -29,6 +29,10 @@ import jakarta.annotation.Nonnull;
 
 public interface ISMLConfiguration extends IHasID <String>, IHasDisplayName, Serializable
 {
+  int PRIO_MINIMUM = Integer.MIN_VALUE;
+  int PRIO_DEFAULT = 0;
+  int PRIO_MAXIMIM = Integer.MAX_VALUE;
+
   @Nonnull
   ISMLInfo getSMLInfo ();
 
@@ -79,4 +83,6 @@ public interface ISMLConfiguration extends IHasID <String>, IHasDisplayName, Ser
   ESMPIdentifierType getSMPIdentifierType ();
 
   boolean isProduction ();
+
+  int getPriority ();
 }

@@ -16,6 +16,7 @@
  */
 package com.helger.peppol.sharedui.domain;
 
+import com.helger.annotation.style.ReturnsMutableObject;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.hashcode.HashCodeGenerator;
 import com.helger.base.state.EChange;
@@ -33,19 +34,23 @@ public final class SMLConfiguration implements ISMLConfiguration
   private ESMPAPIType m_eSMPAPIType;
   private ESMPIdentifierType m_eSMPIdentifierType;
   private boolean m_bProduction;
+  private int m_nPriority;
 
   public SMLConfiguration (@Nonnull final SMLInfo aSMLInfo,
                            @Nonnull final ESMPAPIType eSMPAPIType,
                            @Nonnull final ESMPIdentifierType eSMPIdentifierType,
-                           final boolean bProduction)
+                           final boolean bProduction,
+                           final int nPriority)
   {
     setSMLInfo (aSMLInfo);
     setSMPAPIType (eSMPAPIType);
     setSMPIdentifierType (eSMPIdentifierType);
     setProduction (bProduction);
+    setPriority (nPriority);
   }
 
   @Nonnull
+  @ReturnsMutableObject
   public SMLInfo getSMLInfo ()
   {
     return m_aSMLInfo;
@@ -107,10 +112,29 @@ public final class SMLConfiguration implements ISMLConfiguration
     return EChange.CHANGED;
   }
 
-  @Nonnull
-  public static SMLConfiguration create (@Nonnull final ESML eSML)
+  public int getPriority ()
   {
-    return new SMLConfiguration (new SMLInfo (eSML), ESMPAPIType.PEPPOL, ESMPIdentifierType.PEPPOL, eSML == ESML.DIGIT_PRODUCTION);
+    return m_nPriority;
+  }
+
+  @Nonnull
+  public EChange setPriority (final int nPriority)
+  {
+    if (nPriority == m_nPriority)
+      return EChange.UNCHANGED;
+    m_nPriority = nPriority;
+    return EChange.CHANGED;
+  }
+
+  @Nonnull
+  public static SMLConfiguration createForPeppol (@Nonnull final ESML eSML)
+  {
+    final boolean bIsProd = eSML == ESML.DIGIT_PRODUCTION;
+    return new SMLConfiguration (new SMLInfo (eSML),
+                                 ESMPAPIType.PEPPOL,
+                                 ESMPIdentifierType.PEPPOL,
+                                 bIsProd,
+                                 bIsProd ? 200 : 100);
   }
 
   @Override
@@ -137,6 +161,7 @@ public final class SMLConfiguration implements ISMLConfiguration
                                        .append ("APIType", m_eSMPAPIType)
                                        .append ("IdentifierType", m_eSMPIdentifierType)
                                        .append ("Production", m_bProduction)
+                                       .append ("Priority", m_nPriority)
                                        .getToString ();
   }
 }
