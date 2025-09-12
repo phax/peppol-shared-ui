@@ -1215,7 +1215,9 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
         aNodeList.addChild (h3 ("Business Card details"));
 
         EFamFamFlagIcon.registerResourcesForThisRequest ();
-        final String sBCURL = aSMPHost.toExternalForm () + "/businesscard/" + aParticipantID.getURIEncoded ();
+        final String sBCURL = StringHelper.trimEnd (aSMPHost.toExternalForm (), '/') +
+                              "/businesscard/" +
+                              aParticipantID.getURIEncoded ();
         LOGGER.info ("Querying BC from '" + sBCURL + "'");
         byte [] aData;
 
