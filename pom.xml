@@ -22,7 +22,7 @@
   <parent>
     <groupId>com.helger</groupId>
     <artifactId>parent-pom</artifactId>
-    <version>3.0.1</version>
+    <version>3.0.2</version>
   </parent>
   <groupId>com.helger.peppol</groupId>
   <artifactId>peppol-shared-ui</artifactId>
@@ -134,14 +134,14 @@
       <dependency>
         <groupId>com.helger.schematron</groupId>
         <artifactId>ph-schematron-parent-pom</artifactId>
-        <version>9.0.0</version>
+        <version>9.0.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.helger.phive</groupId>
         <artifactId>phive-parent-pom</artifactId>
-        <version>11.0.0</version>
+        <version>11.0.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -155,14 +155,14 @@
       <dependency>
         <groupId>com.helger.phase4</groupId>
         <artifactId>phase4-parent-pom</artifactId>
-        <version>4.0.0</version>
+        <version>4.0.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.helger</groupId>
         <artifactId>ddd</artifactId>
-        <version>0.6.0</version>
+        <version>0.7.0</version>
       </dependency>
       
       <dependency>
