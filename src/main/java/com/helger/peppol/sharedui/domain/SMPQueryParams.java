@@ -74,6 +74,11 @@ public final class SMPQueryParams
     return m_ePeppolNetwork;
   }
 
+  public boolean isPeppolNetworkProduction ()
+  {
+    return m_ePeppolNetwork != null && m_ePeppolNetwork.isProduction ();
+  }
+
   @Nonnull
   public IIdentifierFactory getIF ()
   {

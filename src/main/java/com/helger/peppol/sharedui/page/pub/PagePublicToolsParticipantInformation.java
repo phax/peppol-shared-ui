@@ -841,16 +841,18 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
               if (aSMPQueryParams.getSMPAPIType () == ESMPAPIType.PEPPOL)
               {
                 final URL aURL = URLHelper.getAsURL (sOriginalHref);
-                if (aURL != null)
+
+                // Until February 1st 2026, production SMPs must be http only
+                if (aURL != null && aSMPQueryParams.isPeppolNetworkProduction ())
                 {
                   if (!"http".equals (aURL.getProtocol ()))
-                    aLI.addChild (div (badgeDanger ("Peppol SMP URLs MUST be using http and not " +
+                    aLI.addChild (div (badgeDanger ("Production Peppol SMP URLs MUST be using http and not " +
                                                     aURL.getProtocol ())));
                   if (aURL.getPort () >= 0 && aURL.getPort () <= 0)
-                    aLI.addChild (div (badgeDanger ("Peppol SMP URLs MUST be using port 80 and not " +
+                    aLI.addChild (div (badgeDanger ("Production Peppol SMP URLs MUST be using port 80 and not " +
                                                     aURL.getPort ())));
                   if (!aURL.getPath ().startsWith ("/iso6523-actorid-upis"))
-                    aLI.addChild (div (badgeDanger ("Peppol SMP URLs MUST be in the root path!")));
+                    aLI.addChild (div (badgeDanger ("Production Peppol SMP URLs MUST be in the root path!")));
                 }
               }
 
