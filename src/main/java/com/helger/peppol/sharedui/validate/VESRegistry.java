@@ -42,6 +42,7 @@ import com.helger.phive.energieefactuur.EnergieEFactuurValidation;
 import com.helger.phive.facturae.FacturaeValidation;
 import com.helger.phive.fatturapa.FatturaPAValidation;
 import com.helger.phive.finvoice.FinvoiceValidation;
+import com.helger.phive.france.FranceCTCValidation;
 import com.helger.phive.isdoc.ISDOCValidation;
 import com.helger.phive.oioubl.OIOUBLValidation;
 import com.helger.phive.peppol.PeppolValidation;
@@ -73,29 +74,32 @@ public final class VESRegistry
   {
     // Must be first
     EN16931Validation.initEN16931 (VES_REGISTRY);
+    // The rest in alphabetical order, except where explicitly stated
+    CIIValidation.initCII (VES_REGISTRY);
+    CIUS_PTValidation.initCIUS_PT (VES_REGISTRY);
+    CIUS_ROValidation.initCIUS_RO (VES_REGISTRY);
+    EbInterfaceValidation.initEbInterface (VES_REGISTRY);
+    EHFValidation.initEHF (VES_REGISTRY);
+    FacturaeValidation.initFacturae (VES_REGISTRY);
+    FatturaPAValidation.initFatturaPA (VES_REGISTRY);
+    FinvoiceValidation.initFinvoice (VES_REGISTRY);
+    FranceCTCValidation.initFranceCTC (VES_REGISTRY);
+    ISDOCValidation.initISDOC (VES_REGISTRY);
+    OIOUBLValidation.initOIOUBL (VES_REGISTRY);
+    PeppolItalyValidation.init (VES_REGISTRY);
     PeppolValidation.initStandard (VES_REGISTRY);
     PeppolLegacyValidationBisEurope.init (VES_REGISTRY);
     PeppolLegacyValidationBisAUNZ.init (VES_REGISTRY);
     PeppolLegacyValidationSG.init (VES_REGISTRY);
+    SETUValidation.initSETU (VES_REGISTRY);
     SimplerInvoicingValidation.initSimplerInvoicing (VES_REGISTRY);
-    EHFValidation.initEHF (VES_REGISTRY);
-    UBLValidation.initUBLAllVersions (VES_REGISTRY);
-    CIIValidation.initCII (VES_REGISTRY);
+    // Must be after SimplerInvoicing
     EnergieEFactuurValidation.initEnergieEFactuur (VES_REGISTRY);
-    OIOUBLValidation.initOIOUBL (VES_REGISTRY);
-    EbInterfaceValidation.initEbInterface (VES_REGISTRY);
+    SvefakturaValidation.initSvefaktura (VES_REGISTRY);
     TEAPPSValidation.initTEAPPS (VES_REGISTRY);
+    UBLValidation.initUBLAllVersions (VES_REGISTRY);
     UBLBEValidation.initUBLBE (VES_REGISTRY);
     XRechnungValidation.initXRechnung (VES_REGISTRY);
-    FatturaPAValidation.initFatturaPA (VES_REGISTRY);
-    FinvoiceValidation.initFinvoice (VES_REGISTRY);
-    SvefakturaValidation.initSvefaktura (VES_REGISTRY);
-    FacturaeValidation.initFacturae (VES_REGISTRY);
-    CIUS_PTValidation.initCIUS_PT (VES_REGISTRY);
-    ISDOCValidation.initISDOC (VES_REGISTRY);
-    PeppolItalyValidation.init (VES_REGISTRY);
-    CIUS_ROValidation.initCIUS_RO (VES_REGISTRY);
-    SETUValidation.initSETU (VES_REGISTRY);
     ZATCAValidation.initZATCA (VES_REGISTRY);
     ZugferdValidation.initZugferd (VES_REGISTRY);
   }
