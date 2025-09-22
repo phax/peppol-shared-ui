@@ -198,6 +198,7 @@ public class PagePublicToolsParticipantCheck extends AbstractAppWebPage
             final SMPQueryParams aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aSMLConfiguration,
                                                                                       sParticipantIDScheme,
                                                                                       sPIDValue,
+                                                                                      PagePublicToolsParticipantInformation.DEFAULT_CNAME_LOOKUP,
                                                                                       true);
             _checkParticipant (aWPEC,
                                aSMLConfiguration,

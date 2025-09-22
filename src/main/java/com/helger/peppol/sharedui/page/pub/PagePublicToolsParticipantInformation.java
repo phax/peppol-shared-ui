@@ -168,11 +168,13 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
   public static final String PARAM_SHOW_TIME = "showtime";
   public static final String PARAM_XSD_VALIDATION = "xsdvalidation";
   public static final String PARAM_VERIFY_SIGNATURES = "verifysignatures";
+  public static final String PARAM_CNAME_LOOKUP = "cnamelookup";
 
-  private static final boolean DEFAULT_QUERY_BUSINESS_CARD = true;
-  private static final boolean DEFAULT_SHOW_TIME = false;
-  private static final boolean DEFAULT_XSD_VALIDATION = true;
-  private static final boolean DEFAULT_VERIFY_SIGNATURES = true;
+  public static final boolean DEFAULT_QUERY_BUSINESS_CARD = true;
+  public static final boolean DEFAULT_SHOW_TIME = false;
+  public static final boolean DEFAULT_XSD_VALIDATION = true;
+  public static final boolean DEFAULT_VERIFY_SIGNATURES = true;
+  public static final boolean DEFAULT_CNAME_LOOKUP = false;
   private static final Logger LOGGER = LoggerFactory.getLogger (PagePublicToolsParticipantInformation.class);
 
   private final String m_sUserAgent;
@@ -345,7 +347,8 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                   final boolean bQueryBusinessCard,
                                   final boolean bShowTime,
                                   final boolean bXSDValidation,
-                                  final boolean bVerifySignatures)
+                                  final boolean bVerifySignatures,
+                                  boolean bUseCNAMELookup)
   {
     final HCNodeList aNodeList = aWPEC.getNodeList ();
     final Locale aDisplayLocale = aWPEC.getDisplayLocale ();
@@ -380,6 +383,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
           aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aCurSML,
                                                                sParticipantIDScheme,
                                                                sParticipantIDValue,
+                                                               bUseCNAMELookup,
                                                                false);
           if (aSMPQueryParams != null && aSMPQueryParams.isSMPRegisteredInDNS ())
           {
@@ -414,6 +418,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
         aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aRealSMLConfiguration,
                                                              sParticipantIDScheme,
                                                              sParticipantIDValue,
+                                                             bUseCNAMELookup,
                                                              true);
       }
 
@@ -918,7 +923,9 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                        aParticipantID.getURIEncoded () +
                        "' / '" +
                        aDocTypeID.getURIEncoded () +
-                       "'");
+                       "' with " +
+                       (bUseCNAMELookup ? "CNAME" : "NAPTR") +
+                       " lookup");
 
           final StopWatch aSWGetDetails = StopWatch.createdStarted ();
           try
@@ -1432,6 +1439,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
     boolean bShowTime = DEFAULT_SHOW_TIME;
     boolean bXSDValidation = DEFAULT_XSD_VALIDATION;
     boolean bVerifySignatures = DEFAULT_VERIFY_SIGNATURES;
+    boolean bUseCNAMELookup = DEFAULT_CNAME_LOOKUP;
     if (aWPEC.hasAction (CPageParam.ACTION_PERFORM))
     {
       // Validate fields
@@ -1444,6 +1452,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
       bShowTime = aWPEC.params ().isCheckBoxCheckedNoHiddenField (PARAM_SHOW_TIME);
       bXSDValidation = aWPEC.params ().isCheckBoxCheckedNoHiddenField (PARAM_XSD_VALIDATION);
       bVerifySignatures = aWPEC.params ().isCheckBoxCheckedNoHiddenField (PARAM_VERIFY_SIGNATURES);
+      bUseCNAMELookup = aWPEC.params ().isCheckBoxCheckedNoHiddenField (PARAM_CNAME_LOOKUP);
       final IIdentifierFactory aIF = aSMLConfiguration != null ? aSMLConfiguration.getSMPIdentifierType ()
                                                                                   .getIdentifierFactory ()
                                                                : SimpleIdentifierFactory.INSTANCE;
@@ -1484,7 +1493,8 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                            bQueryBusinessCard,
                            bShowTime,
                            bXSDValidation,
-                           bVerifySignatures);
+                           bVerifySignatures,
+                           bUseCNAMELookup);
       }
     }
 
@@ -1535,6 +1545,11 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                                                       bVerifySignatures)).setValue ("yes")
                                                                                                                          .setEmitHiddenField (false))
                                                    .setErrorList (aFormErrors.getListOfField (PARAM_VERIFY_SIGNATURES)));
+      aForm.addFormGroup (new BootstrapFormGroup ().setLabel ("Use old CNAME lookup instead of NAPTR?")
+                                                   .setCtrl (new HCCheckBox (new RequestFieldBoolean (PARAM_CNAME_LOOKUP,
+                                                                                                      bUseCNAMELookup)).setValue ("yes")
+                                                                                                                       .setEmitHiddenField (false))
+                                                   .setErrorList (aFormErrors.getListOfField (PARAM_CNAME_LOOKUP)));
 
       final BootstrapButtonToolbar aToolbar = aForm.addAndReturnChild (new BootstrapButtonToolbar (aWPEC));
       aToolbar.addHiddenField (CPageParam.PARAM_ACTION, CPageParam.ACTION_PERFORM);

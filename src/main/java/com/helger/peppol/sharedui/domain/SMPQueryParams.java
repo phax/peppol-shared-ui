@@ -37,7 +37,8 @@ import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.smpclient.url.BDXLURLProvider;
 import com.helger.smpclient.url.ISMPURLProvider;
-import com.helger.smpclient.url.PeppolConfigurableURLProvider;
+import com.helger.smpclient.url.PeppolNaptrURLProvider;
+import com.helger.smpclient.url.PeppolURLProvider;
 import com.helger.smpclient.url.SMPDNSResolutionException;
 
 import jakarta.annotation.Nonnull;
@@ -151,19 +152,17 @@ public final class SMPQueryParams
     if (aRecords != null)
     {
       for (final Record aRecord : aRecords)
-        if (aRecord instanceof ARecord)
+        if (aRecord instanceof final ARecord aSpecificRec)
         {
           // IP v4
-          final ARecord aSpecificRec = (ARecord) aRecord;
           final String sResolvedIP = aSpecificRec.rdataToString ();
           LOGGER.info ("[A] --> '" + sResolvedIP + "'");
           bFoundAny = true;
         }
         else
-          if (aRecord instanceof AAAARecord)
+          if (aRecord instanceof final AAAARecord aSpecificRec)
           {
             // IP v6
-            final AAAARecord aSpecificRec = (AAAARecord) aRecord;
             final String sResolvedIP = aSpecificRec.rdataToString ();
             LOGGER.info ("[AAAA] --> '" + sResolvedIP + "'");
             bFoundAny = true;
@@ -188,16 +187,20 @@ public final class SMPQueryParams
     return _isSMPRegisteredInDNSViaDnsJava ();
   }
 
+  @SuppressWarnings ({ "removal", "deprecation" })
   @Nonnull
-  private static ISMPURLProvider _getURLProvider (@Nonnull final ESMPAPIType eAPIType)
+  private static ISMPURLProvider _getURLProvider (@Nonnull final ESMPAPIType eAPIType, final boolean bUseCNAMELookup)
   {
-    return eAPIType == ESMPAPIType.PEPPOL ? PeppolConfigurableURLProvider.INSTANCE : BDXLURLProvider.INSTANCE;
+    return eAPIType == ESMPAPIType.PEPPOL ? bUseCNAMELookup ? PeppolURLProvider.INSTANCE
+                                                            : PeppolNaptrURLProvider.INSTANCE
+                                          : BDXLURLProvider.INSTANCE;
   }
 
   @Nullable
   public static SMPQueryParams createForSMLOrNull (@Nonnull final ISMLConfiguration aCurSML,
                                                    @Nullable final String sParticipantIDScheme,
                                                    @Nullable final String sParticipantIDValue,
+                                                   final boolean bUseCNAMELookup,
                                                    final boolean bLogOnError)
   {
     final SMPQueryParams ret = new SMPQueryParams ();
@@ -219,8 +222,9 @@ public final class SMPQueryParams
 
     try
     {
-      ret.m_aSMPHostURI = _getURLProvider (ret.m_eSMPAPIType).getSMPURIOfParticipant (ret.m_aParticipantID,
-                                                                                      aCurSML.getDNSZone ());
+      ret.m_aSMPHostURI = _getURLProvider (ret.m_eSMPAPIType, bUseCNAMELookup).getSMPURIOfParticipant (
+                                                                                                       ret.m_aParticipantID,
+                                                                                                       aCurSML.getDNSZone ());
       if ("https".equals (ret.m_aSMPHostURI.getScheme ()))
         ret.m_bTrustAllCerts = true;
     }
