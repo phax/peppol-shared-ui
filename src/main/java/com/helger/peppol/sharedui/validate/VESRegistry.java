@@ -44,6 +44,7 @@ import com.helger.phive.fatturapa.FatturaPAValidation;
 import com.helger.phive.finvoice.FinvoiceValidation;
 import com.helger.phive.france.FranceCTCValidation;
 import com.helger.phive.isdoc.ISDOCValidation;
+import com.helger.phive.ksef.KSeFValidation;
 import com.helger.phive.oioubl.OIOUBLValidation;
 import com.helger.phive.peppol.PeppolValidation;
 import com.helger.phive.peppol.italy.PeppolItalyValidation;
@@ -84,6 +85,7 @@ public final class VESRegistry
     FatturaPAValidation.initFatturaPA (VES_REGISTRY);
     FinvoiceValidation.initFinvoice (VES_REGISTRY);
     FranceCTCValidation.initFranceCTC (VES_REGISTRY);
+    KSeFValidation.initKSeF (VES_REGISTRY);
     ISDOCValidation.initISDOC (VES_REGISTRY);
     OIOUBLValidation.initOIOUBL (VES_REGISTRY);
     PeppolItalyValidation.init (VES_REGISTRY);
