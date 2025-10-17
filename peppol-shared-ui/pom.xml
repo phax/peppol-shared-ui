@@ -80,10 +80,6 @@
     </dependency>
     <dependency>
       <groupId>com.helger.peppol</groupId>
-      <artifactId>peppol-id</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.helger.peppol</groupId>
       <artifactId>peppol-commons</artifactId>
     </dependency>
     <dependency>
@@ -103,6 +99,11 @@
     <dependency>
       <groupId>com.helger.phase4</groupId>
       <artifactId>phase4-peppol-client</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.helger.peppol.ui</groupId>
+      <artifactId>ph-oton-peppol</artifactId>
     </dependency>
 
     <dependency>

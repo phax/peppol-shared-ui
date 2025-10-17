@@ -22,7 +22,7 @@ import com.helger.annotation.concurrent.Immutable;
 import com.helger.json.IJson;
 import com.helger.json.IJsonArray;
 import com.helger.json.IJsonObject;
-import com.helger.peppol.sharedui.domain.NiceNameEntry;
+import com.helger.peppol.photon.nicename.NiceNameEntry;
 import com.helger.peppol.sharedui.ui.SharedCommonUI;
 import com.helger.peppol.sml.ESMPAPIType;
 import com.helger.peppolid.IParticipantIdentifier;
