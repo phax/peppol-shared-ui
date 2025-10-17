@@ -37,9 +37,9 @@ import com.helger.html.hc.html.forms.HCHiddenField;
 import com.helger.html.hc.html.forms.HCTextArea;
 import com.helger.html.hc.html.grouping.HCDiv;
 import com.helger.html.hc.impl.HCNodeList;
+import com.helger.peppol.photon.PeppolUI;
 import com.helger.peppol.sharedui.CSharedUI;
 import com.helger.peppol.sharedui.config.SharedUIConfig;
-import com.helger.peppol.sharedui.ui.SharedCommonUI;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
@@ -324,7 +324,7 @@ public class PageSecurePeppolSendAS4 extends AbstractBootstrapWebPage <WebPageEx
             aNL.addChild (error ().addChild (div ("Failed to send AS4 message to Peppol receiver ").addChild (code (aReceiverID.getURIEncoded ()))
                                                                                                    .addChild (" with result ")
                                                                                                    .addChild (code (eResult.name ())))
-                                  .addChild (SharedCommonUI.getTechnicalDetailsUI (aSendEx.get (), true)));
+                                  .addChild (PeppolUI.getTechnicalDetailsUI (aSendEx.get (), true)));
 
           boolean bShowRaw = true;
           if (aResponseMsg.isSet ())
@@ -361,8 +361,8 @@ public class PageSecurePeppolSendAS4 extends AbstractBootstrapWebPage <WebPageEx
         }
         catch (final SMPDNSResolutionException ex)
         {
-          aNL.addChild (error (div ("Error creating the SMP client.")).addChild (SharedCommonUI.getTechnicalDetailsUI (ex,
-                                                                                                                       false)));
+          aNL.addChild (error (div ("Error creating the SMP client.")).addChild (PeppolUI.getTechnicalDetailsUI (ex,
+                                                                                                                 false)));
         }
 
         if (true)

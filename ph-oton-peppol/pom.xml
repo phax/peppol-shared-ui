@@ -58,6 +58,14 @@
       <groupId>com.helger.photon</groupId>
       <artifactId>ph-oton-uicore</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.helger.photon</groupId>
+      <artifactId>ph-oton-bootstrap4</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.helger.photon</groupId>
+      <artifactId>ph-oton-bootstrap4-uictrls</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>com.helger.peppol</groupId>

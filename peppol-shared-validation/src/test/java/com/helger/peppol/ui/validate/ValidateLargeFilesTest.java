@@ -30,7 +30,6 @@ import com.helger.base.timing.StopWatch;
 import com.helger.diver.api.coord.DVRCoordinate;
 import com.helger.io.resource.ClassPathResource;
 import com.helger.io.resource.IReadableResource;
-import com.helger.peppol.ui.validate.VESRegistry;
 import com.helger.phive.api.execute.ValidationExecutionManager;
 import com.helger.phive.api.executorset.IValidationExecutorSet;
 import com.helger.phive.api.validity.IValidityDeterminator;

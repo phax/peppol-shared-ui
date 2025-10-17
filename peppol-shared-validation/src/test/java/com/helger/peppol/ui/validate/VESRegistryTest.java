@@ -5,8 +5,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import com.helger.peppol.ui.validate.VESRegistry;
-
 /**
  * Test class for class {@link VESRegistry}.
  *

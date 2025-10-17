@@ -23,7 +23,7 @@ import com.helger.json.IJson;
 import com.helger.json.IJsonArray;
 import com.helger.json.IJsonObject;
 import com.helger.peppol.photon.nicename.NiceNameEntry;
-import com.helger.peppol.sharedui.ui.SharedCommonUI;
+import com.helger.peppol.photon.nicename.NiceNameManager;
 import com.helger.peppol.sml.ESMPAPIType;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.factory.IIdentifierFactory;
@@ -57,7 +57,7 @@ public final class SMPJsonResponseExt
           final String sDocType = aUrlEntry.getAsString (SMPJsonResponse.JSON_DOCUMENT_TYPE_ID);
           if (sDocType != null)
           {
-            final NiceNameEntry aNN = SharedCommonUI.getDocTypeNames ().get (sDocType);
+            final NiceNameEntry aNN = NiceNameManager.docTypeNames ().get (sDocType);
             if (aNN != null)
             {
               aUrlEntry.add (JSON_NICE_NAME, aNN.getName ());
