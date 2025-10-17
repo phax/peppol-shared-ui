@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.peppol.sharedui.validate.ui;
+package com.helger.peppol.ui.validate.ctrl;
 
 import java.util.Locale;
 
@@ -25,7 +25,7 @@ import com.helger.collection.commons.ICommonsList;
 import com.helger.collection.commons.ICommonsSet;
 import com.helger.diver.api.coord.DVRCoordinate;
 import com.helger.html.request.IHCRequestField;
-import com.helger.peppol.sharedui.validate.VESRegistry;
+import com.helger.peppol.ui.validate.VESRegistry;
 import com.helger.phive.api.executorset.IValidationExecutorSet;
 import com.helger.phive.peppol.legacy.PeppolValidation3_10_0;
 import com.helger.phive.xml.source.IValidationSourceXML;

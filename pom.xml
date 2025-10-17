@@ -186,7 +186,11 @@
         <artifactId>peppol-shared-ui</artifactId>
         <version>${project.version}</version>
       </dependency>
-      
+      <dependency>
+        <groupId>com.helger.peppol.ui</groupId>
+        <artifactId>peppol-shared-validation</artifactId>
+        <version>${project.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   
@@ -194,6 +198,7 @@
     <module>ph-oton-peppol</module>
     <module>peppol-shared-api</module>
     <module>peppol-shared-ui</module>
+    <module>peppol-shared-validation</module>
   </modules>
 
   <build>
