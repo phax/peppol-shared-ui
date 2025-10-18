@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.peppol.api;
+package com.helger.peppol.api.rest;
 
 public class APIParamException extends RuntimeException
 {
