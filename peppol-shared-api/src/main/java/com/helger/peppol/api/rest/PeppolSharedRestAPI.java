@@ -14,24 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.peppol.ui.validate;
+package com.helger.peppol.api.rest;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
-
-/**
- * Test class for class {@link VESRegistry}.
- *
- * @author Philip Helger
- */
-public final class VESRegistryTest
+public final class PeppolSharedRestAPI
 {
-  @Test
-  public void testBasic ()
-  {
-    assertNotNull (VESRegistry.getAll ());
-    assertTrue (VESRegistry.getAllSortedByID ().isNotEmpty ());
-  }
+  public static final String PARAM_SML_ID = "smlID";
+  public static final String PARAM_PARTICIPANT_ID = "participantID";
+  public static final String PARAM_DOCTYPE_ID = "docTypeID";
+
+  private PeppolSharedRestAPI ()
+  {}
 }
