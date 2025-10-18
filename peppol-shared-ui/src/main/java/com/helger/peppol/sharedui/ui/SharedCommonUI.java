@@ -18,7 +18,7 @@ package com.helger.peppol.sharedui.ui;
 
 import com.helger.html.jquery.JQueryAjaxBuilder;
 import com.helger.html.jscode.JSAssocArray;
-import com.helger.peppol.sharedui.api.CSharedUIAjax;
+import com.helger.peppol.api.ajax.CPeppolSharedAjax;
 import com.helger.photon.bootstrap4.ext.BootstrapSystemMessage;
 import com.helger.photon.bootstrap4.uictrls.datatables.BootstrapDataTables;
 import com.helger.photon.core.requestparam.RequestParameterHandlerURLPathNamed;
@@ -48,11 +48,11 @@ public final class SharedCommonUI
       final IRequestWebScopeWithoutResponse aRequestScope = aLEC.getRequestScope ();
       aDataTables.setAutoWidth (false)
                  .setLengthMenu (LENGTH_MENU)
-                 .setAjaxBuilder (new JQueryAjaxBuilder ().url (CSharedUIAjax.DATATABLES.getInvocationURL (aRequestScope))
+                 .setAjaxBuilder (new JQueryAjaxBuilder ().url (CPeppolSharedAjax.DATATABLES.getInvocationURL (aRequestScope))
                                                           .data (new JSAssocArray ().add (AjaxExecutorDataTables.OBJECT_ID,
                                                                                           aTable.getID ())))
                  .setServerFilterType (EDataTablesFilterType.ALL_TERMS_PER_ROW)
-                 .setTextLoadingURL (CSharedUIAjax.DATATABLES_I18N.getInvocationURL (aRequestScope),
+                 .setTextLoadingURL (CPeppolSharedAjax.DATATABLES_I18N.getInvocationURL (aRequestScope),
                                      AjaxExecutorDataTablesI18N.REQUEST_PARAM_LANGUAGE_ID)
                  .addPlugin (new DataTablesPluginSearchHighlight ());
     });

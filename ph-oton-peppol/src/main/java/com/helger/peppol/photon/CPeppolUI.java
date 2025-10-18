@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.peppol.sharedui;
+package com.helger.peppol.photon;
 
 import java.util.List;
 import java.util.Locale;
@@ -26,7 +26,7 @@ import com.helger.collection.commons.ICommonsMap;
 import com.helger.text.locale.LocaleCache;
 
 @Immutable
-public final class CSharedUI
+public final class CPeppolUI
 {
   public static final Locale LOCALE_DE = LocaleCache.getInstance ().getLocale ("de", "DE");
   public static final Locale LOCALE_EN = LocaleCache.getInstance ().getLocale ("en", "US");
@@ -43,6 +43,6 @@ public final class CSharedUI
 
   public static final boolean DEFAULT_SMP_USE_SECURE_VALIDATION = true;
 
-  private CSharedUI ()
+  private CPeppolUI ()
   {}
 }

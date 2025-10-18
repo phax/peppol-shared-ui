@@ -21,6 +21,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import com.helger.cache.regex.RegExHelper;
+import com.helger.peppol.photon.CPeppolUI;
 
 public final class CSharedUITest
 {
@@ -35,6 +36,6 @@ public final class CSharedUITest
                                           "IBM.ECSCTEST",
                                           "smp.difi.no",
                                           "SMP123" })
-      assertTrue (s + " failed!", RegExHelper.stringMatchesPattern (CSharedUI.PATTERN_SMP_ID, s));
+      assertTrue (s + " failed!", RegExHelper.stringMatchesPattern (CPeppolUI.PATTERN_SMP_ID, s));
   }
 }

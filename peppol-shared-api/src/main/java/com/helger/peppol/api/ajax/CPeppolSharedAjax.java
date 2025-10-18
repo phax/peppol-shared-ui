@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.peppol.sharedui.api;
+package com.helger.peppol.api.ajax;
 
 import java.util.function.Predicate;
 
 import com.helger.annotation.concurrent.Immutable;
-import com.helger.peppol.sharedui.CSharedUI;
+import com.helger.peppol.photon.CPeppolUI;
 import com.helger.photon.ajax.decl.AjaxFunctionDeclaration;
 import com.helger.photon.ajax.decl.IAjaxFunctionDeclaration;
 import com.helger.photon.security.login.LoggedInUserManager;
@@ -28,7 +28,7 @@ import com.helger.photon.uictrls.datatables.ajax.AjaxExecutorDataTablesI18N;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 
 @Immutable
-public final class CSharedUIAjax
+public final class CPeppolSharedAjax
 {
   public static final IAjaxFunctionDeclaration DATATABLES = AjaxFunctionDeclaration.builder ("dataTables")
                                                                                    .executor (AjaxExecutorDataTables.class)
@@ -36,12 +36,12 @@ public final class CSharedUIAjax
 
   // The fallback locale is always english
   public static final IAjaxFunctionDeclaration DATATABLES_I18N = AjaxFunctionDeclaration.builder ("datatables-i18n")
-                                                                                        .executor (new AjaxExecutorDataTablesI18N (CSharedUI.LOCALE_EN))
+                                                                                        .executor (new AjaxExecutorDataTablesI18N (CPeppolUI.LOCALE_EN))
                                                                                         .build ();
 
   public static final Predicate <? super IRequestWebScopeWithoutResponse> FILTER_LOGIN = x -> LoggedInUserManager.getInstance ()
                                                                                                                  .isUserLoggedInInCurrentSession ();
 
-  private CSharedUIAjax ()
+  private CPeppolSharedAjax ()
   {}
 }
