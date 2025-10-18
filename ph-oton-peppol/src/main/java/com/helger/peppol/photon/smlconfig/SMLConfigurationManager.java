@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.peppol.sharedui.mgr;
+package com.helger.peppol.photon.smlconfig;
 
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.style.ReturnsMutableCopy;
@@ -22,8 +22,6 @@ import com.helger.base.state.EChange;
 import com.helger.base.string.StringHelper;
 import com.helger.collection.commons.ICommonsList;
 import com.helger.dao.DAOException;
-import com.helger.peppol.photon.smlconfig.ISMLConfiguration;
-import com.helger.peppol.photon.smlconfig.SMLConfiguration;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppol.sml.ESMPAPIType;
 import com.helger.peppol.sml.SMLInfo;

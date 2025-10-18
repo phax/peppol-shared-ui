@@ -22,6 +22,8 @@ import org.slf4j.LoggerFactory;
 import com.helger.annotation.style.UsedViaReflection;
 import com.helger.base.exception.InitializationException;
 import com.helger.dao.DAOException;
+import com.helger.peppol.photon.smlconfig.ISMLConfigurationManager;
+import com.helger.peppol.photon.smlconfig.SMLConfigurationManager;
 import com.helger.scope.IScope;
 import com.helger.scope.singleton.AbstractGlobalSingleton;
 

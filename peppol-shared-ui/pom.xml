@@ -59,10 +59,6 @@
       <artifactId>dnsjava</artifactId>
       <version>${dnsjava.version}</version>
     </dependency>
-    <dependency>
-      <groupId>es.moki.ratelimitj</groupId>
-      <artifactId>ratelimitj-inmemory</artifactId>
-    </dependency>
 
     <dependency>
       <groupId>com.helger.commons</groupId>
@@ -100,6 +96,10 @@
     <dependency>
       <groupId>com.helger.peppol.ui</groupId>
       <artifactId>ph-oton-peppol</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.helger.peppol.ui</groupId>
+      <artifactId>peppol-shared-api</artifactId>
     </dependency>
 
     <dependency>

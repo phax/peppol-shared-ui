@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.peppol.sharedui.api;
+package com.helger.peppol.api;
 
 import java.time.Duration;
 import java.util.Map;
@@ -26,11 +26,11 @@ import org.slf4j.LoggerFactory;
 import com.helger.annotation.Nonempty;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.http.CHttp;
-import com.helger.peppol.sharedui.config.SharedUIConfig;
+import com.helger.httpclient.HttpClientSettings;
+import com.helger.peppol.api.config.PeppolSharedAPIConfig;
 import com.helger.photon.api.IAPIDescriptor;
 import com.helger.photon.api.IAPIExecutor;
 import com.helger.servlet.response.UnifiedResponse;
-import com.helger.smpclient.httpclient.SMPHttpClientSettings;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 
 import es.moki.ratelimitj.core.limiter.request.RequestLimitRule;
@@ -42,7 +42,7 @@ public abstract class AbstractRateLimitingAPIExecutor implements IAPIExecutor
   private static final Logger LOGGER = LoggerFactory.getLogger (AbstractRateLimitingAPIExecutor.class);
 
   protected final InMemorySlidingWindowRequestRateLimiter m_aRequestRateLimiter;
-  protected final Consumer <? super SMPHttpClientSettings> m_aHCSModifier;
+  protected final Consumer <? super HttpClientSettings> m_aHCSModifier;
 
   /**
    * @param sUserAgent
@@ -52,7 +52,7 @@ public abstract class AbstractRateLimitingAPIExecutor implements IAPIExecutor
   {
     ValueEnforcer.notEmpty (sUserAgent, "UserAgent");
 
-    final long nRequestsPerSec = SharedUIConfig.getRESTAPIMaxRequestsPerSecond ();
+    final long nRequestsPerSec = PeppolSharedAPIConfig.getRestAPIMaxRequestsPerSecond ();
     if (nRequestsPerSec > 0)
     {
       // 2 request per second, per key

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.peppol.sharedui.mgr;
+package com.helger.peppol.photon.smlconfig;
 
 import java.util.function.Predicate;
 
@@ -22,16 +22,14 @@ import com.helger.annotation.Nonempty;
 import com.helger.annotation.style.ReturnsMutableCopy;
 import com.helger.base.state.EChange;
 import com.helger.collection.commons.ICommonsList;
-import com.helger.peppol.photon.smlconfig.ISMLConfiguration;
 import com.helger.peppol.sml.ESMPAPIType;
-import com.helger.peppol.sml.ISMLInfo;
 import com.helger.peppolid.factory.ESMPIdentifierType;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * Base interface for a manager that handles {@link ISMLInfo} objects.
+ * Base interface for a manager that handles {@link ISMLConfiguration} objects.
  *
  * @author Philip Helger
  */

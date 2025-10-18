@@ -93,14 +93,14 @@ import com.helger.peppol.businesscard.helper.PDBusinessCardHelper.EBusinessCardV
 import com.helger.peppol.photon.PeppolUI;
 import com.helger.peppol.photon.nicename.NiceNameUI;
 import com.helger.peppol.photon.smlconfig.ISMLConfiguration;
+import com.helger.peppol.photon.smlconfig.ISMLConfigurationManager;
 import com.helger.peppol.security.PeppolTrustStores;
 import com.helger.peppol.servicedomain.EPeppolNetwork;
 import com.helger.peppol.sharedui.CSharedUI;
 import com.helger.peppol.sharedui.domain.SMPQueryParams;
-import com.helger.peppol.sharedui.mgr.ISMLConfigurationManager;
 import com.helger.peppol.sharedui.mgr.SharedUIMetaManager;
 import com.helger.peppol.sharedui.page.AbstractAppWebPage;
-import com.helger.peppol.sharedui.ui.select.SMLConfigurationSelect;
+import com.helger.peppol.sharedui.ui.SMLConfigurationSelect;
 import com.helger.peppol.sml.ESMPAPIType;
 import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppol.smp.ESMPTransportProfileState;

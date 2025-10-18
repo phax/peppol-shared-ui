@@ -38,8 +38,8 @@ import com.helger.html.hc.html.forms.HCTextArea;
 import com.helger.html.hc.html.grouping.HCDiv;
 import com.helger.html.hc.impl.HCNodeList;
 import com.helger.peppol.photon.PeppolUI;
+import com.helger.peppol.photon.config.PeppolSharedConfig;
 import com.helger.peppol.sharedui.CSharedUI;
-import com.helger.peppol.sharedui.config.SharedUIConfig;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
@@ -109,7 +109,7 @@ public class PageSecurePeppolSendAS4 extends AbstractBootstrapWebPage <WebPageEx
   private static final IAS4CryptoFactory AS4_CF;
   static
   {
-    final IConfig aConfig = SharedUIConfig.getConfig ();
+    final IConfig aConfig = PeppolSharedConfig.getConfig ();
     final IKeyStoreType eTrustStoreType = EKeyStoreType.getFromIDCaseInsensitiveOrNull (aConfig.getAsString ("peppol.as4.truststore.type"));
     final LoadedKeyStore aLTS = KeyStoreHelper.loadKeyStore (eTrustStoreType,
                                                              aConfig.getAsString ("peppol.as4.truststore.path"),

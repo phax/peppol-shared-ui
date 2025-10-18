@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.peppol.sharedui.domain;
+package com.helger.peppol.photon.codelistui;
 
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.base.string.StringHelper;

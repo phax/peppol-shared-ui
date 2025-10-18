@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.peppol.sharedui.api;
+package com.helger.peppol.api;
 
 import org.apache.hc.client5.http.HttpResponseException;
 import org.slf4j.Logger;
@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import com.helger.base.debug.GlobalDebug;
 import com.helger.base.state.EHandled;
 import com.helger.base.string.StringHelper;
-import com.helger.peppol.sharedui.config.SharedUIConfig;
+import com.helger.peppol.api.config.PeppolSharedAPIConfig;
 import com.helger.photon.api.AbstractAPIExceptionMapper;
 import com.helger.photon.api.InvokableAPIDescriptor;
 import com.helger.servlet.response.UnifiedResponse;
@@ -44,7 +44,7 @@ public class APIExceptionMapper extends AbstractAPIExceptionMapper
 
   private static void _logRestException (@Nonnull final String sMsg, @Nonnull final Throwable t)
   {
-    if (SharedUIConfig.isRestLogExceptions ())
+    if (PeppolSharedAPIConfig.isRestLogExceptions ())
       LOGGER.error (sMsg, t);
     else
       LOGGER.error (sMsg +
@@ -57,7 +57,7 @@ public class APIExceptionMapper extends AbstractAPIExceptionMapper
                                               final int nStatusCode,
                                               @Nullable final String sContent)
   {
-    if (SharedUIConfig.isRestExceptionsWithPayload ())
+    if (PeppolSharedAPIConfig.isRestExceptionsWithPayload ())
     {
       // With payload
       setSimpleTextResponse (aUnifiedResponse, nStatusCode, sContent);
@@ -78,10 +78,9 @@ public class APIExceptionMapper extends AbstractAPIExceptionMapper
                                             @Nonnull final Throwable aThrowable)
   {
     // From specific to general
-    if (aThrowable instanceof HttpResponseException)
+    if (aThrowable instanceof final HttpResponseException aEx)
     {
       _logRestException ("HttpResponse exception", aThrowable);
-      final HttpResponseException aEx = (HttpResponseException) aThrowable;
       _setSimpleTextResponse (aUnifiedResponse, aEx.getStatusCode (), aEx.getReasonPhrase ());
       return EHandled.HANDLED;
     }

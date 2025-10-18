@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.peppol.sharedui.ui.select;
+package com.helger.peppol.sharedui.ui;
 
 import com.helger.peppol.photon.smlconfig.ISMLConfiguration;
-import com.helger.peppol.sharedui.mgr.ISMLConfigurationManager;
+import com.helger.peppol.photon.smlconfig.ISMLConfigurationManager;
 import com.helger.peppol.sharedui.mgr.SharedUIMetaManager;
 import com.helger.photon.core.form.RequestField;
 import com.helger.photon.uicore.html.select.HCExtSelect;

@@ -188,7 +188,7 @@ public final class SMPQueryParams
     return _isSMPRegisteredInDNSViaDnsJava ();
   }
 
-  @SuppressWarnings ({ "removal" })
+  @SuppressWarnings ({ "removal", "deprecation" })
   @Nonnull
   private static ISMPURLProvider _getURLProvider (@Nonnull final ESMPAPIType eAPIType, final boolean bUseCNAMELookup)
   {

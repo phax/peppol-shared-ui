@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.peppol.sharedui.config;
+package com.helger.peppol.api.config;
 
 import com.helger.annotation.style.UsedViaReflection;
 import com.helger.base.debug.GlobalDebug;
@@ -23,7 +23,6 @@ import com.helger.peppol.photon.config.PeppolSharedConfig;
 import com.helger.scope.singleton.AbstractGlobalSingleton;
 
 import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * This class provides access to the settings as contained in the
@@ -31,11 +30,11 @@ import jakarta.annotation.Nullable;
  *
  * @author Philip Helger
  */
-public final class SharedUIConfig extends AbstractGlobalSingleton
+public final class PeppolSharedAPIConfig extends AbstractGlobalSingleton
 {
   @Deprecated
   @UsedViaReflection
-  private SharedUIConfig ()
+  private PeppolSharedAPIConfig ()
   {}
 
   @Nonnull
@@ -44,48 +43,18 @@ public final class SharedUIConfig extends AbstractGlobalSingleton
     return PeppolSharedConfig.getConfig ();
   }
 
-  @Nullable
-  public static String getGlobalDebug ()
+  public static boolean isRestLogExceptions ()
   {
-    return _getConfig ().getAsString ("global.debug");
+    return _getConfig ().getAsBoolean ("rest.log.exceptions", GlobalDebug.isDebugMode ());
   }
 
-  @Nullable
-  public static String getGlobalProduction ()
+  public static boolean isRestExceptionsWithPayload ()
   {
-    return _getConfig ().getAsString ("global.production");
+    return _getConfig ().getAsBoolean ("rest.exceptions.payload", GlobalDebug.isDebugMode ());
   }
 
-  @Nullable
-  public static String getDataPath ()
+  public static long getRestAPIMaxRequestsPerSecond ()
   {
-    return _getConfig ().getAsString ("webapp.datapath");
-  }
-
-  public static boolean isCheckFileAccess ()
-  {
-    return _getConfig ().getAsBoolean ("webapp.checkfileaccess", true);
-  }
-
-  public static boolean isTestVersion ()
-  {
-    return _getConfig ().getAsBoolean ("webapp.testversion", GlobalDebug.isDebugMode ());
-  }
-
-  @Nullable
-  public static String getRecaptchaWebKey ()
-  {
-    return _getConfig ().getAsString ("recaptcha.webkey");
-  }
-
-  @Nullable
-  public static String getRecaptchaSecretKey ()
-  {
-    return _getConfig ().getAsString ("recaptcha.secretkey");
-  }
-
-  public static long getValidationAPIMaxRequestsPerSecond ()
-  {
-    return _getConfig ().getAsLong ("validation.limit.requestspersecond", -1);
+    return _getConfig ().getAsLong ("rest.limit.requestspersecond", -1);
   }
 }

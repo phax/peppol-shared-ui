@@ -14,29 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.peppol.sharedui.ui.select;
+package com.helger.peppol.photon.select;
 
 import java.util.Locale;
 
-import com.helger.peppol.smp.ESMPTransportProfile;
+import com.helger.peppolid.peppol.pidscheme.EPredefinedParticipantIdentifierScheme;
 import com.helger.photon.core.form.RequestField;
 import com.helger.photon.uicore.html.select.HCExtSelect;
 
 import jakarta.annotation.Nonnull;
 
-/**
- * UI select for SMP transport profiles
- *
- * @author Philip Helger
- */
-public class SMPTransportProfileSelect extends HCExtSelect
+public class ParticipantIdentifierSchemeSelect extends HCExtSelect
 {
-  public SMPTransportProfileSelect (@Nonnull final RequestField aRF, @Nonnull final Locale aDisplayLocale)
+  public ParticipantIdentifierSchemeSelect (@Nonnull final RequestField aRF, @Nonnull final Locale aDisplayLocale)
   {
     super (aRF);
     addOptionPleaseSelect (aDisplayLocale);
-    for (final ESMPTransportProfile e : ESMPTransportProfile.values ())
-      if (e.getState ().isActive ())
-        addOption (e.getID (), e.getName () + " (" + e.getID () + ")");
+    for (final EPredefinedParticipantIdentifierScheme eIIA : EPredefinedParticipantIdentifierScheme.values ())
+      if (!eIIA.isDeprecated ())
+        addOption (eIIA.getISO6523Code (), eIIA.getISO6523Code () + " - " + eIIA.getSchemeID ());
   }
 }
