@@ -66,6 +66,10 @@
       <groupId>com.helger.photon</groupId>
       <artifactId>ph-oton-bootstrap4-uictrls</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.helger.photon</groupId>
+      <artifactId>ph-oton-bootstrap4-pages</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>com.helger.peppol</groupId>

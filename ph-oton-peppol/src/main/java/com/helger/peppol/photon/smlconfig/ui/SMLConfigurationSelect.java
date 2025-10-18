@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.peppol.sharedui.ui;
+package com.helger.peppol.photon.smlconfig.ui;
 
+import com.helger.peppol.photon.mgr.PhotonPeppolMetaManager;
 import com.helger.peppol.photon.smlconfig.ISMLConfiguration;
 import com.helger.peppol.photon.smlconfig.ISMLConfigurationManager;
-import com.helger.peppol.sharedui.mgr.SharedUIMetaManager;
 import com.helger.photon.core.form.RequestField;
 import com.helger.photon.uicore.html.select.HCExtSelect;
 
@@ -31,7 +31,7 @@ public class SMLConfigurationSelect extends HCExtSelect
     super (aRF);
     if (bAddAutoDetect)
       addOption (ISMLConfigurationManager.ID_AUTO_DETECT, "Auto-detect SML");
-    for (final ISMLConfiguration aSMLInfo : SharedUIMetaManager.getSMLConfigurationMgr ().getAllSorted ())
+    for (final ISMLConfiguration aSMLInfo : PhotonPeppolMetaManager.getSMLConfigurationMgr ().getAllSorted ())
       if (aSMLInfo.isClientCertificateRequired ())
         addOption (aSMLInfo.getID (),
                    "[" +

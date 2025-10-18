@@ -26,10 +26,10 @@ import com.helger.html.hc.IHCNode;
 import com.helger.html.hc.html.forms.EHCFormMethod;
 import com.helger.html.hc.html.forms.HCEdit;
 import com.helger.html.hc.impl.HCNodeList;
+import com.helger.peppol.photon.mgr.PhotonPeppolMetaManager;
 import com.helger.peppol.photon.smlconfig.ISMLConfiguration;
 import com.helger.peppol.photon.smlconfig.ISMLConfigurationManager;
 import com.helger.peppol.sharedui.domain.SMPQueryParams;
-import com.helger.peppol.sharedui.mgr.SharedUIMetaManager;
 import com.helger.peppol.sharedui.page.AbstractAppWebPage;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
@@ -79,7 +79,7 @@ public class PagePublicToolsParticipantCheckBelgium extends AbstractAppWebPage
                                   @Nonnull final String sParticipantIDValue)
   {
     final HCNodeList aNodeList = aWPEC.getNodeList ();
-    final ISMLConfigurationManager aSMLConfigurationMgr = SharedUIMetaManager.getSMLConfigurationMgr ();
+    final ISMLConfigurationManager aSMLConfigurationMgr = PhotonPeppolMetaManager.getSMLConfigurationMgr ();
 
     LOGGER.info ("Performing Belgium Participant Check for '" + sParticipantIDValue + "'");
 

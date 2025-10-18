@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.peppol.sharedui.mgr;
+package com.helger.peppol.photon.mgr;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,17 +34,18 @@ import jakarta.annotation.Nonnull;
  *
  * @author Philip Helger
  */
-public final class SharedUIMetaManager extends AbstractGlobalSingleton
+public final class PhotonPeppolMetaManager extends AbstractGlobalSingleton
 {
-  private static final String SML_INFO_XML = "sml-info.xml";
+  // Legacy filename
+  private static final String SML_CONFIGURATION_XML = "sml-info.xml";
 
-  private static final Logger LOGGER = LoggerFactory.getLogger (SharedUIMetaManager.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (PhotonPeppolMetaManager.class);
 
   private SMLConfigurationManager m_aSMLConfigurationMgr;
 
   @Deprecated
   @UsedViaReflection
-  public SharedUIMetaManager ()
+  public PhotonPeppolMetaManager ()
   {}
 
   @Override
@@ -53,7 +54,7 @@ public final class SharedUIMetaManager extends AbstractGlobalSingleton
     try
     {
       // Before TestEndpoint manager!
-      m_aSMLConfigurationMgr = new SMLConfigurationManager (SML_INFO_XML);
+      m_aSMLConfigurationMgr = new SMLConfigurationManager (SML_CONFIGURATION_XML);
 
       LOGGER.info (getClass ().getName () + " was initialized");
     }
@@ -64,9 +65,9 @@ public final class SharedUIMetaManager extends AbstractGlobalSingleton
   }
 
   @Nonnull
-  public static SharedUIMetaManager getInstance ()
+  public static PhotonPeppolMetaManager getInstance ()
   {
-    return getGlobalSingleton (SharedUIMetaManager.class);
+    return getGlobalSingleton (PhotonPeppolMetaManager.class);
   }
 
   @Nonnull
