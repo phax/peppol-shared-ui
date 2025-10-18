@@ -31,7 +31,7 @@ import com.helger.html.hc.html.textlevel.HCA;
 import com.helger.html.hc.html.textlevel.HCCode;
 import com.helger.html.hc.impl.HCNodeList;
 import com.helger.html.hc.impl.HCTextNode;
-import com.helger.peppol.sharedui.domain.ISMLConfiguration;
+import com.helger.peppol.photon.smlconfig.ISMLConfiguration;
 import com.helger.peppol.sharedui.mgr.ISMLConfigurationManager;
 import com.helger.peppol.sharedui.mgr.SharedUIMetaManager;
 import com.helger.peppol.sharedui.ui.select.SMPAPITypeSelect;

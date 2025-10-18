@@ -26,7 +26,7 @@ import com.helger.html.hc.IHCNode;
 import com.helger.html.hc.html.forms.EHCFormMethod;
 import com.helger.html.hc.html.forms.HCEdit;
 import com.helger.html.hc.impl.HCNodeList;
-import com.helger.peppol.sharedui.domain.ISMLConfiguration;
+import com.helger.peppol.photon.smlconfig.ISMLConfiguration;
 import com.helger.peppol.sharedui.domain.SMPQueryParams;
 import com.helger.peppol.sharedui.mgr.ISMLConfigurationManager;
 import com.helger.peppol.sharedui.mgr.SharedUIMetaManager;

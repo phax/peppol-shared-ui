@@ -22,7 +22,7 @@ import com.helger.annotation.Nonempty;
 import com.helger.annotation.style.ReturnsMutableCopy;
 import com.helger.base.state.EChange;
 import com.helger.collection.commons.ICommonsList;
-import com.helger.peppol.sharedui.domain.ISMLConfiguration;
+import com.helger.peppol.photon.smlconfig.ISMLConfiguration;
 import com.helger.peppol.sml.ESMPAPIType;
 import com.helger.peppol.sml.ISMLInfo;
 import com.helger.peppolid.factory.ESMPIdentifierType;

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.peppol.sharedui.domain;
+package com.helger.peppol.photon.smlconfig;
 
 import com.helger.annotation.misc.ContainsSoftMigration;
 import com.helger.peppol.sml.ESMPAPIType;

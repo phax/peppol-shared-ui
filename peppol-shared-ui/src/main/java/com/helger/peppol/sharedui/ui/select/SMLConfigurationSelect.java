@@ -16,7 +16,7 @@
  */
 package com.helger.peppol.sharedui.ui.select;
 
-import com.helger.peppol.sharedui.domain.ISMLConfiguration;
+import com.helger.peppol.photon.smlconfig.ISMLConfiguration;
 import com.helger.peppol.sharedui.mgr.ISMLConfigurationManager;
 import com.helger.peppol.sharedui.mgr.SharedUIMetaManager;
 import com.helger.photon.core.form.RequestField;

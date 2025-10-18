@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.peppol.sharedui.config;
+package com.helger.peppol.photon.config;
 
 import com.helger.annotation.style.IsSPIImplementation;
-import com.helger.peppol.sharedui.domain.SMLConfiguration;
-import com.helger.peppol.sharedui.domain.SMLConfigurationMicroTypeConverter;
+import com.helger.peppol.photon.smlconfig.SMLConfiguration;
+import com.helger.peppol.photon.smlconfig.SMLConfigurationMicroTypeConverter;
 import com.helger.xml.microdom.convert.IMicroTypeConverterRegistrarSPI;
 import com.helger.xml.microdom.convert.IMicroTypeConverterRegistry;
 
@@ -28,7 +28,7 @@ import com.helger.xml.microdom.convert.IMicroTypeConverterRegistry;
  * @author Philip Helger
  */
 @IsSPIImplementation
-public final class SharedUIMicroTypeConverterRegistarSPI implements IMicroTypeConverterRegistrarSPI
+public final class PhotonPeppolMicroTypeConverterRegistarSPI implements IMicroTypeConverterRegistrarSPI
 {
   public void registerMicroTypeConverter (final IMicroTypeConverterRegistry aRegistry)
   {
