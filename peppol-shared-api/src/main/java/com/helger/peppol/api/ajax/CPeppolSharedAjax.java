@@ -19,7 +19,7 @@ package com.helger.peppol.api.ajax;
 import java.util.function.Predicate;
 
 import com.helger.annotation.concurrent.Immutable;
-import com.helger.peppol.photon.CPeppolUI;
+import com.helger.peppol.photon.PeppolUI;
 import com.helger.photon.ajax.decl.AjaxFunctionDeclaration;
 import com.helger.photon.ajax.decl.IAjaxFunctionDeclaration;
 import com.helger.photon.security.login.LoggedInUserManager;
@@ -36,7 +36,7 @@ public final class CPeppolSharedAjax
 
   // The fallback locale is always english
   public static final IAjaxFunctionDeclaration DATATABLES_I18N = AjaxFunctionDeclaration.builder ("datatables-i18n")
-                                                                                        .executor (new AjaxExecutorDataTablesI18N (CPeppolUI.LOCALE_EN))
+                                                                                        .executor (new AjaxExecutorDataTablesI18N (PeppolUI.LOCALE_EN))
                                                                                         .build ();
 
   public static final Predicate <? super IRequestWebScopeWithoutResponse> FILTER_LOGIN = x -> LoggedInUserManager.getInstance ()

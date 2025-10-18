@@ -37,7 +37,6 @@ import com.helger.html.hc.html.forms.HCHiddenField;
 import com.helger.html.hc.html.forms.HCTextArea;
 import com.helger.html.hc.html.grouping.HCDiv;
 import com.helger.html.hc.impl.HCNodeList;
-import com.helger.peppol.photon.CPeppolUI;
 import com.helger.peppol.photon.PeppolUI;
 import com.helger.peppol.photon.config.PeppolSharedConfig;
 import com.helger.peppol.sml.ESML;
@@ -261,7 +260,7 @@ public class PageSecurePeppolSendAS4 extends AbstractBootstrapWebPage <WebPageEx
           final SMPClientReadOnly aSMPClient = new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                       aReceiverID,
                                                                       ESML.DIGIT_TEST);
-          aSMPClient.setSecureValidation (CPeppolUI.DEFAULT_SMP_USE_SECURE_VALIDATION);
+          aSMPClient.setSecureValidation (PeppolUI.DEFAULT_SMP_USE_SECURE_VALIDATION);
 
           // What to remember
           final Wrapper <String> aEndpointURL = new Wrapper <> ();

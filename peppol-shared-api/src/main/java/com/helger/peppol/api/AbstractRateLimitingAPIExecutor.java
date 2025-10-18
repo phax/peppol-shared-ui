@@ -18,31 +18,26 @@ package com.helger.peppol.api;
 
 import java.time.Duration;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.annotation.Nonempty;
-import com.helger.base.enforce.ValueEnforcer;
 import com.helger.http.CHttp;
-import com.helger.httpclient.HttpClientSettings;
 import com.helger.peppol.api.config.PeppolSharedAPIConfig;
 import com.helger.photon.api.IAPIDescriptor;
-import com.helger.photon.api.IAPIExecutor;
-import com.helger.servlet.response.UnifiedResponse;
+import com.helger.photon.app.PhotonUnifiedResponse;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 
 import es.moki.ratelimitj.core.limiter.request.RequestLimitRule;
 import es.moki.ratelimitj.inmemory.request.InMemorySlidingWindowRequestRateLimiter;
 import jakarta.annotation.Nonnull;
 
-public abstract class AbstractRateLimitingAPIExecutor implements IAPIExecutor
+public abstract class AbstractRateLimitingAPIExecutor extends AbstractAPIExecutor
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (AbstractRateLimitingAPIExecutor.class);
 
   protected final InMemorySlidingWindowRequestRateLimiter m_aRequestRateLimiter;
-  protected final Consumer <? super HttpClientSettings> m_aHCSModifier;
 
   /**
    * @param sUserAgent
@@ -50,7 +45,7 @@ public abstract class AbstractRateLimitingAPIExecutor implements IAPIExecutor
    */
   protected AbstractRateLimitingAPIExecutor (@Nonnull @Nonempty final String sUserAgent)
   {
-    ValueEnforcer.notEmpty (sUserAgent, "UserAgent");
+    super (sUserAgent);
 
     final long nRequestsPerSec = PeppolSharedAPIConfig.getRestAPIMaxRequestsPerSecond ();
     if (nRequestsPerSec > 0)
@@ -67,22 +62,25 @@ public abstract class AbstractRateLimitingAPIExecutor implements IAPIExecutor
     else
     {
       m_aRequestRateLimiter = null;
-      LOGGER.info ("REST API runs without limit");
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("REST API runs without limit");
     }
-    m_aHCSModifier = hcs -> { hcs.setUserAgent (sUserAgent); };
   }
 
-  protected abstract void rateLimitedInvokeAPI (@Nonnull IAPIDescriptor aAPIDescriptor,
+  protected abstract void rateLimitedInvokeAPI (@Nonnull @Nonempty String sLogPrefix,
+                                                @Nonnull IAPIDescriptor aAPIDescriptor,
                                                 @Nonnull @Nonempty String sPath,
                                                 @Nonnull Map <String, String> aPathVariables,
                                                 @Nonnull IRequestWebScopeWithoutResponse aRequestScope,
-                                                @Nonnull UnifiedResponse aUnifiedResponse) throws Exception;
+                                                @Nonnull PhotonUnifiedResponse aUnifiedResponse) throws Exception;
 
-  public final void invokeAPI (@Nonnull final IAPIDescriptor aAPIDescriptor,
+  @Override
+  public final void invokeAPI (@Nonnull @Nonempty final String sLogPrefix,
+                               @Nonnull final IAPIDescriptor aAPIDescriptor,
                                @Nonnull @Nonempty final String sPath,
                                @Nonnull final Map <String, String> aPathVariables,
                                @Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
-                               @Nonnull final UnifiedResponse aUnifiedResponse) throws Exception
+                               @Nonnull final PhotonUnifiedResponse aUnifiedResponse) throws Exception
   {
     final String sRateLimitKey = "ip:" + aRequestScope.getRemoteAddr ();
     final boolean bOverRateLimit = m_aRequestRateLimiter != null ? m_aRequestRateLimiter.overLimitWhenIncremented (
@@ -93,13 +91,13 @@ public abstract class AbstractRateLimitingAPIExecutor implements IAPIExecutor
     {
       // Too Many Requests
       if (LOGGER.isDebugEnabled ())
-        LOGGER.debug ("REST search rate limit exceeded for " + sRateLimitKey);
+        LOGGER.debug (sLogPrefix + "REST search rate limit exceeded for " + sRateLimitKey);
 
       aUnifiedResponse.setStatus (CHttp.HTTP_TOO_MANY_REQUESTS);
     }
     else
     {
-      rateLimitedInvokeAPI (aAPIDescriptor, sPath, aPathVariables, aRequestScope, aUnifiedResponse);
+      rateLimitedInvokeAPI (sLogPrefix, aAPIDescriptor, sPath, aPathVariables, aRequestScope, aUnifiedResponse);
     }
   }
 }
