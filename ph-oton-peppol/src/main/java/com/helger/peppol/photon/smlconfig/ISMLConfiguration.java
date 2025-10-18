@@ -16,9 +16,6 @@
  */
 package com.helger.peppol.photon.smlconfig;
 
-import java.io.Serializable;
-import java.net.URL;
-
 import com.helger.base.id.IHasID;
 import com.helger.base.name.IHasDisplayName;
 import com.helger.peppol.sml.ESMPAPIType;
@@ -27,14 +24,18 @@ import com.helger.peppolid.factory.ESMPIdentifierType;
 
 import jakarta.annotation.Nonnull;
 
-public interface ISMLConfiguration extends IHasID <String>, IHasDisplayName, Serializable
+public interface ISMLConfiguration extends IHasID <String>, IHasDisplayName
 {
   int PRIO_MINIMUM = Integer.MIN_VALUE;
   int PRIO_DEFAULT = 0;
   int PRIO_MAXIMIM = Integer.MAX_VALUE;
 
+  /**
+   * @return The SML it's all about.
+   */
   @Nonnull
   ISMLInfo getSMLInfo ();
+
 
   default String getID ()
   {
@@ -46,43 +47,26 @@ public interface ISMLConfiguration extends IHasID <String>, IHasDisplayName, Ser
     return getSMLInfo ().getDisplayName ();
   }
 
-  default String getDNSZone ()
-  {
-    return getSMLInfo ().getDNSZone ();
-  }
-
-  default String getPublisherDNSZone ()
-  {
-    return getSMLInfo ().getPublisherDNSZone ();
-  }
-
-  default String getManagementServiceURL ()
-  {
-    return getSMLInfo ().getManagementServiceURL ();
-  }
-
-  default URL getManageServiceMetaDataEndpointAddress ()
-  {
-    return getSMLInfo ().getManageServiceMetaDataEndpointAddress ();
-  }
-
-  default URL getManageParticipantIdentifierEndpointAddress ()
-  {
-    return getSMLInfo ().getManageParticipantIdentifierEndpointAddress ();
-  }
-
-  default boolean isClientCertificateRequired ()
-  {
-    return getSMLInfo ().isClientCertificateRequired ();
-  }
-
+  /**
+   * @return The API type to use.
+   */
   @Nonnull
   ESMPAPIType getSMPAPIType ();
 
+  /**
+   * @return The SMP identifier type to use.
+   */
   @Nonnull
   ESMPIdentifierType getSMPIdentifierType ();
 
+  /**
+   * @return <code>true</code> if this is a production configuration, <code>false</code> if not
+   */
   boolean isProduction ();
 
+  /**
+   * @return The priority of this SML configuration in case of "auto detection". The higher the
+   *         value, the higher the priority.
+   */
   int getPriority ();
 }

@@ -150,19 +150,24 @@ public class PageSecureSMLConfiguration extends
     final BootstrapViewForm aForm = new BootstrapViewForm ();
     aForm.addFormGroup (new BootstrapFormGroup ().setLabel ("ID").setCtrl (aSelectedObject.getID ()));
     aForm.addFormGroup (new BootstrapFormGroup ().setLabel ("Name").setCtrl (aSelectedObject.getDisplayName ()));
-    aForm.addFormGroup (new BootstrapFormGroup ().setLabel ("DNS Zone").setCtrl (aSelectedObject.getDNSZone ()));
+    aForm.addFormGroup (new BootstrapFormGroup ().setLabel ("DNS Zone")
+                                                 .setCtrl (aSelectedObject.getSMLInfo ().getDNSZone ()));
     aForm.addFormGroup (new BootstrapFormGroup ().setLabel ("Publisher DNS Zone")
-                                                 .setCtrl (aSelectedObject.getPublisherDNSZone ()));
+                                                 .setCtrl (aSelectedObject.getSMLInfo ().getPublisherDNSZone ()));
     aForm.addFormGroup (new BootstrapFormGroup ().setLabel ("Management Service URL")
-                                                 .setCtrl (HCA.createLinkedWebsite (aSelectedObject.getManagementServiceURL ())));
+                                                 .setCtrl (HCA.createLinkedWebsite (aSelectedObject.getSMLInfo ()
+                                                                                                   .getManagementServiceURL ())));
     aForm.addFormGroup (new BootstrapFormGroup ().setLabel ("Manage Service Metadata Endpoint")
-                                                 .setCtrl (HCA.createLinkedWebsite (aSelectedObject.getManageServiceMetaDataEndpointAddress ()
+                                                 .setCtrl (HCA.createLinkedWebsite (aSelectedObject.getSMLInfo ()
+                                                                                                   .getManageServiceMetaDataEndpointAddress ()
                                                                                                    .toExternalForm ())));
     aForm.addFormGroup (new BootstrapFormGroup ().setLabel ("Manage Participant Identifier Endpoint")
-                                                 .setCtrl (HCA.createLinkedWebsite (aSelectedObject.getManageParticipantIdentifierEndpointAddress ()
+                                                 .setCtrl (HCA.createLinkedWebsite (aSelectedObject.getSMLInfo ()
+                                                                                                   .getManageParticipantIdentifierEndpointAddress ()
                                                                                                    .toExternalForm ())));
     aForm.addFormGroup (new BootstrapFormGroup ().setLabel ("Client certificate required?")
-                                                 .setCtrl (EPhotonCoreText.getYesOrNo (aSelectedObject.isClientCertificateRequired (),
+                                                 .setCtrl (EPhotonCoreText.getYesOrNo (aSelectedObject.getSMLInfo ()
+                                                                                                      .isClientCertificateRequired (),
                                                                                        aDisplayLocale)));
     aForm.addFormGroup (new BootstrapFormGroup ().setLabel ("SMP API type")
                                                  .setCtrl (aSelectedObject.getSMPAPIType ().getDisplayName ()));
@@ -209,7 +214,8 @@ public class PageSecureSMLConfiguration extends
     aForm.addFormGroup (new BootstrapFormGroup ().setLabelMandatory ("DNS Zone")
                                                  .setCtrl (new HCEdit (new RequestField (FIELD_DNS_ZONE,
                                                                                          aSelectedObject != null
-                                                                                                                 ? aSelectedObject.getDNSZone ()
+                                                                                                                 ? aSelectedObject.getSMLInfo ()
+                                                                                                                                  .getDNSZone ()
                                                                                                                  : null)))
                                                  .setHelpText (new HCTextNode ("The name of the DNS Zone that this SML is working upon (e.g. "),
                                                                new HCCode ().addChild ("sml.peppolcentral.org"),
@@ -219,7 +225,8 @@ public class PageSecureSMLConfiguration extends
     aForm.addFormGroup (new BootstrapFormGroup ().setLabelMandatory ("Management Service URL")
                                                  .setCtrl (new HCEdit (new RequestField (FIELD_MANAGEMENT_ADDRESS_URL,
                                                                                          aSelectedObject != null
-                                                                                                                 ? aSelectedObject.getManagementServiceURL ()
+                                                                                                                 ? aSelectedObject.getSMLInfo ()
+                                                                                                                                  .getManagementServiceURL ()
                                                                                                                  : null)))
                                                  .setHelpText ("The service URL where the SML management application is running on including the host name. It may not contain the '" +
                                                                CSMLDefault.MANAGEMENT_SERVICE_METADATA +
@@ -231,7 +238,8 @@ public class PageSecureSMLConfiguration extends
     aForm.addFormGroup (new BootstrapFormGroup ().setLabel ("Client Certificate required?")
                                                  .setCtrl (new HCCheckBox (new RequestFieldBoolean (FIELD_CLIENT_CERTIFICATE_REQUIRED,
                                                                                                     aSelectedObject !=
-                                                                                                                                       null ? aSelectedObject.isClientCertificateRequired ()
+                                                                                                                                       null ? aSelectedObject.getSMLInfo ()
+                                                                                                                                                             .isClientCertificateRequired ()
                                                                                                                                             : DEFAULT_CLIENT_CERTIFICATE_REQUIRED)))
                                                  .setHelpText ("Check this if this SML requires a client certificate for access. Both Peppol production SML and SMK require a client certificate. Only a locally running SML software may not require a client certificate.")
                                                  .setErrorList (aFormErrors.getListOfField (FIELD_CLIENT_CERTIFICATE_REQUIRED)));
@@ -420,9 +428,10 @@ public class PageSecureSMLConfiguration extends
       final HCRow aRow = aTable.addBodyRow ();
       aRow.addCell (aCurObject.getID ());
       aRow.addCell (new HCA (aViewLink).addChild (aCurObject.getDisplayName ()));
-      aRow.addCell (aCurObject.getDNSZone ());
-      aRow.addCell (aCurObject.getManagementServiceURL ());
-      aRow.addCell (EPhotonCoreText.getYesOrNo (aCurObject.isClientCertificateRequired (), aDisplayLocale));
+      aRow.addCell (aCurObject.getSMLInfo ().getDNSZone ());
+      aRow.addCell (aCurObject.getSMLInfo ().getManagementServiceURL ());
+      aRow.addCell (EPhotonCoreText.getYesOrNo (aCurObject.getSMLInfo ().isClientCertificateRequired (),
+                                                aDisplayLocale));
       aRow.addCell (aCurObject.getSMPAPIType ().getDisplayName ());
       aRow.addCell (aCurObject.getSMPIdentifierType ().getDisplayName ());
       aRow.addCell (EPhotonCoreText.getYesOrNo (aCurObject.isProduction (), aDisplayLocale));

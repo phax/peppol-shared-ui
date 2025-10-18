@@ -469,7 +469,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
         // Information only
         aUL.addItem (div ("SML used: ").addChild (code (aRealSMLConfiguration.getDisplayName () +
                                                         " / " +
-                                                        aRealSMLConfiguration.getDNSZone ()))
+                                                        aRealSMLConfiguration.getSMLInfo ().getDNSZone ()))
                                        .addChild (" ")
                                        .addChild (aRealSMLConfiguration.isProduction () ? badgeSuccess ("production SML")
                                                                                         : badgeWarn ("test SML")));

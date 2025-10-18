@@ -32,12 +32,12 @@ public class SMLConfigurationSelect extends HCExtSelect
     if (bAddAutoDetect)
       addOption (ISMLConfigurationManager.ID_AUTO_DETECT, "Auto-detect SML");
     for (final ISMLConfiguration aSMLInfo : PhotonPeppolMetaManager.getSMLConfigurationMgr ().getAllSorted ())
-      if (aSMLInfo.isClientCertificateRequired ())
+      if (aSMLInfo.getSMLInfo ().isClientCertificateRequired ())
         addOption (aSMLInfo.getID (),
                    "[" +
                                       aSMLInfo.getDisplayName () +
                                       "] " +
-                                      aSMLInfo.getManagementServiceURL () +
+                                      aSMLInfo.getSMLInfo ().getManagementServiceURL () +
                                       (aSMLInfo.isProduction () ? " (production)" : " (test)") +
                                       " (ID: " +
                                       aSMLInfo.getID () +
