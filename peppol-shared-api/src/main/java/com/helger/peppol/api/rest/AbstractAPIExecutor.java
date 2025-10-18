@@ -16,6 +16,7 @@
  */
 package com.helger.peppol.api.rest;
 
+import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -26,14 +27,18 @@ import org.slf4j.LoggerFactory;
 import com.helger.annotation.Nonempty;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.timing.StopWatch;
+import com.helger.http.CHttp;
 import com.helger.httpclient.HttpClientSettings;
 import com.helger.json.serialize.JsonWriterSettings;
+import com.helger.peppol.api.config.PeppolSharedAPIConfig;
 import com.helger.photon.api.IAPIDescriptor;
 import com.helger.photon.api.IAPIExecutor;
 import com.helger.photon.app.PhotonUnifiedResponse;
 import com.helger.servlet.response.UnifiedResponse;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 
+import es.moki.ratelimitj.core.limiter.request.RequestLimitRule;
+import es.moki.ratelimitj.inmemory.request.InMemorySlidingWindowRequestRateLimiter;
 import jakarta.annotation.Nonnull;
 
 public abstract class AbstractAPIExecutor implements IAPIExecutor
@@ -43,6 +48,8 @@ public abstract class AbstractAPIExecutor implements IAPIExecutor
   private static final Logger LOGGER = LoggerFactory.getLogger (AbstractAPIExecutor.class);
 
   protected final Consumer <? super HttpClientSettings> m_aHCSModifier;
+  protected boolean m_bRateLimitEnabled = false;
+  protected InMemorySlidingWindowRequestRateLimiter m_aRequestRateLimiter = null;
 
   /**
    * @param sUserAgent
@@ -52,6 +59,40 @@ public abstract class AbstractAPIExecutor implements IAPIExecutor
   {
     ValueEnforcer.notEmpty (sUserAgent, "UserAgent");
     m_aHCSModifier = hcs -> { hcs.setUserAgent (sUserAgent); };
+  }
+
+  @Nonnull
+  protected final AbstractAPIExecutor setRateLimitEnabled (final boolean bEnabled)
+  {
+    if (bEnabled)
+    {
+      m_bRateLimitEnabled = true;
+
+      final long nRequestsPerSec = PeppolSharedAPIConfig.getRestAPIMaxRequestsPerSecond ();
+      if (nRequestsPerSec > 0)
+      {
+        // 2 request per second, per key
+        // Note: duration must be > 1 second
+        m_aRequestRateLimiter = new InMemorySlidingWindowRequestRateLimiter (RequestLimitRule.of (Duration.ofSeconds (2),
+                                                                                                  nRequestsPerSec * 2));
+        LOGGER.info ("Installed REST API rate limiter with a maximum of " +
+                     nRequestsPerSec +
+                     " requests per second for class " +
+                     getClass ().getSimpleName ());
+      }
+      else
+      {
+        m_aRequestRateLimiter = null;
+        if (LOGGER.isDebugEnabled ())
+          LOGGER.debug ("REST API runs without limit");
+      }
+    }
+    else
+    {
+      m_bRateLimitEnabled = false;
+      m_aRequestRateLimiter = null;
+    }
+    return this;
   }
 
   protected abstract void invokeAPI (@Nonnull @Nonempty String sLogPrefix,
@@ -68,6 +109,24 @@ public abstract class AbstractAPIExecutor implements IAPIExecutor
                                @Nonnull final UnifiedResponse aUnifiedResponse) throws Exception
   {
     final String sLogPrefix = "[API-" + COUNTER.incrementAndGet () + "] ";
+
+    if (m_bRateLimitEnabled)
+    {
+      final String sRateLimitKey = "ip:" + aRequestScope.getRemoteAddr ();
+      final boolean bOverRateLimit = m_aRequestRateLimiter != null ? m_aRequestRateLimiter.overLimitWhenIncremented (
+                                                                                                                     sRateLimitKey)
+                                                                   : false;
+      if (bOverRateLimit)
+      {
+        // Too Many Requests
+        if (LOGGER.isDebugEnabled ())
+          LOGGER.debug (sLogPrefix + "REST search rate limit exceeded for '" + sRateLimitKey + "'");
+
+        aUnifiedResponse.setStatus (CHttp.HTTP_TOO_MANY_REQUESTS);
+        return;
+      }
+    }
+
     final StopWatch aSW = StopWatch.createdStarted ();
 
     final PhotonUnifiedResponse aPUR = (PhotonUnifiedResponse) aUnifiedResponse;
