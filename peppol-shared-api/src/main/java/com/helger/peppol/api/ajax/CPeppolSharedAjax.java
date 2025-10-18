@@ -34,7 +34,7 @@ public final class CPeppolSharedAjax
                                                                                    .executor (AjaxExecutorDataTables.class)
                                                                                    .build ();
 
-  // The fallback locale is always english
+  // The fallback locale is always English
   public static final IAjaxFunctionDeclaration DATATABLES_I18N = AjaxFunctionDeclaration.builder ("datatables-i18n")
                                                                                         .executor (new AjaxExecutorDataTablesI18N (PeppolUI.LOCALE_EN))
                                                                                         .build ();
