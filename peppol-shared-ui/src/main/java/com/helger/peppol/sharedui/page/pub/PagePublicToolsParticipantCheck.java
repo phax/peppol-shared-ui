@@ -28,7 +28,7 @@ import com.helger.html.hc.impl.HCNodeList;
 import com.helger.peppol.photon.mgr.PhotonPeppolMetaManager;
 import com.helger.peppol.photon.smlconfig.ISMLConfiguration;
 import com.helger.peppol.photon.smlconfig.ISMLConfigurationManager;
-import com.helger.peppol.sharedui.domain.SMPQueryParams;
+import com.helger.peppol.photon.smp.SMPQueryParams;
 import com.helger.peppol.sharedui.page.AbstractAppWebPage;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
