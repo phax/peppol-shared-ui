@@ -32,7 +32,7 @@ public final class NiceNameEntry
   private final String m_sName;
   private final EPeppolCodeListItemState m_eState;
   private final ICommonsList <IProcessIdentifier> m_aProcIDs;
-  private final String m_sWarning;
+  private final String m_sSpecialLabel;
 
   public NiceNameEntry (@Nonnull @Nonempty final String sName,
                         @Nonnull final EPeppolCodeListItemState eState,
@@ -44,12 +44,12 @@ public final class NiceNameEntry
   public NiceNameEntry (@Nonnull @Nonempty final String sName,
                         @Nonnull final EPeppolCodeListItemState eState,
                         @Nullable final ICommonsList <IProcessIdentifier> aProcIDs,
-                        @Nullable final String sWarning)
+                        @Nullable final String sSpecialLabel)
   {
     m_sName = sName;
     m_eState = eState;
     m_aProcIDs = aProcIDs;
-    m_sWarning = sWarning;
+    m_sSpecialLabel = sSpecialLabel;
   }
 
   @Nonnull
@@ -82,15 +82,15 @@ public final class NiceNameEntry
   }
 
   @Nullable
-  public String getWarning ()
+  public String getSpecialLabel ()
   {
-    return m_sWarning;
+    return m_sSpecialLabel;
   }
 
   @Nonnull
   public NiceNameEntry withNewName (@Nonnull @Nonempty final String sNewName)
   {
-    return new NiceNameEntry (sNewName, m_eState, m_aProcIDs, m_sWarning);
+    return new NiceNameEntry (sNewName, m_eState, m_aProcIDs, m_sSpecialLabel);
   }
 
   @Override
@@ -116,7 +116,7 @@ public final class NiceNameEntry
     return new ToStringGenerator (this).append ("Name", m_sName)
                                        .append ("Deprecated", m_eState)
                                        .append ("ProcessIDs", m_aProcIDs)
-                                       .appendIfNotNull ("Warning", m_sWarning)
+                                       .appendIfNotNull ("SpecialLabel", m_sSpecialLabel)
                                        .getToString ();
   }
 }

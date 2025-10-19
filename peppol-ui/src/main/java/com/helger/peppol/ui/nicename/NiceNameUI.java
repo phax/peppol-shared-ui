@@ -24,7 +24,7 @@ import com.helger.html.hc.html.textlevel.HCSmall;
 import com.helger.html.hc.impl.HCNodeList;
 import com.helger.html.hc.impl.HCTextNode;
 import com.helger.peppol.ui.types.nicename.NiceNameEntry;
-import com.helger.peppol.ui.types.nicename.NiceNameManager;
+import com.helger.peppol.ui.types.nicename.NiceNameHandler;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.peppol.PeppolIdentifierHelper;
@@ -79,11 +79,11 @@ public class NiceNameUI
     else
       if (aNiceName.getState ().isDeprecated ())
         aWarnings.addChild (new BootstrapBadge (EBootstrapBadgeType.WARNING).addChild ("Identifier is deprecated"));
-    if (StringHelper.isNotEmpty (aNiceName.getWarning ()))
+    if (StringHelper.isNotEmpty (aNiceName.getSpecialLabel ()))
     {
       if (aWarnings.hasChildren ())
         aWarnings.addChild (" ");
-      aWarnings.addChild (new BootstrapBadge (EBootstrapBadgeType.WARNING).addChild (aNiceName.getWarning ()));
+      aWarnings.addChild (new BootstrapBadge (EBootstrapBadgeType.WARNING).addChild (aNiceName.getSpecialLabel ()));
     }
 
     return _createFormattedID (sID,
@@ -109,11 +109,11 @@ public class NiceNameUI
     final boolean bIsPint = _isPintDocType (aDocTypeID);
     final boolean bIsWildcard = _isWildcardDocType (aDocTypeID);
 
-    NiceNameEntry aNN = NiceNameManager.docTypeNames ().get (aDocTypeID.getURIEncoded ());
+    NiceNameEntry aNN = NiceNameHandler.getDocTypeNiceName (aDocTypeID);
     if (aNN == null && bIsPint && bIsWildcard)
     {
       // Try version without the star
-      aNN = NiceNameManager.docTypeNames ().get (StringRemove.removeAll (aDocTypeID.getURIEncoded (), '*'));
+      aNN = NiceNameHandler.getDocTypeNiceName (StringRemove.removeAll (aDocTypeID.getURIEncoded (), '*'));
     }
     if (aNN != null && bIsPint)
     {
@@ -149,7 +149,7 @@ public class NiceNameUI
     }
 
     // Check direct match first
-    aNN = NiceNameManager.processNames ().get (sURI);
+    aNN = NiceNameHandler.getProcessNiceName (sURI);
     if (aNN != null)
       return _createID (sURI, aNN, bInDetails);
 
