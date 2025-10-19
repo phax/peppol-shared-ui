@@ -24,11 +24,11 @@
     <artifactId>peppol-shared-ui-parent-pom</artifactId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
-  <artifactId>ph-oton-peppol</artifactId>
+  <artifactId>peppol-ui-types</artifactId>
   <packaging>jar</packaging>
-  <name>ph-oton-peppol</name>
-  <description>Shared UI components for Peppol UIs</description>
-  <url>https://github.com/phax/peppol-shared-ui/ph-oton-peppol</url>
+  <name>peppol-ui-types</name>
+  <description>Data types for shared UI components for Peppol UIs</description>
+  <url>https://github.com/phax/peppol-shared-ui/peppol-ui-types</url>
   <inceptionYear>2025</inceptionYear>
 
   <licenses>
@@ -54,23 +54,6 @@
   </developers>
 
   <dependencies>
-    <dependency>
-      <groupId>com.helger.photon</groupId>
-      <artifactId>ph-oton-uicore</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.helger.photon</groupId>
-      <artifactId>ph-oton-bootstrap4</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.helger.photon</groupId>
-      <artifactId>ph-oton-bootstrap4-uictrls</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.helger.photon</groupId>
-      <artifactId>ph-oton-bootstrap4-pages</artifactId>
-    </dependency>
-
     <dependency>
       <groupId>com.helger.peppol</groupId>
       <artifactId>peppol-id</artifactId>

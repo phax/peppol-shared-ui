@@ -173,7 +173,12 @@
       
       <dependency>
         <groupId>com.helger.peppol.ui</groupId>
-        <artifactId>ph-oton-peppol</artifactId>
+        <artifactId>peppol-ui-types</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.helger.peppol.ui</groupId>
+        <artifactId>peppol-ui</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -195,7 +200,8 @@
   </dependencyManagement>
   
   <modules>
-    <module>ph-oton-peppol</module>
+    <module>peppol-ui-types</module>
+    <module>peppol-ui</module>
     <module>peppol-shared-api</module>
     <module>peppol-shared-ui</module>
     <module>peppol-shared-validation</module>
