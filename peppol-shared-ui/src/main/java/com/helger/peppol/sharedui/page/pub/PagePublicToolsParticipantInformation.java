@@ -976,7 +976,8 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                       {
                         final IHCLI <?> aLIProcessID = aULProcessID.addItem ();
                         aLIProcessID.addChild (div ("Process ID: ").addChild (NiceNameUI.createProcessID (aDocTypeID,
-                                                                                                          SimpleProcessIdentifier.wrap (aProcess.getProcessIdentifier ()))));
+                                                                                                          SimpleProcessIdentifier.wrap (aProcess.getProcessIdentifier ()),
+                                                                                                          true)));
                         final HCUL aULEndpoint = new HCUL ();
                         // For all endpoints of the process
                         for (final var aEndpoint : aProcess.getServiceEndpointList ().getEndpoint ())
@@ -1038,7 +1039,8 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                       {
                         final IHCLI <?> aLIProcessID = aULProcessID.addItem ();
                         aLIProcessID.addChild (div ("Process ID: ").addChild (NiceNameUI.createProcessID (aDocTypeID,
-                                                                                                          SimpleProcessIdentifier.wrap (aProcess.getProcessIdentifier ()))));
+                                                                                                          SimpleProcessIdentifier.wrap (aProcess.getProcessIdentifier ()),
+                                                                                                          true)));
                         final HCUL aULEndpoint = new HCUL ();
                         // For all endpoints of the process
                         for (final com.helger.xsds.bdxr.smp1.EndpointType aEndpoint : aProcess.getServiceEndpointList ()

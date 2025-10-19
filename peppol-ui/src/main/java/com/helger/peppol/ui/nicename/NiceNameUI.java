@@ -41,11 +41,11 @@ public final class NiceNameUI
   {}
 
   @Nonnull
-  private static IHCNode _createFormattedID (@Nonnull final String sID,
-                                             @Nullable final String sName,
-                                             @Nullable final EBootstrapBadgeType eType,
-                                             @Nullable final IHCNode aWarningsNode,
-                                             final boolean bInDetails)
+  public static IHCNode createFormattedID (@Nonnull final String sID,
+                                           @Nullable final String sName,
+                                           @Nullable final EBootstrapBadgeType eType,
+                                           @Nullable final IHCNode aWarningsNode,
+                                           final boolean bInDetails)
   {
     if (sName == null)
     {
@@ -80,7 +80,7 @@ public final class NiceNameUI
                                     final boolean bInDetails)
   {
     if (aNiceName == null)
-      return _createFormattedID (sID, null, null, null, bInDetails);
+      return createFormattedID (sID, null, null, null, bInDetails);
 
     final HCNodeList aWarnings = new HCNodeList ();
     if (aNiceName.getState ().isRemoved ())
@@ -96,11 +96,11 @@ public final class NiceNameUI
       aWarnings.addChild (new BootstrapBadge (EBootstrapBadgeType.WARNING).addChild (aNiceName.getSpecialLabel ()));
     }
 
-    return _createFormattedID (sID,
-                               aNiceName.getName (),
-                               EBootstrapBadgeType.SUCCESS,
-                               aWarnings.hasChildren () ? aWarnings : null,
-                               bInDetails);
+    return createFormattedID (sID,
+                              aNiceName.getName (),
+                              EBootstrapBadgeType.SUCCESS,
+                              aWarnings.hasChildren () ? aWarnings : null,
+                              bInDetails);
   }
 
   private static boolean _isPintDocType (@Nonnull final IDocumentTypeIdentifier aDocTypeID)
@@ -114,7 +114,7 @@ public final class NiceNameUI
   }
 
   @Nullable
-  private static NiceNameEntry _getPintEnabledNN (@Nonnull final IDocumentTypeIdentifier aDocTypeID)
+  private static NiceNameEntry _getPintEnabledNiceNameEntry (@Nonnull final IDocumentTypeIdentifier aDocTypeID)
   {
     final boolean bIsPint = _isPintDocType (aDocTypeID);
     final boolean bIsWildcard = _isWildcardDocType (aDocTypeID);
@@ -138,24 +138,24 @@ public final class NiceNameUI
   @Nonnull
   public static IHCNode createDocTypeID (@Nonnull final IDocumentTypeIdentifier aDocTypeID, final boolean bInDetails)
   {
-    final NiceNameEntry aNN = _getPintEnabledNN (aDocTypeID);
+    final NiceNameEntry aNN = _getPintEnabledNiceNameEntry (aDocTypeID);
     return _createID (aDocTypeID.getURIEncoded (), aNN, bInDetails);
   }
 
   @Nonnull
   public static IHCNode createProcessID (@Nonnull final IDocumentTypeIdentifier aDocTypeID,
-                                         @Nonnull final IProcessIdentifier aProcessID)
+                                         @Nonnull final IProcessIdentifier aProcessID,
+                                         final boolean bInDetails)
   {
     final String sURI = aProcessID.getURIEncoded ();
-    final boolean bInDetails = true;
 
     // Check in relation ship to Document Type first
-    NiceNameEntry aNN = _getPintEnabledNN (aDocTypeID);
+    NiceNameEntry aNN = _getPintEnabledNiceNameEntry (aDocTypeID);
     if (aNN != null)
     {
       if (aNN.containsProcessID (aProcessID))
-        return _createFormattedID (sURI, "Matching Process Identifier", EBootstrapBadgeType.SUCCESS, null, bInDetails);
-      return _createFormattedID (sURI, "Unexpected Process Identifier", EBootstrapBadgeType.DANGER, null, bInDetails);
+        return createFormattedID (sURI, "Matching Process Identifier", EBootstrapBadgeType.SUCCESS, null, bInDetails);
+      return createFormattedID (sURI, "Unexpected Process Identifier", EBootstrapBadgeType.DANGER, null, bInDetails);
     }
 
     // Check direct match first
@@ -163,7 +163,6 @@ public final class NiceNameUI
     if (aNN != null)
       return _createID (sURI, aNN, bInDetails);
 
-    return _createFormattedID (sURI, null, null, null, bInDetails);
+    return createFormattedID (sURI, null, null, null, bInDetails);
   }
-
 }
