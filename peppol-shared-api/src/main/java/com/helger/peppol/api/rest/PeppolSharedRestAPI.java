@@ -16,6 +16,9 @@
  */
 package com.helger.peppol.api.rest;
 
+import com.helger.annotation.concurrent.Immutable;
+
+@Immutable
 public final class PeppolSharedRestAPI
 {
   public static final String PARAM_SML_ID = "smlID";

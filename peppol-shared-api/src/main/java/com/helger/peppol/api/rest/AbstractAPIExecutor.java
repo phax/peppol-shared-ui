@@ -130,10 +130,17 @@ public abstract class AbstractAPIExecutor implements IAPIExecutor
     final StopWatch aSW = StopWatch.createdStarted ();
 
     final PhotonUnifiedResponse aPUR = (PhotonUnifiedResponse) aUnifiedResponse;
+
+    // Disable all caching by default
     aPUR.disableCaching ();
+
+    // Default JSON result is formatted
     aPUR.setJsonWriterSettings (JsonWriterSettings.DEFAULT_SETTINGS_FORMATTED);
+
+    // Go on
     invokeAPI (sLogPrefix, aAPIDescriptor, sPath, aPathVariables, aRequestScope, aPUR);
 
+    // Measure time and log only above a certain threshold
     aSW.stop ();
     if (aSW.getMillis () > 100)
       LOGGER.info (sLogPrefix +

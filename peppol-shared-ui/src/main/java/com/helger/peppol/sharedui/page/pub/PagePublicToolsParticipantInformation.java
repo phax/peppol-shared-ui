@@ -171,11 +171,6 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
   public static final String PARAM_VERIFY_SIGNATURES = "verifysignatures";
   public static final String PARAM_CNAME_LOOKUP = "cnamelookup";
 
-  public static final boolean DEFAULT_QUERY_BUSINESS_CARD = true;
-  public static final boolean DEFAULT_SHOW_TIME = false;
-  public static final boolean DEFAULT_XSD_VALIDATION = true;
-  public static final boolean DEFAULT_VERIFY_SIGNATURES = true;
-  public static final boolean DEFAULT_CNAME_LOOKUP = false;
   private static final Logger LOGGER = LoggerFactory.getLogger (PagePublicToolsParticipantInformation.class);
 
   private final String m_sUserAgent;
@@ -1436,11 +1431,11 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
 
     String sParticipantIDScheme = DEFAULT_ID_SCHEME;
     String sParticipantIDValue = null;
-    boolean bQueryBusinessCard = DEFAULT_QUERY_BUSINESS_CARD;
-    boolean bShowTime = DEFAULT_SHOW_TIME;
-    boolean bXSDValidation = DEFAULT_XSD_VALIDATION;
-    boolean bVerifySignatures = DEFAULT_VERIFY_SIGNATURES;
-    boolean bUseCNAMELookup = DEFAULT_CNAME_LOOKUP;
+    boolean bQueryBusinessCard = PeppolUITypes.DEFAULT_QUERY_BUSINESS_CARD;
+    boolean bShowTime = PeppolUITypes.DEFAULT_SHOW_TIME;
+    boolean bXSDValidation = PeppolUITypes.DEFAULT_XSD_VALIDATION;
+    boolean bVerifySignatures = PeppolUITypes.DEFAULT_VERIFY_SIGNATURES;
+    boolean bUseCNAMELookup = PeppolUITypes.DEFAULT_CNAME_LOOKUP;
     if (aWPEC.hasAction (CPageParam.ACTION_PERFORM))
     {
       // Validate fields

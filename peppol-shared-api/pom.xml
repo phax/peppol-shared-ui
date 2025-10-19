@@ -76,6 +76,10 @@
       <artifactId>ph-oton-datatables</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.helger.peppol</groupId>
+      <artifactId>peppol-directory-businesscard</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.helger.peppol.ui</groupId>
       <artifactId>peppol-ui-types</artifactId>
     </dependency>

@@ -27,6 +27,7 @@ import com.helger.html.hc.html.forms.HCRadioButton;
 import com.helger.html.hc.impl.HCNodeList;
 import com.helger.peppol.sharedui.page.AbstractAppWebPage;
 import com.helger.peppol.sml.ESML;
+import com.helger.peppol.ui.types.PeppolUITypes;
 import com.helger.peppol.ui.types.mgr.PhotonPeppolMetaManager;
 import com.helger.peppol.ui.types.smlconfig.ISMLConfiguration;
 import com.helger.peppol.ui.types.smlconfig.ISMLConfigurationManager;
@@ -198,7 +199,7 @@ public class PagePublicToolsParticipantCheck extends AbstractAppWebPage
             final SMPQueryParams aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aSMLConfiguration,
                                                                                       sParticipantIDScheme,
                                                                                       sPIDValue,
-                                                                                      PagePublicToolsParticipantInformation.DEFAULT_CNAME_LOOKUP,
+                                                                                      PeppolUITypes.DEFAULT_CNAME_LOOKUP,
                                                                                       true);
             _checkParticipant (aWPEC,
                                aSMLConfiguration,
