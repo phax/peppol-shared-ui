@@ -163,7 +163,7 @@ public final class APISMPQueryGetBusinessCard extends AbstractAPIExecutor
       final PDBusinessCard aBC = PDBusinessCardHelper.parseBusinessCard (aBCBytes, StandardCharsets.UTF_8);
       if (aBC == null)
       {
-        LOGGER.error (sLogPrefix + "Failed to parse BC:\n" + new String (aBCBytes));
+        LOGGER.error (sLogPrefix + "Failed to parse BC:\n" + new String (aBCBytes, StandardCharsets.UTF_8));
       }
       else
       {

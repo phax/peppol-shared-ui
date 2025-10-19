@@ -104,28 +104,6 @@ public final class SMPQueryParams
     return m_bTrustAllCerts;
   }
 
-  public static boolean isSMPRegisteredInDNSViaNaptr (@Nonnull final IParticipantIdentifier aParticipantID,
-                                                      @Nonnull final String sSMLZoneName)
-  {
-    try
-    {
-      // Perform NAPTR resolution
-      PeppolNaptrURLProvider.INSTANCE.getSMPURIOfParticipant (aParticipantID, sSMLZoneName);
-
-      // Found it
-      return true;
-    }
-    catch (final SMPDNSResolutionException ex)
-    {
-      return false;
-    }
-  }
-
-  public boolean isSMPRegisteredInDNS ()
-  {
-    return isSMPRegisteredInDNSViaNaptr (m_aParticipantID, m_aSMLInfo.getDNSZone ());
-  }
-
   @SuppressWarnings ({ "removal", "deprecation" })
   @Nonnull
   private static ISMPURLProvider _getURLProvider (@Nonnull final ESMPAPIType eAPIType, final boolean bUseCNAMELookup)
@@ -133,6 +111,34 @@ public final class SMPQueryParams
     return eAPIType == ESMPAPIType.PEPPOL ? bUseCNAMELookup ? PeppolURLProvider.INSTANCE
                                                             : PeppolNaptrURLProvider.INSTANCE
                                           : BDXLURLProvider.INSTANCE;
+  }
+
+  @Nullable
+  public static URI getSMURIViaNaptr (@Nonnull final ESMPAPIType eAPIType,
+                                      @Nonnull final IParticipantIdentifier aParticipantID,
+                                      @Nonnull final String sSMLZoneName)
+  {
+    try
+    {
+      // Always perform NAPTR resolution
+      return _getURLProvider (eAPIType, false).getSMPURIOfParticipant (aParticipantID, sSMLZoneName);
+    }
+    catch (final SMPDNSResolutionException ex)
+    {
+      return null;
+    }
+  }
+
+  public static boolean isSMPRegisteredInDNSViaNaptr (@Nonnull final ESMPAPIType eAPIType,
+                                                      @Nonnull final IParticipantIdentifier aParticipantID,
+                                                      @Nonnull final String sSMLZoneName)
+  {
+    return getSMURIViaNaptr (eAPIType, aParticipantID, sSMLZoneName) != null;
+  }
+
+  public boolean isSMPRegisteredInDNS ()
+  {
+    return isSMPRegisteredInDNSViaNaptr (m_eSMPAPIType, m_aParticipantID, m_aSMLInfo.getDNSZone ());
   }
 
   @Nullable

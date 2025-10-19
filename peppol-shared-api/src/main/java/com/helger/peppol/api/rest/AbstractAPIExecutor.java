@@ -62,7 +62,7 @@ public abstract class AbstractAPIExecutor implements IAPIExecutor
   }
 
   @Nonnull
-  protected final AbstractAPIExecutor setRateLimitEnabled (final boolean bEnabled)
+  public final AbstractAPIExecutor setRateLimitEnabled (final boolean bEnabled)
   {
     if (bEnabled)
     {
