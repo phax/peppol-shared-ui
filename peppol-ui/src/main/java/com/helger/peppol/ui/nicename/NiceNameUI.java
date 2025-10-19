@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.peppol.photon.nicename;
+package com.helger.peppol.ui.nicename;
 
 import com.helger.base.string.StringHelper;
 import com.helger.base.string.StringRemove;

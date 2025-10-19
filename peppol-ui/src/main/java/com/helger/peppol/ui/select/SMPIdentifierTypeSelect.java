@@ -14,24 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.peppol.photon.select;
+package com.helger.peppol.ui.select;
 
 import java.util.Locale;
 
-import com.helger.peppolid.peppol.pidscheme.EPredefinedParticipantIdentifierScheme;
+import com.helger.peppolid.factory.ESMPIdentifierType;
 import com.helger.photon.core.form.RequestField;
 import com.helger.photon.uicore.html.select.HCExtSelect;
 
 import jakarta.annotation.Nonnull;
 
-public class ParticipantIdentifierSchemeSelect extends HCExtSelect
+/**
+ * UI select for SMP API types
+ *
+ * @author Philip Helger
+ */
+public class SMPIdentifierTypeSelect extends HCExtSelect
 {
-  public ParticipantIdentifierSchemeSelect (@Nonnull final RequestField aRF, @Nonnull final Locale aDisplayLocale)
+  public SMPIdentifierTypeSelect (@Nonnull final RequestField aRF, @Nonnull final Locale aDisplayLocale)
   {
     super (aRF);
     addOptionPleaseSelect (aDisplayLocale);
-    for (final EPredefinedParticipantIdentifierScheme eIIA : EPredefinedParticipantIdentifierScheme.values ())
-      if (!eIIA.isDeprecated ())
-        addOption (eIIA.getISO6523Code (), eIIA.getISO6523Code () + " - " + eIIA.getSchemeID ());
+    for (final ESMPIdentifierType e : ESMPIdentifierType.values ())
+      addOption (e.getID (), e.getDisplayName ());
   }
 }

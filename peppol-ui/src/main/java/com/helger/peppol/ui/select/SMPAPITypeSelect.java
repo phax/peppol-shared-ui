@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.peppol.photon.select;
+package com.helger.peppol.ui.select;
 
 import java.util.Locale;
 
-import com.helger.peppolid.factory.ESMPIdentifierType;
+import com.helger.peppol.sml.ESMPAPIType;
 import com.helger.photon.core.form.RequestField;
 import com.helger.photon.uicore.html.select.HCExtSelect;
 
@@ -29,13 +29,13 @@ import jakarta.annotation.Nonnull;
  *
  * @author Philip Helger
  */
-public class SMPIdentifierTypeSelect extends HCExtSelect
+public class SMPAPITypeSelect extends HCExtSelect
 {
-  public SMPIdentifierTypeSelect (@Nonnull final RequestField aRF, @Nonnull final Locale aDisplayLocale)
+  public SMPAPITypeSelect (@Nonnull final RequestField aRF, @Nonnull final Locale aDisplayLocale)
   {
     super (aRF);
     addOptionPleaseSelect (aDisplayLocale);
-    for (final ESMPIdentifierType e : ESMPIdentifierType.values ())
+    for (final ESMPAPIType e : ESMPAPIType.values ())
       addOption (e.getID (), e.getDisplayName ());
   }
 }

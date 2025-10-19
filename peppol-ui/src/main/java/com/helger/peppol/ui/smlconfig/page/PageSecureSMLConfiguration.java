@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.peppol.photon.smlconfig.page;
+package com.helger.peppol.ui.smlconfig.page;
 
 import java.net.URL;
 import java.util.Locale;
@@ -31,13 +31,13 @@ import com.helger.html.hc.html.textlevel.HCA;
 import com.helger.html.hc.html.textlevel.HCCode;
 import com.helger.html.hc.impl.HCNodeList;
 import com.helger.html.hc.impl.HCTextNode;
-import com.helger.peppol.photon.mgr.PhotonPeppolMetaManager;
-import com.helger.peppol.photon.select.SMPAPITypeSelect;
-import com.helger.peppol.photon.select.SMPIdentifierTypeSelect;
-import com.helger.peppol.photon.smlconfig.ISMLConfiguration;
-import com.helger.peppol.photon.smlconfig.ISMLConfigurationManager;
 import com.helger.peppol.sml.CSMLDefault;
 import com.helger.peppol.sml.ESMPAPIType;
+import com.helger.peppol.ui.select.SMPAPITypeSelect;
+import com.helger.peppol.ui.select.SMPIdentifierTypeSelect;
+import com.helger.peppol.ui.types.mgr.PhotonPeppolMetaManager;
+import com.helger.peppol.ui.types.smlconfig.ISMLConfiguration;
+import com.helger.peppol.ui.types.smlconfig.ISMLConfigurationManager;
 import com.helger.peppolid.factory.ESMPIdentifierType;
 import com.helger.photon.bootstrap4.CBootstrapCSS;
 import com.helger.photon.bootstrap4.buttongroup.BootstrapButtonToolbar;

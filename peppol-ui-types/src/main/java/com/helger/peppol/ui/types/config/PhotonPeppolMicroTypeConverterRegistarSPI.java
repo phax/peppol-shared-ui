@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.peppol.photon.config;
+package com.helger.peppol.ui.types.config;
 
 import com.helger.annotation.style.IsSPIImplementation;
-import com.helger.peppol.photon.smlconfig.SMLConfiguration;
-import com.helger.peppol.photon.smlconfig.SMLConfigurationMicroTypeConverter;
+import com.helger.peppol.ui.types.smlconfig.SMLConfiguration;
+import com.helger.peppol.ui.types.smlconfig.SMLConfigurationMicroTypeConverter;
 import com.helger.xml.microdom.convert.IMicroTypeConverterRegistrarSPI;
 import com.helger.xml.microdom.convert.IMicroTypeConverterRegistry;
 

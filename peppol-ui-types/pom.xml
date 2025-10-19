@@ -59,6 +59,14 @@
       <artifactId>ph-scopes</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.helger.photon</groupId>
+      <artifactId>ph-oton-io</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.helger.photon</groupId>
+      <artifactId>ph-oton-audit</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.helger.peppol</groupId>
       <artifactId>peppol-id</artifactId>
     </dependency>

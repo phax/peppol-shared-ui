@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.peppol.photon.smlconfig.ui;
+package com.helger.peppol.ui.smlconfig.ui;
 
-import com.helger.peppol.photon.mgr.PhotonPeppolMetaManager;
-import com.helger.peppol.photon.smlconfig.ISMLConfiguration;
-import com.helger.peppol.photon.smlconfig.ISMLConfigurationManager;
+import com.helger.peppol.ui.types.mgr.PhotonPeppolMetaManager;
+import com.helger.peppol.ui.types.smlconfig.ISMLConfiguration;
+import com.helger.peppol.ui.types.smlconfig.ISMLConfigurationManager;
 import com.helger.photon.core.form.RequestField;
 import com.helger.photon.uicore.html.select.HCExtSelect;
 

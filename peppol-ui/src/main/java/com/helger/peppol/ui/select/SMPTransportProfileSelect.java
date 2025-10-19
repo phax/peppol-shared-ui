@@ -14,28 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.peppol.photon.select;
+package com.helger.peppol.ui.select;
 
 import java.util.Locale;
 
-import com.helger.peppol.sml.ESMPAPIType;
+import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.photon.core.form.RequestField;
 import com.helger.photon.uicore.html.select.HCExtSelect;
 
 import jakarta.annotation.Nonnull;
 
 /**
- * UI select for SMP API types
+ * UI select for SMP transport profiles
  *
  * @author Philip Helger
  */
-public class SMPAPITypeSelect extends HCExtSelect
+public class SMPTransportProfileSelect extends HCExtSelect
 {
-  public SMPAPITypeSelect (@Nonnull final RequestField aRF, @Nonnull final Locale aDisplayLocale)
+  public SMPTransportProfileSelect (@Nonnull final RequestField aRF, @Nonnull final Locale aDisplayLocale)
   {
     super (aRF);
     addOptionPleaseSelect (aDisplayLocale);
-    for (final ESMPAPIType e : ESMPAPIType.values ())
-      addOption (e.getID (), e.getDisplayName ());
+    for (final ESMPTransportProfile e : ESMPTransportProfile.values ())
+      if (e.getState ().isActive ())
+        addOption (e.getID (), e.getName () + " (" + e.getID () + ")");
   }
 }
