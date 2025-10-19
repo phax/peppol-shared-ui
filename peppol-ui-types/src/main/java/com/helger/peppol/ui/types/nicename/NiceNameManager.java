@@ -23,6 +23,7 @@ import com.helger.annotation.concurrent.GuardedBy;
 import com.helger.annotation.concurrent.ThreadSafe;
 import com.helger.annotation.style.ReturnsMutableCopy;
 import com.helger.base.concurrent.SimpleReadWriteLock;
+import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.string.StringHelper;
 import com.helger.base.string.StringParser;
 import com.helger.collection.commons.CommonsArrayList;
@@ -64,8 +65,16 @@ public final class NiceNameManager
   static
   {
     // By default, init with the defaults
-    DOCTYPE_IDS.putAll (NiceNameDefaults.defaultDocTypes ());
-    PROCESS_IDS.putAll (NiceNameDefaults.defaultProcesses ());
+    setAllToDefaults ();
+  }
+
+  public static void setAllToDefaults ()
+  {
+    RW_LOCK.writeLocked ( () -> {
+      // setAll to clear and add all
+      DOCTYPE_IDS.setAll (NiceNameDefaults.defaultDocTypes ());
+      PROCESS_IDS.setAll (NiceNameDefaults.defaultProcesses ());
+    });
   }
 
   @Nonnull
@@ -135,30 +144,30 @@ public final class NiceNameManager
     return ret;
   }
 
-  public static void reloadNames (@Nonnull final IReadableResource aDocTypeIDRes,
-                                  @Nonnull final IReadableResource aProcessIDRes)
+  public static void loadDocTypeNames (@Nonnull final IReadableResource aDocTypeIDRes)
   {
-    // Doc types
-    {
-      final ICommonsOrderedMap <String, NiceNameEntry> aDocTypeIDs = readEntries (aDocTypeIDRes, true);
-      RW_LOCK.writeLocked ( () -> DOCTYPE_IDS.setAll (aDocTypeIDs));
-      LOGGER.info ("Loaded " +
-                   aDocTypeIDs.size () +
-                   " document type nice name entries from '" +
-                   aDocTypeIDRes.getPath () +
-                   "'");
-    }
+    ValueEnforcer.notNull (aDocTypeIDRes, "DocTypeIDRes");
 
-    // Processes
-    {
-      final ICommonsOrderedMap <String, NiceNameEntry> aProcessIDs = readEntries (aProcessIDRes, false);
-      RW_LOCK.writeLocked ( () -> PROCESS_IDS.setAll (aProcessIDs));
-      LOGGER.info ("Loaded " +
-                   aProcessIDs.size () +
-                   " process nice name entries from '" +
-                   aProcessIDRes.getPath () +
-                   "'");
-    }
+    final ICommonsOrderedMap <String, NiceNameEntry> aDocTypeIDs = readEntries (aDocTypeIDRes, true);
+    RW_LOCK.writeLocked ( () -> DOCTYPE_IDS.setAll (aDocTypeIDs));
+    LOGGER.info ("Loaded " +
+                 aDocTypeIDs.size () +
+                 " document type nice name entries from '" +
+                 aDocTypeIDRes.getPath () +
+                 "'");
+  }
+
+  public static void loadProcessNames (@Nonnull final IReadableResource aProcessIDRes)
+  {
+    ValueEnforcer.notNull (aProcessIDRes, "ProcessIDRes");
+
+    final ICommonsOrderedMap <String, NiceNameEntry> aProcessIDs = readEntries (aProcessIDRes, false);
+    RW_LOCK.writeLocked ( () -> PROCESS_IDS.setAll (aProcessIDs));
+    LOGGER.info ("Loaded " +
+                 aProcessIDs.size () +
+                 " process nice name entries from '" +
+                 aProcessIDRes.getPath () +
+                 "'");
   }
 
   @Nullable
