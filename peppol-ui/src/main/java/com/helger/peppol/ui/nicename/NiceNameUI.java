@@ -16,7 +16,7 @@
  */
 package com.helger.peppol.ui.nicename;
 
-import com.helger.base.string.StringHelper;
+import com.helger.annotation.concurrent.Immutable;
 import com.helger.base.string.StringRemove;
 import com.helger.html.hc.IHCNode;
 import com.helger.html.hc.html.textlevel.HCCode;
@@ -24,7 +24,7 @@ import com.helger.html.hc.html.textlevel.HCSmall;
 import com.helger.html.hc.impl.HCNodeList;
 import com.helger.html.hc.impl.HCTextNode;
 import com.helger.peppol.ui.types.nicename.NiceNameEntry;
-import com.helger.peppol.ui.types.nicename.NiceNameHandler;
+import com.helger.peppol.ui.types.nicename.NiceNameManager;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.peppol.PeppolIdentifierHelper;
@@ -34,8 +34,11 @@ import com.helger.photon.bootstrap4.badge.EBootstrapBadgeType;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
-public class NiceNameUI
+@Immutable
+public final class NiceNameUI
 {
+  private NiceNameUI ()
+  {}
 
   @Nonnull
   private static IHCNode _createFormattedID (@Nonnull final String sID,
@@ -53,14 +56,20 @@ public class NiceNameUI
     }
 
     final HCNodeList ret = new HCNodeList ();
-    ret.addChild (new BootstrapBadge (eType).addChild (sName));
+    final BootstrapBadge aNameBadge = ret.addAndReturnChild (new BootstrapBadge (eType).addChild (sName));
     if (aWarningsNode != null)
     {
       ret.addChild (" ").addChild (aWarningsNode);
     }
+
     if (bInDetails)
     {
       ret.addChild (new HCSmall ().addChild (" (").addChild (new HCCode ().addChild (sID)).addChild (")"));
+    }
+    else
+    {
+      // Add ID as mouse over
+      aNameBadge.setTitle (sID);
     }
     return ret;
   }
@@ -79,7 +88,8 @@ public class NiceNameUI
     else
       if (aNiceName.getState ().isDeprecated ())
         aWarnings.addChild (new BootstrapBadge (EBootstrapBadgeType.WARNING).addChild ("Identifier is deprecated"));
-    if (StringHelper.isNotEmpty (aNiceName.getSpecialLabel ()))
+
+    if (aNiceName.hasSpecialLabel ())
     {
       if (aWarnings.hasChildren ())
         aWarnings.addChild (" ");
@@ -109,11 +119,11 @@ public class NiceNameUI
     final boolean bIsPint = _isPintDocType (aDocTypeID);
     final boolean bIsWildcard = _isWildcardDocType (aDocTypeID);
 
-    NiceNameEntry aNN = NiceNameHandler.getDocTypeNiceName (aDocTypeID);
+    NiceNameEntry aNN = NiceNameManager.getDocTypeNiceName (aDocTypeID);
     if (aNN == null && bIsPint && bIsWildcard)
     {
       // Try version without the star
-      aNN = NiceNameHandler.getDocTypeNiceName (StringRemove.removeAll (aDocTypeID.getURIEncoded (), '*'));
+      aNN = NiceNameManager.getDocTypeNiceName (StringRemove.removeAll (aDocTypeID.getURIEncoded (), '*'));
     }
     if (aNN != null && bIsPint)
     {
@@ -149,7 +159,7 @@ public class NiceNameUI
     }
 
     // Check direct match first
-    aNN = NiceNameHandler.getProcessNiceName (sURI);
+    aNN = NiceNameManager.getProcessNiceName (sURI);
     if (aNN != null)
       return _createID (sURI, aNN, bInDetails);
 

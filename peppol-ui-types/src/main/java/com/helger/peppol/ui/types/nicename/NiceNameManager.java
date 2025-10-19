@@ -46,11 +46,11 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 @ThreadSafe
-public final class NiceNameHandler
+public final class NiceNameManager
 {
   private static final String PREFIX_WILDCARD = PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_PEPPOL_DOCTYPE_WILDCARD +
                                                 "::";
-  private static final Logger LOGGER = LoggerFactory.getLogger (NiceNameHandler.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (NiceNameManager.class);
 
   private static final SimpleReadWriteLock RW_LOCK = new SimpleReadWriteLock ();
   @GuardedBy ("RW_LOCK")
@@ -58,7 +58,7 @@ public final class NiceNameHandler
   @GuardedBy ("RW_LOCK")
   private static final ICommonsOrderedMap <String, NiceNameEntry> PROCESS_IDS = new CommonsLinkedHashMap <> ();
 
-  private NiceNameHandler ()
+  private NiceNameManager ()
   {}
 
   static

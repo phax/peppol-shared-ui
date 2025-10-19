@@ -18,6 +18,7 @@ package com.helger.peppol.ui.types.nicename;
 
 import com.helger.annotation.Nonempty;
 import com.helger.base.hashcode.HashCodeGenerator;
+import com.helger.base.string.StringHelper;
 import com.helger.base.tostring.ToStringGenerator;
 import com.helger.collection.CollectionHelper;
 import com.helger.collection.commons.ICommonsList;
@@ -85,6 +86,11 @@ public final class NiceNameEntry
   public String getSpecialLabel ()
   {
     return m_sSpecialLabel;
+  }
+
+  public boolean hasSpecialLabel ()
+  {
+    return StringHelper.isNotEmpty (m_sSpecialLabel);
   }
 
   @Nonnull
