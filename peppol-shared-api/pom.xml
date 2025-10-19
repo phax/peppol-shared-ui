@@ -60,6 +60,18 @@
     </dependency>
 
     <dependency>
+      <groupId>com.helger.commons</groupId>
+      <artifactId>ph-config</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.helger.photon</groupId>
+      <artifactId>ph-oton-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.helger.photon</groupId>
+      <artifactId>ph-oton-ajax</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.helger.peppol.ui</groupId>
       <artifactId>ph-oton-peppol</artifactId>
     </dependency>
