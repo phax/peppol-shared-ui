@@ -14,16 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.peppol.sharedui;
+package com.helger.peppol.ui.types;
 
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
 import com.helger.cache.regex.RegExHelper;
-import com.helger.peppol.photon.PeppolUI;
 
-public final class CSharedUITest
+public final class PeppolUITypesTest
 {
   @Test
   public void testSMPIDPattern ()
@@ -36,6 +35,6 @@ public final class CSharedUITest
                                           "IBM.ECSCTEST",
                                           "smp.difi.no",
                                           "SMP123" })
-      assertTrue (s + " failed!", RegExHelper.stringMatchesPattern (PeppolUI.PATTERN_SMP_ID, s));
+      assertTrue (s + " failed!", RegExHelper.stringMatchesPattern (PeppolUITypes.PATTERN_SMP_ID, s));
   }
 }

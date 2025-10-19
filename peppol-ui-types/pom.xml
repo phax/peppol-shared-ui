@@ -55,6 +55,10 @@
 
   <dependencies>
     <dependency>
+      <groupId>com.helger.commons</groupId>
+      <artifactId>ph-scopes</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.helger.peppol</groupId>
       <artifactId>peppol-id</artifactId>
     </dependency>

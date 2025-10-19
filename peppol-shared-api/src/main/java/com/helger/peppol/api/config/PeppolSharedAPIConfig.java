@@ -19,7 +19,7 @@ package com.helger.peppol.api.config;
 import com.helger.annotation.style.UsedViaReflection;
 import com.helger.base.debug.GlobalDebug;
 import com.helger.config.IConfig;
-import com.helger.peppol.photon.config.PeppolSharedConfig;
+import com.helger.peppol.ui.types.config.PeppolSharedConfig;
 import com.helger.scope.singleton.AbstractGlobalSingleton;
 
 import jakarta.annotation.Nonnull;

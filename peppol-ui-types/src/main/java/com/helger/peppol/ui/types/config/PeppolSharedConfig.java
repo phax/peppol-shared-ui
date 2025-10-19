@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.peppol.photon.config;
+package com.helger.peppol.ui.types.config;
 
 import com.helger.annotation.concurrent.GuardedBy;
 import com.helger.annotation.style.UsedViaReflection;

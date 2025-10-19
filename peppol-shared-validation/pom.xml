@@ -56,7 +56,7 @@
   <dependencies>
     <dependency>
       <groupId>com.helger.peppol.ui</groupId>
-      <artifactId>ph-oton-peppol</artifactId>
+      <artifactId>peppol-ui</artifactId>
     </dependency>
 
     <dependency>

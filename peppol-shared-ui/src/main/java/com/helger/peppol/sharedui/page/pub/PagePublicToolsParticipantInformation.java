@@ -103,6 +103,7 @@ import com.helger.peppol.sharedui.page.AbstractAppWebPage;
 import com.helger.peppol.sml.ESMPAPIType;
 import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppol.smp.ESMPTransportProfileState;
+import com.helger.peppol.ui.types.PeppolUITypes;
 import com.helger.peppolid.CIdentifier;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
@@ -674,7 +675,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
         final ICommonsSortedMap <String, String> aSGHrefs = new CommonsTreeMap <> ();
         IHCNode aSGExtension = null;
         // Defaulting to true per 10.8.2025
-        boolean bUseSMPSecureValidation = PeppolUI.DEFAULT_SMP_USE_SECURE_VALIDATION;
+        boolean bUseSMPSecureValidation = PeppolUITypes.DEFAULT_SMP_USE_SECURE_VALIDATION;
 
         switch (aSMPQueryParams.getSMPAPIType ())
         {
