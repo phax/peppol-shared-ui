@@ -27,6 +27,7 @@ import com.helger.peppol.ui.types.nicename.NiceNameEntry;
 import com.helger.peppol.ui.types.nicename.NiceNameManager;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
+import com.helger.peppolid.peppol.EPeppolCodeListItemState;
 import com.helger.peppolid.peppol.PeppolIdentifierHelper;
 import com.helger.photon.bootstrap4.badge.BootstrapBadge;
 import com.helger.photon.bootstrap4.badge.EBootstrapBadgeType;
@@ -74,6 +75,16 @@ public final class NiceNameUI
     return ret;
   }
 
+  @Nullable
+  public static BootstrapBadge createStateBadge (@Nonnull final EPeppolCodeListItemState eState)
+  {
+    if (eState.isRemoved ())
+      return new BootstrapBadge (EBootstrapBadgeType.DANGER).addChild ("Identifier is removed");
+    if (eState.isDeprecated ())
+      return new BootstrapBadge (EBootstrapBadgeType.WARNING).addChild ("Identifier is deprecated");
+    return null;
+  }
+
   @Nonnull
   private static IHCNode _createID (@Nonnull final String sID,
                                     @Nullable final NiceNameEntry aNiceName,
@@ -83,12 +94,7 @@ public final class NiceNameUI
       return createFormattedID (sID, null, null, null, bInDetails);
 
     final HCNodeList aWarnings = new HCNodeList ();
-    if (aNiceName.getState ().isRemoved ())
-      aWarnings.addChild (new BootstrapBadge (EBootstrapBadgeType.DANGER).addChild ("Identifier is removed"));
-    else
-      if (aNiceName.getState ().isDeprecated ())
-        aWarnings.addChild (new BootstrapBadge (EBootstrapBadgeType.WARNING).addChild ("Identifier is deprecated"));
-
+    aWarnings.addChild (createStateBadge (aNiceName.getState ()));
     if (aNiceName.hasSpecialLabel ())
     {
       if (aWarnings.hasChildren ())
