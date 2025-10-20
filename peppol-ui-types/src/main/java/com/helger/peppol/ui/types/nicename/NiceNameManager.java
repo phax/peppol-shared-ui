@@ -26,6 +26,7 @@ import com.helger.base.concurrent.SimpleReadWriteLock;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.string.StringHelper;
 import com.helger.base.string.StringParser;
+import com.helger.base.string.StringRemove;
 import com.helger.collection.commons.CommonsArrayList;
 import com.helger.collection.commons.CommonsLinkedHashMap;
 import com.helger.collection.commons.ICommonsList;
@@ -191,6 +192,38 @@ public final class NiceNameManager
     {
       RW_LOCK.readLock ().unlock ();
     }
+  }
+
+  public static boolean isPintDocType (@Nonnull final IDocumentTypeIdentifier aDocTypeID)
+  {
+    return PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_PEPPOL_DOCTYPE_WILDCARD.equals (aDocTypeID.getScheme ());
+  }
+
+  public static boolean isWildcardDocType (@Nonnull final IDocumentTypeIdentifier aDocTypeID)
+  {
+    return aDocTypeID.getValue ().indexOf ('*') > 0;
+  }
+
+  @Nullable
+  public static NiceNameEntry getPintEnabledNiceNameEntry (@Nonnull final IDocumentTypeIdentifier aDocTypeID)
+  {
+    final boolean bIsPint = isPintDocType (aDocTypeID);
+    final boolean bIsWildcard = isWildcardDocType (aDocTypeID);
+
+    NiceNameEntry aNN = getDocTypeNiceName (aDocTypeID);
+    if (aNN == null && bIsPint && bIsWildcard)
+    {
+      // Try version without the star
+      aNN = getDocTypeNiceName (StringRemove.removeAll (aDocTypeID.getURIEncoded (), '*'));
+    }
+    if (aNN != null && bIsPint)
+    {
+      // Append something to the name
+      // New logic since 15.5.2025 (PFUOI 4.3.0)
+      aNN = aNN.withNewName (aNN.getName () + (bIsWildcard ? " (PINT wildcard match)" : " (PINT exact match)"));
+    }
+
+    return aNN;
   }
 
   @Nullable

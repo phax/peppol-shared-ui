@@ -17,7 +17,6 @@
 package com.helger.peppol.ui.nicename;
 
 import com.helger.annotation.concurrent.Immutable;
-import com.helger.base.string.StringRemove;
 import com.helger.html.hc.IHCNode;
 import com.helger.html.hc.html.textlevel.HCCode;
 import com.helger.html.hc.html.textlevel.HCSmall;
@@ -28,7 +27,6 @@ import com.helger.peppol.ui.types.nicename.NiceNameManager;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.peppol.EPeppolCodeListItemState;
-import com.helger.peppolid.peppol.PeppolIdentifierHelper;
 import com.helger.photon.bootstrap4.badge.BootstrapBadge;
 import com.helger.photon.bootstrap4.badge.EBootstrapBadgeType;
 
@@ -109,42 +107,10 @@ public final class NiceNameUI
                               bInDetails);
   }
 
-  private static boolean _isPintDocType (@Nonnull final IDocumentTypeIdentifier aDocTypeID)
-  {
-    return PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_PEPPOL_DOCTYPE_WILDCARD.equals (aDocTypeID.getScheme ());
-  }
-
-  private static boolean _isWildcardDocType (@Nonnull final IDocumentTypeIdentifier aDocTypeID)
-  {
-    return aDocTypeID.getValue ().indexOf ('*') > 0;
-  }
-
-  @Nullable
-  private static NiceNameEntry _getPintEnabledNiceNameEntry (@Nonnull final IDocumentTypeIdentifier aDocTypeID)
-  {
-    final boolean bIsPint = _isPintDocType (aDocTypeID);
-    final boolean bIsWildcard = _isWildcardDocType (aDocTypeID);
-
-    NiceNameEntry aNN = NiceNameManager.getDocTypeNiceName (aDocTypeID);
-    if (aNN == null && bIsPint && bIsWildcard)
-    {
-      // Try version without the star
-      aNN = NiceNameManager.getDocTypeNiceName (StringRemove.removeAll (aDocTypeID.getURIEncoded (), '*'));
-    }
-    if (aNN != null && bIsPint)
-    {
-      // Append something to the name
-      // New logic since 15.5.2025 (PFUOI 4.3.0)
-      aNN = aNN.withNewName (aNN.getName () + (bIsWildcard ? " (PINT wildcard match)" : " (PINT exact match)"));
-    }
-
-    return aNN;
-  }
-
   @Nonnull
   public static IHCNode createDocTypeID (@Nonnull final IDocumentTypeIdentifier aDocTypeID, final boolean bInDetails)
   {
-    final NiceNameEntry aNN = _getPintEnabledNiceNameEntry (aDocTypeID);
+    final NiceNameEntry aNN = NiceNameManager.getPintEnabledNiceNameEntry (aDocTypeID);
     return _createID (aDocTypeID.getURIEncoded (), aNN, bInDetails);
   }
 
@@ -156,7 +122,7 @@ public final class NiceNameUI
     final String sURI = aProcessID.getURIEncoded ();
 
     // Check in relation ship to Document Type first
-    NiceNameEntry aNN = _getPintEnabledNiceNameEntry (aDocTypeID);
+    NiceNameEntry aNN = NiceNameManager.getPintEnabledNiceNameEntry (aDocTypeID);
     if (aNN != null)
     {
       if (aNN.containsProcessID (aProcessID))

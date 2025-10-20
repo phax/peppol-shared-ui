@@ -34,6 +34,7 @@ import com.helger.peppol.ui.types.nicename.NiceNameEntry;
 import com.helger.peppol.ui.types.nicename.NiceNameManager;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.factory.IIdentifierFactory;
+import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.smpclient.json.SMPJsonResponse;
 
 import jakarta.annotation.Nonnull;
@@ -122,7 +123,7 @@ public final class PeppolSharedSMPJsonHelper
           final String sDocType = aUrlEntry.getAsString (SMPJsonResponse.JSON_DOCUMENT_TYPE_ID);
           if (sDocType != null)
           {
-            final NiceNameEntry aNN = NiceNameManager.getDocTypeNiceName (sDocType);
+            final NiceNameEntry aNN = NiceNameManager.getPintEnabledNiceNameEntry (SimpleIdentifierFactory.INSTANCE.parseDocumentTypeIdentifier (sDocType));
             if (aNN != null)
             {
               aUrlEntry.add (JSON_NICE_NAME, aNN.getName ());
