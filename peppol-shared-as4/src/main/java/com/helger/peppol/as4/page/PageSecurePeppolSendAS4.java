@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.peppol.sharedui.page.secure;
+package com.helger.peppol.as4.page;
 
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore.PrivateKeyEntry;
