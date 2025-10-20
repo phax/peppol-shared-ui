@@ -62,6 +62,12 @@
     </developer>
   </developers>
   
+  <properties>
+    <phive-rules.version>4.0.3</phive-rules.version>
+    <phase4.version>4.0.1</phase4.version>
+    <ddd.version>0.7.2</ddd.version>
+  </properties>
+  
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -107,58 +113,11 @@
         <scope>import</scope>
       </dependency>
       <dependency>
-        <groupId>com.helger.ubl</groupId>
-        <artifactId>ph-ubl-parent-pom</artifactId>
-        <version>10.0.0</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.helger.cii</groupId>
-        <artifactId>ph-cii-parent-pom</artifactId>
-        <version>4.0.0</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
         <groupId>com.helger.peppol</groupId>
         <artifactId>peppol-commons-parent-pom</artifactId>
         <version>12.0.4</version>
         <type>pom</type>
         <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.helger.schematron</groupId>
-        <artifactId>ph-schematron-parent-pom</artifactId>
-        <version>9.0.1</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.helger.phive</groupId>
-        <artifactId>phive-parent-pom</artifactId>
-        <version>11.0.1</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.helger.phive.rules</groupId>
-        <artifactId>phive-rules-parent-pom</artifactId>
-        <version>4.0.3</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.helger.phase4</groupId>
-        <artifactId>phase4-parent-pom</artifactId>
-        <version>4.0.1</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.helger</groupId>
-        <artifactId>ddd</artifactId>
-        <version>0.7.2</version>
       </dependency>
       
       <dependency>

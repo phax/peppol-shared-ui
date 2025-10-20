@@ -62,106 +62,132 @@
     <dependency>
       <groupId>com.helger.phive.rules</groupId>
       <artifactId>phive-rules-cii</artifactId>
+      <version>${phive-rules.version}</version>
     </dependency>
     <dependency>
       <groupId>com.helger.phive.rules</groupId>
       <artifactId>phive-rules-cius-pt</artifactId>
+      <version>${phive-rules.version}</version>
     </dependency>
     <dependency>
       <groupId>com.helger.phive.rules</groupId>
       <artifactId>phive-rules-cius-ro</artifactId>
+      <version>${phive-rules.version}</version>
     </dependency>
     <dependency>
       <groupId>com.helger.phive.rules</groupId>
       <artifactId>phive-rules-ebinterface</artifactId>
+      <version>${phive-rules.version}</version>
     </dependency>
     <dependency>
       <groupId>com.helger.phive.rules</groupId>
       <artifactId>phive-rules-ehf</artifactId>
+      <version>${phive-rules.version}</version>
     </dependency>
     <dependency>
       <groupId>com.helger.phive.rules</groupId>
       <artifactId>phive-rules-en16931</artifactId>
+      <version>${phive-rules.version}</version>
     </dependency>
     <dependency>
       <groupId>com.helger.phive.rules</groupId>
       <artifactId>phive-rules-energieefactuur</artifactId>
+      <version>${phive-rules.version}</version>
     </dependency>
     <dependency>
       <groupId>com.helger.phive.rules</groupId>
       <artifactId>phive-rules-facturae</artifactId>
+      <version>${phive-rules.version}</version>
     </dependency>
     <dependency>
       <groupId>com.helger.phive.rules</groupId>
       <artifactId>phive-rules-fatturapa</artifactId>
+      <version>${phive-rules.version}</version>
     </dependency>
     <dependency>
       <groupId>com.helger.phive.rules</groupId>
       <artifactId>phive-rules-finvoice</artifactId>
+      <version>${phive-rules.version}</version>
     </dependency>
     <dependency>
       <groupId>com.helger.phive.rules</groupId>
       <artifactId>phive-rules-france</artifactId>
+      <version>${phive-rules.version}</version>
     </dependency>
     <dependency>
       <groupId>com.helger.phive.rules</groupId>
       <artifactId>phive-rules-ksef</artifactId>
+      <version>${phive-rules.version}</version>
     </dependency>
     <dependency>
       <groupId>com.helger.phive.rules</groupId>
       <artifactId>phive-rules-isdoc</artifactId>
+      <version>${phive-rules.version}</version>
     </dependency>
     <dependency>
       <groupId>com.helger.phive.rules</groupId>
       <artifactId>phive-rules-oioubl</artifactId>
+      <version>${phive-rules.version}</version>
     </dependency>
     <dependency>
       <groupId>com.helger.phive.rules</groupId>
       <artifactId>phive-rules-peppol</artifactId>
+      <version>${phive-rules.version}</version>
     </dependency>
     <dependency>
       <groupId>com.helger.phive.rules</groupId>
       <artifactId>phive-rules-peppol-italy</artifactId>
+      <version>${phive-rules.version}</version>
     </dependency>
     <dependency>
       <groupId>com.helger.phive.rules</groupId>
       <artifactId>phive-rules-peppol-legacy</artifactId>
+      <version>${phive-rules.version}</version>
     </dependency>
     <dependency>
       <groupId>com.helger.phive.rules</groupId>
       <artifactId>phive-rules-setu</artifactId>
+      <version>${phive-rules.version}</version>
     </dependency>
     <dependency>
       <groupId>com.helger.phive.rules</groupId>
       <artifactId>phive-rules-simplerinvoicing</artifactId>
+      <version>${phive-rules.version}</version>
     </dependency>
     <dependency>
       <groupId>com.helger.phive.rules</groupId>
       <artifactId>phive-rules-svefaktura</artifactId>
+      <version>${phive-rules.version}</version>
     </dependency>
     <dependency>
       <groupId>com.helger.phive.rules</groupId>
       <artifactId>phive-rules-teapps</artifactId>
+      <version>${phive-rules.version}</version>
     </dependency>
     <dependency>
       <groupId>com.helger.phive.rules</groupId>
       <artifactId>phive-rules-ubl</artifactId>
+      <version>${phive-rules.version}</version>
     </dependency>
     <dependency>
       <groupId>com.helger.phive.rules</groupId>
       <artifactId>phive-rules-ublbe</artifactId>
+      <version>${phive-rules.version}</version>
     </dependency>
     <dependency>
       <groupId>com.helger.phive.rules</groupId>
       <artifactId>phive-rules-xrechnung</artifactId>
+      <version>${phive-rules.version}</version>
     </dependency>
     <dependency>
       <groupId>com.helger.phive.rules</groupId>
       <artifactId>phive-rules-zatca</artifactId>
+      <version>${phive-rules.version}</version>
     </dependency>
     <dependency>
       <groupId>com.helger.phive.rules</groupId>
       <artifactId>phive-rules-zugferd</artifactId>
+      <version>${phive-rules.version}</version>
     </dependency>
 
     <dependency>
