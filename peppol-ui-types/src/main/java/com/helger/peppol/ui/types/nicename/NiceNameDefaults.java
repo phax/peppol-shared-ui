@@ -17,7 +17,6 @@
 package com.helger.peppol.ui.types.nicename;
 
 import com.helger.annotation.style.ReturnsMutableObject;
-import com.helger.base.string.StringHelper;
 import com.helger.collection.commons.CommonsArrayList;
 import com.helger.collection.commons.CommonsLinkedHashMap;
 import com.helger.collection.commons.ICommonsOrderedMap;
@@ -38,20 +37,20 @@ public final class NiceNameDefaults
   private static final ICommonsOrderedMap <String, NiceNameEntry> DEFAULT_PROCESSES = new CommonsLinkedHashMap <> ();
 
   @Nonnull
-  private static String _ensurePrefix (@Nonnull final String sPrefix, @Nonnull final String s)
+  private static String _unifyCasing (@Nonnull final String s)
   {
-    final String sReal = StringHelper.trimStart (s, "PEPPOL").trim ();
+    String ret = s.trim ();
+    if (ret.startsWith ("PEPPOL"))
+      ret = "Peppol" + ret.substring (6);
 
-    if (sReal.startsWith (sPrefix))
-      return sReal;
-    return sPrefix + sReal;
+    return ret;
   }
 
   static
   {
     for (final com.helger.peppolid.peppol.doctype.EPredefinedDocumentTypeIdentifier e : com.helger.peppolid.peppol.doctype.EPredefinedDocumentTypeIdentifier.values ())
       DEFAULT_DOCTYPES.put (e.getURIEncoded (),
-                            new NiceNameEntry (_ensurePrefix ("Peppol ", e.getCommonName ()),
+                            new NiceNameEntry (_unifyCasing (e.getCommonName ()),
                                                e.getState (),
                                                e.getAllProcessIDs ()));
     for (final com.helger.peppolid.peppol.process.EPredefinedProcessIdentifier e : com.helger.peppolid.peppol.process.EPredefinedProcessIdentifier.values ())
