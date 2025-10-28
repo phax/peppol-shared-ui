@@ -13,5 +13,8 @@ This project consists of the following modules, in dependency order:
 
 # News and Noteworthy
 
-v0.9.0 - work in progress
-* Initial version
+v0.9.1 - 2025-10-28
+* Removed the hardcoded "Peppol " prefix before Document Type code list entries 
+
+v0.9.0 - 2025-10-20
+* Initial release
