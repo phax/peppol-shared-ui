@@ -144,7 +144,6 @@ import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.smpclient.peppol.utils.W3CEndpointReferenceHelper;
 import com.helger.smpclient.redirect.ISMPFollowRedirectCallback;
 import com.helger.smpclient.url.IPeppolURLProvider;
-import com.helger.smpclient.url.PeppolConfigurableURLProvider;
 import com.helger.smpclient.url.PeppolNaptrURLProvider;
 import com.helger.smpclient.url.PeppolURLProvider;
 import com.helger.smpclient.url.SMPDNSResolutionException;
@@ -475,31 +474,28 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
         if (aSMPQueryParams.getSMPAPIType () == ESMPAPIType.PEPPOL)
         {
           // Only if NAPTR is used
-          if (PeppolConfigurableURLProvider.USE_NATPR.get ())
+          try
           {
-            try
-            {
-              aUL.addItem (div ("DNS NAPTR domain: ").addChild (code (PeppolNaptrURLProvider.INSTANCE.getDNSNameOfParticipant (aParticipantID,
-                                                                                                                               aSMPQueryParams.getPeppolNetwork ()
-                                                                                                                                              .getSMLInfo ()))));
-            }
-            catch (final SMPDNSResolutionException ex)
-            {
-              // Ignore
-            }
+            aUL.addItem (div ("DNS NAPTR domain: ").addChild (code (PeppolNaptrURLProvider.INSTANCE.getDNSNameOfParticipant (aParticipantID,
+                                                                                                                             aSMPQueryParams.getPeppolNetwork ()
+                                                                                                                                            .getSMLInfo ()))));
+          }
+          catch (final SMPDNSResolutionException ex)
+          {
+            // Ignore
+          }
 
-            try
-            {
-              @SuppressWarnings ("removal")
-              final IPeppolURLProvider aOldURLProvider = PeppolURLProvider.INSTANCE;
-              aUL.addItem (div ("Old DNS CNAME domain: ").addChild (code (aOldURLProvider.getDNSNameOfParticipant (aParticipantID,
-                                                                                                                   aSMPQueryParams.getPeppolNetwork ()
-                                                                                                                                  .getSMLInfo ()))));
-            }
-            catch (final SMPDNSResolutionException ex)
-            {
-              // Ignore
-            }
+          try
+          {
+            @SuppressWarnings ("removal")
+            final IPeppolURLProvider aOldURLProvider = PeppolURLProvider.INSTANCE;
+            aUL.addItem (div ("Old-style DNS CNAME domain: ").addChild (code (aOldURLProvider.getDNSNameOfParticipant (aParticipantID,
+                                                                                                                       aSMPQueryParams.getPeppolNetwork ()
+                                                                                                                                      .getSMLInfo ()))));
+          }
+          catch (final SMPDNSResolutionException ex)
+          {
+            // Ignore
           }
         }
 
