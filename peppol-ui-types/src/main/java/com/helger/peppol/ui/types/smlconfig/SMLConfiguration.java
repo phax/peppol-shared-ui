@@ -130,7 +130,7 @@ public final class SMLConfiguration implements ISMLConfiguration
   public static SMLConfiguration createForPeppol (@Nonnull final ESML eSML)
   {
     final boolean bIsProd = eSML == ESML.DIGIT_PRODUCTION;
-    return new SMLConfiguration (new SMLInfo (eSML),
+    return new SMLConfiguration (SMLInfo.builder (eSML).build (),
                                  ESMPAPIType.PEPPOL,
                                  ESMPIdentifierType.PEPPOL,
                                  bIsProd,

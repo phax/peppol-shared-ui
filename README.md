@@ -13,6 +13,10 @@ This project consists of the following modules, in dependency order:
 
 # News and Noteworthy
 
+v0.9.2 - work in progress
+* Updated to peppol-commons 12.1.0
+* The SML URL suffixes are now editable 
+
 v0.9.1 - 2025-10-28
 * Removed the hardcoded "Peppol " prefix before Document Type code list entries 
 

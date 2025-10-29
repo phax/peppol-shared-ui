@@ -56,6 +56,12 @@ public interface ISMLConfigurationManager
    *        The service URL where the management application is running on incl. the host name. May
    *        not be <code>null</code>. The difference to the host name is the eventually present
    *        context path.
+   * @param sURLSuffixManageSMP
+   *        The sub-path to be used for managing SMP data in the SML. May not be <code>null</code>,
+   *        may be empty. If not empty it must start with a slash ("/").
+   * @param sURLSuffixManageParticipant
+   *        The sub-path to be used for managing participant data in the SML. May not be
+   *        <code>null</code>, may be empty. If not empty it must start with a slash ("/").
    * @param bClientCertificateRequired
    *        <code>true</code> if this SML requires a client certificate for access,
    *        <code>false</code> otherwise.<br>
@@ -76,6 +82,8 @@ public interface ISMLConfigurationManager
                                    @Nonnull @Nonempty String sDisplayName,
                                    @Nonnull @Nonempty String sDNSZone,
                                    @Nonnull @Nonempty String sManagementServiceURL,
+                                   @Nonnull final String sURLSuffixManageSMP,
+                                   @Nonnull final String sURLSuffixManageParticipant,
                                    boolean bClientCertificateRequired,
                                    @Nonnull ESMPAPIType eSMPAPIType,
                                    @Nonnull ESMPIdentifierType eSMPIdentifierType,
@@ -98,6 +106,12 @@ public interface ISMLConfigurationManager
    *        The service URL where the management application is running on incl. the host name. May
    *        not be <code>null</code>. The difference to the host name is the eventually present
    *        context path.
+   * @param sURLSuffixManageSMP
+   *        The sub-path to be used for managing SMP data in the SML. May not be <code>null</code>,
+   *        may be empty. If not empty it must start with a slash ("/").
+   * @param sURLSuffixManageParticipant
+   *        The sub-path to be used for managing participant data in the SML. May not be
+   *        <code>null</code>, may be empty. If not empty it must start with a slash ("/").
    * @param bClientCertificateRequired
    *        <code>true</code> if this SML requires a client certificate for access,
    *        <code>false</code> otherwise.<br>
@@ -118,6 +132,8 @@ public interface ISMLConfigurationManager
                          @Nonnull @Nonempty String sDisplayName,
                          @Nonnull @Nonempty String sDNSZone,
                          @Nonnull @Nonempty String sManagementServiceURL,
+                         @Nonnull final String sURLSuffixManageSMP,
+                         @Nonnull final String sURLSuffixManageParticipant,
                          boolean bClientCertificateRequired,
                          @Nonnull ESMPAPIType eSMPAPIType,
                          @Nonnull ESMPIdentifierType eSMPIdentifierType,

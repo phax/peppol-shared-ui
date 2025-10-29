@@ -56,17 +56,23 @@ public final class SMLConfigurationManager extends AbstractPhotonMapBasedWALDAO 
                                           @Nonnull @Nonempty final String sDisplayName,
                                           @Nonnull @Nonempty final String sDNSZone,
                                           @Nonnull @Nonempty final String sManagementServiceURL,
+                                          @Nonnull final String sURLSuffixManageSMP,
+                                          @Nonnull final String sURLSuffixManageParticipant,
                                           final boolean bClientCertificateRequired,
                                           @Nonnull final ESMPAPIType eSMPAPIType,
                                           @Nonnull final ESMPIdentifierType eSMPIdentifierType,
                                           final boolean bProduction,
                                           final int nPriority)
   {
-    final SMLInfo aSMLInfo = new SMLInfo (sSMLInfoID,
-                                          sDisplayName,
-                                          sDNSZone,
-                                          sManagementServiceURL,
-                                          bClientCertificateRequired);
+    final SMLInfo aSMLInfo = SMLInfo.builder ()
+                                    .id (sSMLInfoID)
+                                    .displayName (sDisplayName)
+                                    .dnsZone (sDNSZone)
+                                    .managementServiceURL (sManagementServiceURL)
+                                    .urlSuffixManageSMP (sURLSuffixManageSMP)
+                                    .urlSuffixManageParticipant (sURLSuffixManageParticipant)
+                                    .clientCertificateRequired (bClientCertificateRequired)
+                                    .build ();
     final SMLConfiguration aExtSMLInfo = new SMLConfiguration (aSMLInfo,
                                                                eSMPAPIType,
                                                                eSMPIdentifierType,
@@ -79,6 +85,8 @@ public final class SMLConfigurationManager extends AbstractPhotonMapBasedWALDAO 
                                       sDisplayName,
                                       sDNSZone,
                                       sManagementServiceURL,
+                                      sURLSuffixManageSMP,
+                                      sURLSuffixManageParticipant,
                                       Boolean.valueOf (bClientCertificateRequired),
                                       eSMPAPIType,
                                       eSMPIdentifierType,
@@ -92,6 +100,8 @@ public final class SMLConfigurationManager extends AbstractPhotonMapBasedWALDAO 
                                 @Nonnull @Nonempty final String sDisplayName,
                                 @Nonnull @Nonempty final String sDNSZone,
                                 @Nonnull @Nonempty final String sManagementServiceURL,
+                                @Nonnull final String sURLSuffixManageSMP,
+                                @Nonnull final String sURLSuffixManageParticipant,
                                 final boolean bClientCertificateRequired,
                                 @Nonnull final ESMPAPIType eSMPAPIType,
                                 @Nonnull final ESMPIdentifierType eSMPIdentifierType,
@@ -109,11 +119,17 @@ public final class SMLConfigurationManager extends AbstractPhotonMapBasedWALDAO 
     try
     {
       final SMLInfo aSMLInfo = aExtSMLInfo.getSMLInfo ();
+      final SMLInfo aNewSMLInfo = SMLInfo.builder (aSMLInfo)
+                                         .displayName (sDisplayName)
+                                         .dnsZone (sDNSZone)
+                                         .managementServiceURL (sManagementServiceURL)
+                                         .urlSuffixManageSMP (sURLSuffixManageSMP)
+                                         .urlSuffixManageParticipant (sURLSuffixManageParticipant)
+                                         .clientCertificateRequired (bClientCertificateRequired)
+                                         .build ();
+
       EChange eChange = EChange.UNCHANGED;
-      eChange = eChange.or (aSMLInfo.setDisplayName (sDisplayName));
-      eChange = eChange.or (aSMLInfo.setDNSZone (sDNSZone));
-      eChange = eChange.or (aSMLInfo.setManagementServiceURL (sManagementServiceURL));
-      eChange = eChange.or (aSMLInfo.setClientCertificateRequired (bClientCertificateRequired));
+      eChange = eChange.or (aExtSMLInfo.setSMLInfo (aNewSMLInfo));
       eChange = eChange.or (aExtSMLInfo.setSMPAPIType (eSMPAPIType));
       eChange = eChange.or (aExtSMLInfo.setSMPIdentifierType (eSMPIdentifierType));
       eChange = eChange.or (aExtSMLInfo.setProduction (bProduction));
@@ -133,6 +149,8 @@ public final class SMLConfigurationManager extends AbstractPhotonMapBasedWALDAO 
                                       sDisplayName,
                                       sDNSZone,
                                       sManagementServiceURL,
+                                      sURLSuffixManageSMP,
+                                      sURLSuffixManageParticipant,
                                       Boolean.valueOf (bClientCertificateRequired),
                                       eSMPAPIType,
                                       eSMPIdentifierType,
