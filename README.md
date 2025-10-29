@@ -13,9 +13,9 @@ This project consists of the following modules, in dependency order:
 
 # News and Noteworthy
 
-v0.9.2 - work in progress
+v0.9.2 - 2025-10-29
 * Updated to peppol-commons 12.1.0
-* The SML URL suffixes are now editable 
+* The SML URL suffixes to manage SMPs and Participants are now editable (required for HR)
 
 v0.9.1 - 2025-10-28
 * Removed the hardcoded "Peppol " prefix before Document Type code list entries 
