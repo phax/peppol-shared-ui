@@ -28,6 +28,7 @@ import com.helger.annotation.Nonempty;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.timing.StopWatch;
 import com.helger.http.CHttp;
+import com.helger.http.CHttpHeader;
 import com.helger.httpclient.HttpClientSettings;
 import com.helger.json.serialize.JsonWriterSettings;
 import com.helger.peppol.api.config.PeppolSharedAPIConfig;
@@ -43,6 +44,7 @@ import jakarta.annotation.Nonnull;
 
 public abstract class AbstractAPIExecutor implements IAPIExecutor
 {
+  public static final int DEFAULT_RETRY_AFTER_SECONDS = 5;
   protected static final AtomicInteger COUNTER = new AtomicInteger (0);
 
   private static final Logger LOGGER = LoggerFactory.getLogger (AbstractAPIExecutor.class);
@@ -122,7 +124,9 @@ public abstract class AbstractAPIExecutor implements IAPIExecutor
         if (LOGGER.isDebugEnabled ())
           LOGGER.debug (sLogPrefix + "REST search rate limit exceeded for '" + sRateLimitKey + "'");
 
-        aUnifiedResponse.setStatus (CHttp.HTTP_TOO_MANY_REQUESTS);
+        aUnifiedResponse.setStatus (CHttp.HTTP_TOO_MANY_REQUESTS)
+                        .addCustomResponseHeader (CHttpHeader.RETRY_AFTER,
+                                                  Integer.toString (DEFAULT_RETRY_AFTER_SECONDS));
         return;
       }
     }
