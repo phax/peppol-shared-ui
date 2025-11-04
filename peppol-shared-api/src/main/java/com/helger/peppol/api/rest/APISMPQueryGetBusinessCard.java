@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.apache.hc.client5.http.HttpResponseException;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
@@ -33,6 +34,7 @@ import com.helger.base.timing.StopWatch;
 import com.helger.datetime.helper.PDTFactory;
 import com.helger.http.CHttp;
 import com.helger.httpclient.HttpClientManager;
+import com.helger.httpclient.HttpClientSettings;
 import com.helger.httpclient.response.ResponseHandlerByteArray;
 import com.helger.json.IJsonObject;
 import com.helger.peppol.businesscard.generic.PDBusinessCard;
@@ -49,71 +51,22 @@ import com.helger.smpclient.httpclient.SMPHttpClientSettings;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 
 import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 public final class APISMPQueryGetBusinessCard extends AbstractAPIExecutor
 {
+  private static final Logger LOGGER = LoggerFactory.getLogger (APISMPQueryGetBusinessCard.class);
+
   public APISMPQueryGetBusinessCard (@Nonnull @Nonempty final String sUserAgent)
   {
     super (sUserAgent);
   }
 
-  private static final Logger LOGGER = LoggerFactory.getLogger (APISMPQueryGetBusinessCard.class);
-
-  @Override
-  protected void invokeAPI (@Nonnull @Nonempty final String sLogPrefix,
-                            @Nonnull final IAPIDescriptor aAPIDescriptor,
-                            @Nonnull @Nonempty final String sPath,
-                            @Nonnull final Map <String, String> aPathVariables,
-                            @Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
-                            @Nonnull final PhotonUnifiedResponse aUnifiedResponse) throws Exception
+  @Nullable
+  public static IJsonObject getBusinessCardJSON (@Nonnull final String sLogPrefix,
+                                                 @Nonnull final SMPQueryParams aSMPQueryParams,
+                                                 @Nullable final Consumer <? super HttpClientSettings> aHCSModifier)
   {
-    final ISMLConfigurationManager aSMLConfigurationMgr = PhotonPeppolMetaManager.getSMLConfigurationMgr ();
-    final String sSMLID = aPathVariables.get (PeppolSharedRestAPI.PARAM_SML_ID);
-    final boolean bSMLAutoDetect = ISMLConfigurationManager.ID_AUTO_DETECT.equals (sSMLID);
-    ISMLConfiguration aSML = aSMLConfigurationMgr.getSMLInfoOfID (sSMLID);
-    if (aSML == null && !bSMLAutoDetect)
-      throw new APIParamException ("Unsupported SML ID '" + sSMLID + "' provided.");
-
-    final String sParticipantID = aPathVariables.get (PeppolSharedRestAPI.PARAM_PARTICIPANT_ID);
-    final IParticipantIdentifier aPID = SimpleIdentifierFactory.INSTANCE.parseParticipantIdentifier (sParticipantID);
-    if (aPID == null)
-      throw new APIParamException ("Invalid participant ID '" + sParticipantID + "' provided.");
-
-    final ZonedDateTime aQueryDT = PDTFactory.getCurrentZonedDateTimeUTC ();
-    final StopWatch aSW = StopWatch.createdStarted ();
-
-    SMPQueryParams aSMPQueryParams = null;
-    if (bSMLAutoDetect)
-    {
-      for (final ISMLConfiguration aCurSML : aSMLConfigurationMgr.getAllSorted ())
-      {
-        aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aCurSML, aPID.getScheme (), aPID.getValue (), false);
-        if (aSMPQueryParams != null && aSMPQueryParams.isSMPRegisteredInDNS ())
-        {
-          // Found it
-          aSML = aCurSML;
-          break;
-        }
-      }
-
-      // Ensure to go into the exception handler
-      if (aSML == null)
-        throw new HttpResponseException (CHttp.HTTP_NOT_FOUND,
-                                         "The participant identifier '" +
-                                                               sParticipantID +
-                                                               "' could not be found in any SML.");
-    }
-    else
-    {
-      aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aSML, aPID.getScheme (), aPID.getValue (), true);
-    }
-    if (aSMPQueryParams == null)
-      throw new APIParamException ("Failed to resolve participant ID '" +
-                                   sParticipantID +
-                                   "' for the provided SML '" +
-                                   aSML.getID () +
-                                   "'");
-
     final IParticipantIdentifier aParticipantID = aSMPQueryParams.getParticipantID ();
 
     LOGGER.info (sLogPrefix +
@@ -124,7 +77,7 @@ public final class APISMPQueryGetBusinessCard extends AbstractAPIExecutor
                  "' from '" +
                  aSMPQueryParams.getSMPHostURI () +
                  "' using SML '" +
-                 aSML +
+                 aSMPQueryParams.getSMLInfo ().getID () +
                  "'");
 
     final String sBCURL = StringHelper.trimEnd (aSMPQueryParams.getSMPHostURI ().toString (), '/') +
@@ -134,7 +87,8 @@ public final class APISMPQueryGetBusinessCard extends AbstractAPIExecutor
     byte [] aBCBytes;
 
     final SMPHttpClientSettings aHCS = new SMPHttpClientSettings ();
-    m_aHCSModifier.accept (aHCS);
+    if (aHCSModifier != null)
+      aHCSModifier.accept (aHCS);
 
     try (final HttpClientManager aHttpClientMgr = HttpClientManager.create (aHCS))
     {
@@ -162,6 +116,65 @@ public final class APISMPQueryGetBusinessCard extends AbstractAPIExecutor
         aBCJson = aBC.getAsJson ();
       }
     }
+    return aBCJson;
+  }
+
+  @Override
+  protected void invokeAPI (@Nonnull @Nonempty final String sLogPrefix,
+                            @Nonnull final IAPIDescriptor aAPIDescriptor,
+                            @Nonnull @Nonempty final String sPath,
+                            @Nonnull final Map <String, String> aPathVariables,
+                            @Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
+                            @Nonnull final PhotonUnifiedResponse aUnifiedResponse) throws Exception
+  {
+    final ISMLConfigurationManager aSMLConfigurationMgr = PhotonPeppolMetaManager.getSMLConfigurationMgr ();
+    final String sSMLID = aPathVariables.get (PeppolSharedRestAPI.PARAM_SML_ID);
+    final boolean bSMLAutoDetect = ISMLConfigurationManager.ID_AUTO_DETECT.equals (sSMLID);
+    ISMLConfiguration aSMLConfig = aSMLConfigurationMgr.getSMLInfoOfID (sSMLID);
+    if (aSMLConfig == null && !bSMLAutoDetect)
+      throw new APIParamException ("Unsupported SML ID '" + sSMLID + "' provided.");
+
+    final String sParticipantID = aPathVariables.get (PeppolSharedRestAPI.PARAM_PARTICIPANT_ID);
+    final IParticipantIdentifier aPID = SimpleIdentifierFactory.INSTANCE.parseParticipantIdentifier (sParticipantID);
+    if (aPID == null)
+      throw new APIParamException ("Invalid participant ID '" + sParticipantID + "' provided.");
+
+    final ZonedDateTime aQueryDT = PDTFactory.getCurrentZonedDateTimeUTC ();
+    final StopWatch aSW = StopWatch.createdStarted ();
+
+    SMPQueryParams aSMPQueryParams = null;
+    if (bSMLAutoDetect)
+    {
+      for (final ISMLConfiguration aCurSML : aSMLConfigurationMgr.getAllSorted ())
+      {
+        aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aCurSML, aPID.getScheme (), aPID.getValue (), false);
+        if (aSMPQueryParams != null && aSMPQueryParams.isSMPRegisteredInDNS ())
+        {
+          // Found it
+          aSMLConfig = aCurSML;
+          break;
+        }
+      }
+
+      // Ensure to go into the exception handler
+      if (aSMLConfig == null)
+        throw new HttpResponseException (CHttp.HTTP_NOT_FOUND,
+                                         "The participant identifier '" +
+                                                               sParticipantID +
+                                                               "' could not be found in any SML.");
+    }
+    else
+    {
+      aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aSMLConfig, aPID.getScheme (), aPID.getValue (), true);
+    }
+    if (aSMPQueryParams == null)
+      throw new APIParamException ("Failed to resolve participant ID '" +
+                                   sParticipantID +
+                                   "' for the provided SML '" +
+                                   aSMLConfig.getID () +
+                                   "'");
+
+    final IJsonObject aBCJson = getBusinessCardJSON (sLogPrefix, aSMPQueryParams, m_aHCSModifier);
 
     aSW.stop ();
 

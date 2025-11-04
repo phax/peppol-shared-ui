@@ -14,7 +14,8 @@ This project consists of the following modules, in dependency order:
 # News and Noteworthy
 
 v0.9.3 - 2025-11-04
-* Removed the `https` requirement for Peppol SMP URLs
+* Removed the `https` requirement for Peppol SMP URLs in production
+* Removed the possibility to query with CNAME
 
 v0.9.2 - 2025-10-29
 * Updated to peppol-commons 12.1.0
