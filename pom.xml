@@ -26,7 +26,7 @@
   </parent>
   <groupId>com.helger.peppol.ui</groupId>
   <artifactId>peppol-shared-ui-parent-pom</artifactId>
-  <version>0.9.3-SNAPSHOT</version>
+  <version>0.9.3</version>
   <packaging>pom</packaging>
   <name>peppol-shared-ui-parent-pom</name>
   <description>Parent POM for shared Peppol UI components</description>
@@ -45,7 +45,7 @@
     <connection>scm:git:https://github.com/phax/peppol-shared-ui.git</connection>
     <developerConnection>scm:git:https://github.com/phax/peppol-shared-ui.git</developerConnection>
     <url>https://github.com/phax/peppol-shared-ui</url>
-    <tag>HEAD</tag>
+    <tag>peppol-shared-ui-parent-pom-0.9.3</tag>
   </scm>
 
   <organization>
