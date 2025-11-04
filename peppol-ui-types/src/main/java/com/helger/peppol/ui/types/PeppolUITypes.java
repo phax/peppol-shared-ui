@@ -35,7 +35,6 @@ public final class PeppolUITypes
   public static final boolean DEFAULT_SHOW_TIME = false;
   public static final boolean DEFAULT_XSD_VALIDATION = true;
   public static final boolean DEFAULT_VERIFY_SIGNATURES = true;
-  public static final boolean DEFAULT_CNAME_LOOKUP = false;
 
   private PeppolUITypes ()
   {}

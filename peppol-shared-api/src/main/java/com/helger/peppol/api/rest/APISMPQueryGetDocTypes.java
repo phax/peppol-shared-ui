@@ -106,11 +106,7 @@ public final class APISMPQueryGetDocTypes extends AbstractAPIExecutor
     {
       for (final ISMLConfiguration aCurSML : aSMLConfigurationMgr.getAllSorted ())
       {
-        aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aCurSML,
-                                                             aPID.getScheme (),
-                                                             aPID.getValue (),
-                                                             PeppolUITypes.DEFAULT_CNAME_LOOKUP,
-                                                             false);
+        aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aCurSML, aPID.getScheme (), aPID.getValue (), false);
         if (aSMPQueryParams != null && aSMPQueryParams.isSMPRegisteredInDNS ())
         {
           // Found it
@@ -128,11 +124,7 @@ public final class APISMPQueryGetDocTypes extends AbstractAPIExecutor
     }
     else
     {
-      aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aSML,
-                                                           aPID.getScheme (),
-                                                           aPID.getValue (),
-                                                           PeppolUITypes.DEFAULT_CNAME_LOOKUP,
-                                                           true);
+      aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aSML, aPID.getScheme (), aPID.getValue (), true);
     }
     if (aSMPQueryParams == null)
       throw new APIParamException ("Failed to resolve participant ID '" +

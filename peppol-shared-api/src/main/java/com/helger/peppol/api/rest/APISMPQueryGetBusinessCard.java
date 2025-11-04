@@ -37,7 +37,6 @@ import com.helger.httpclient.response.ResponseHandlerByteArray;
 import com.helger.json.IJsonObject;
 import com.helger.peppol.businesscard.generic.PDBusinessCard;
 import com.helger.peppol.businesscard.helper.PDBusinessCardHelper;
-import com.helger.peppol.ui.types.PeppolUITypes;
 import com.helger.peppol.ui.types.mgr.PhotonPeppolMetaManager;
 import com.helger.peppol.ui.types.smlconfig.ISMLConfiguration;
 import com.helger.peppol.ui.types.smlconfig.ISMLConfigurationManager;
@@ -88,11 +87,7 @@ public final class APISMPQueryGetBusinessCard extends AbstractAPIExecutor
     {
       for (final ISMLConfiguration aCurSML : aSMLConfigurationMgr.getAllSorted ())
       {
-        aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aCurSML,
-                                                             aPID.getScheme (),
-                                                             aPID.getValue (),
-                                                             PeppolUITypes.DEFAULT_CNAME_LOOKUP,
-                                                             false);
+        aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aCurSML, aPID.getScheme (), aPID.getValue (), false);
         if (aSMPQueryParams != null && aSMPQueryParams.isSMPRegisteredInDNS ())
         {
           // Found it
@@ -110,11 +105,7 @@ public final class APISMPQueryGetBusinessCard extends AbstractAPIExecutor
     }
     else
     {
-      aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aSML,
-                                                           aPID.getScheme (),
-                                                           aPID.getValue (),
-                                                           PeppolUITypes.DEFAULT_CNAME_LOOKUP,
-                                                           true);
+      aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aSML, aPID.getScheme (), aPID.getValue (), true);
     }
     if (aSMPQueryParams == null)
       throw new APIParamException ("Failed to resolve participant ID '" +

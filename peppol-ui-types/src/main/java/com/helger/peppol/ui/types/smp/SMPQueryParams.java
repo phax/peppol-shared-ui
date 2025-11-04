@@ -32,7 +32,6 @@ import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.smpclient.url.BDXLURLProvider;
 import com.helger.smpclient.url.ISMPURLProvider;
 import com.helger.smpclient.url.PeppolNaptrURLProvider;
-import com.helger.smpclient.url.PeppolURLProvider;
 import com.helger.smpclient.url.SMPDNSResolutionException;
 
 import jakarta.annotation.Nonnull;
@@ -104,13 +103,10 @@ public final class SMPQueryParams
     return m_bTrustAllCerts;
   }
 
-  @SuppressWarnings ({ "removal", "deprecation" })
   @Nonnull
-  private static ISMPURLProvider _getURLProvider (@Nonnull final ESMPAPIType eAPIType, final boolean bUseCNAMELookup)
+  private static ISMPURLProvider _getURLProvider (@Nonnull final ESMPAPIType eAPIType)
   {
-    return eAPIType == ESMPAPIType.PEPPOL ? bUseCNAMELookup ? PeppolURLProvider.INSTANCE
-                                                            : PeppolNaptrURLProvider.INSTANCE
-                                          : BDXLURLProvider.INSTANCE;
+    return eAPIType == ESMPAPIType.PEPPOL ? PeppolNaptrURLProvider.INSTANCE : BDXLURLProvider.INSTANCE;
   }
 
   @Nullable
@@ -120,8 +116,7 @@ public final class SMPQueryParams
   {
     try
     {
-      // Always perform NAPTR resolution
-      return _getURLProvider (eAPIType, false).getSMPURIOfParticipant (aParticipantID, sSMLZoneName);
+      return _getURLProvider (eAPIType).getSMPURIOfParticipant (aParticipantID, sSMLZoneName);
     }
     catch (final SMPDNSResolutionException ex)
     {
@@ -145,7 +140,6 @@ public final class SMPQueryParams
   public static SMPQueryParams createForSMLOrNull (@Nonnull final ISMLConfiguration aSMLConfig,
                                                    @Nullable final String sParticipantIDScheme,
                                                    @Nullable final String sParticipantIDValue,
-                                                   final boolean bUseCNAMELookup,
                                                    final boolean bLogOnError)
   {
     ValueEnforcer.notNull (aSMLConfig, "CurSML");
@@ -170,10 +164,9 @@ public final class SMPQueryParams
 
     try
     {
-      ret.m_aSMPHostURI = _getURLProvider (ret.m_eSMPAPIType, bUseCNAMELookup).getSMPURIOfParticipant (
-                                                                                                       ret.m_aParticipantID,
-                                                                                                       aSMLConfig.getSMLInfo ()
-                                                                                                                 .getDNSZone ());
+      ret.m_aSMPHostURI = _getURLProvider (ret.m_eSMPAPIType).getSMPURIOfParticipant (ret.m_aParticipantID,
+                                                                                      aSMLConfig.getSMLInfo ()
+                                                                                                .getDNSZone ());
       if ("https".equals (ret.m_aSMPHostURI.getScheme ()))
         ret.m_bTrustAllCerts = true;
     }

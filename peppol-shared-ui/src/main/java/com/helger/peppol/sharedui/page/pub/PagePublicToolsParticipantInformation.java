@@ -143,9 +143,7 @@ import com.helger.smpclient.httpclient.SMPHttpClientSettings;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.smpclient.peppol.utils.W3CEndpointReferenceHelper;
 import com.helger.smpclient.redirect.ISMPFollowRedirectCallback;
-import com.helger.smpclient.url.IPeppolURLProvider;
 import com.helger.smpclient.url.PeppolNaptrURLProvider;
-import com.helger.smpclient.url.PeppolURLProvider;
 import com.helger.smpclient.url.SMPDNSResolutionException;
 import com.helger.text.locale.country.CountryCache;
 import com.helger.text.locale.language.LanguageCache;
@@ -168,7 +166,6 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
   public static final String PARAM_SHOW_TIME = "showtime";
   public static final String PARAM_XSD_VALIDATION = "xsdvalidation";
   public static final String PARAM_VERIFY_SIGNATURES = "verifysignatures";
-  public static final String PARAM_CNAME_LOOKUP = "cnamelookup";
 
   private static final Logger LOGGER = LoggerFactory.getLogger (PagePublicToolsParticipantInformation.class);
 
@@ -342,8 +339,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                   final boolean bQueryBusinessCard,
                                   final boolean bShowTime,
                                   final boolean bXSDValidation,
-                                  final boolean bVerifySignatures,
-                                  boolean bUseCNAMELookup)
+                                  final boolean bVerifySignatures)
   {
     final HCNodeList aNodeList = aWPEC.getNodeList ();
     final Locale aDisplayLocale = aWPEC.getDisplayLocale ();
@@ -378,7 +374,6 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
           aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aCurSML,
                                                                sParticipantIDScheme,
                                                                sParticipantIDValue,
-                                                               bUseCNAMELookup,
                                                                false);
           if (aSMPQueryParams != null && aSMPQueryParams.isSMPRegisteredInDNS ())
           {
@@ -413,7 +408,6 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
         aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aRealSMLConfiguration,
                                                              sParticipantIDScheme,
                                                              sParticipantIDValue,
-                                                             bUseCNAMELookup,
                                                              true);
       }
 
@@ -479,19 +473,6 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
             aUL.addItem (div ("DNS NAPTR domain: ").addChild (code (PeppolNaptrURLProvider.INSTANCE.getDNSNameOfParticipant (aParticipantID,
                                                                                                                              aSMPQueryParams.getPeppolNetwork ()
                                                                                                                                             .getSMLInfo ()))));
-          }
-          catch (final SMPDNSResolutionException ex)
-          {
-            // Ignore
-          }
-
-          try
-          {
-            @SuppressWarnings ("removal")
-            final IPeppolURLProvider aOldURLProvider = PeppolURLProvider.INSTANCE;
-            aUL.addItem (div ("Old-style DNS CNAME domain: ").addChild (code (aOldURLProvider.getDNSNameOfParticipant (aParticipantID,
-                                                                                                                       aSMPQueryParams.getPeppolNetwork ()
-                                                                                                                                      .getSMLInfo ()))));
           }
           catch (final SMPDNSResolutionException ex)
           {
@@ -835,24 +816,6 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
             {
               aDocTypeIDs.add (aDocType);
               aLI.addChild (div (NiceNameUI.createDocTypeID (aDocType, false)));
-              if (aSMPQueryParams.getSMPAPIType () == ESMPAPIType.PEPPOL)
-              {
-                final URL aURL = URLHelper.getAsURL (sOriginalHref);
-
-                // Until February 1st 2026, production SMPs must be http only
-                if (aURL != null && aSMPQueryParams.isPeppolNetworkProduction ())
-                {
-                  if (!"http".equals (aURL.getProtocol ()))
-                    aLI.addChild (div (badgeDanger ("Production Peppol SMP URLs MUST be using http and not " +
-                                                    aURL.getProtocol ())));
-                  if (aURL.getPort () >= 0 && aURL.getPort () <= 0)
-                    aLI.addChild (div (badgeDanger ("Production Peppol SMP URLs MUST be using port 80 and not " +
-                                                    aURL.getPort ())));
-                  if (!aURL.getPath ().startsWith ("/iso6523-actorid-upis"))
-                    aLI.addChild (div (badgeDanger ("Production Peppol SMP URLs MUST be in the root path!")));
-                }
-              }
-
               aLI.addChild (div (_createOpenInBrowser (sOriginalHref)));
             }
             else
@@ -915,9 +878,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                        aParticipantID.getURIEncoded () +
                        "' / '" +
                        aDocTypeID.getURIEncoded () +
-                       "' with " +
-                       (bUseCNAMELookup ? "CNAME" : "NAPTR") +
-                       " lookup");
+                       "' with NAPTR lookup");
 
           final StopWatch aSWGetDetails = StopWatch.createdStarted ();
           try
@@ -1433,7 +1394,6 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
     boolean bShowTime = PeppolUITypes.DEFAULT_SHOW_TIME;
     boolean bXSDValidation = PeppolUITypes.DEFAULT_XSD_VALIDATION;
     boolean bVerifySignatures = PeppolUITypes.DEFAULT_VERIFY_SIGNATURES;
-    boolean bUseCNAMELookup = PeppolUITypes.DEFAULT_CNAME_LOOKUP;
     if (aWPEC.hasAction (CPageParam.ACTION_PERFORM))
     {
       // Validate fields
@@ -1446,7 +1406,6 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
       bShowTime = aWPEC.params ().isCheckBoxCheckedNoHiddenField (PARAM_SHOW_TIME);
       bXSDValidation = aWPEC.params ().isCheckBoxCheckedNoHiddenField (PARAM_XSD_VALIDATION);
       bVerifySignatures = aWPEC.params ().isCheckBoxCheckedNoHiddenField (PARAM_VERIFY_SIGNATURES);
-      bUseCNAMELookup = aWPEC.params ().isCheckBoxCheckedNoHiddenField (PARAM_CNAME_LOOKUP);
       final IIdentifierFactory aIF = aSMLConfiguration != null ? aSMLConfiguration.getSMPIdentifierType ()
                                                                                   .getIdentifierFactory ()
                                                                : SimpleIdentifierFactory.INSTANCE;
@@ -1487,8 +1446,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                            bQueryBusinessCard,
                            bShowTime,
                            bXSDValidation,
-                           bVerifySignatures,
-                           bUseCNAMELookup);
+                           bVerifySignatures);
       }
     }
 
@@ -1539,11 +1497,6 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                                                       bVerifySignatures)).setValue ("yes")
                                                                                                                          .setEmitHiddenField (false))
                                                    .setErrorList (aFormErrors.getListOfField (PARAM_VERIFY_SIGNATURES)));
-      aForm.addFormGroup (new BootstrapFormGroup ().setLabel ("Use old CNAME lookup instead of NAPTR?")
-                                                   .setCtrl (new HCCheckBox (new RequestFieldBoolean (PARAM_CNAME_LOOKUP,
-                                                                                                      bUseCNAMELookup)).setValue ("yes")
-                                                                                                                       .setEmitHiddenField (false))
-                                                   .setErrorList (aFormErrors.getListOfField (PARAM_CNAME_LOOKUP)));
 
       final BootstrapButtonToolbar aToolbar = aForm.addAndReturnChild (new BootstrapButtonToolbar (aWPEC));
       aToolbar.addHiddenField (CPageParam.PARAM_ACTION, CPageParam.ACTION_PERFORM);
