@@ -48,6 +48,7 @@ public final class SMPQueryParams
 
   private ISMLInfo m_aSMLInfo;
   private ESMPAPIType m_eSMPAPIType;
+  private ISMPURLProvider m_aSMPURLProvider;
   private EPeppolNetwork m_ePeppolNetwork;
   private IIdentifierFactory m_aIF;
   private IParticipantIdentifier m_aParticipantID;
@@ -67,6 +68,12 @@ public final class SMPQueryParams
   public ESMPAPIType getSMPAPIType ()
   {
     return m_eSMPAPIType;
+  }
+
+  @Nonnull
+  public ISMPURLProvider getSMPURLProvider ()
+  {
+    return m_aSMPURLProvider;
   }
 
   @Nullable
@@ -103,20 +110,14 @@ public final class SMPQueryParams
     return m_bTrustAllCerts;
   }
 
-  @Nonnull
-  private static ISMPURLProvider _getURLProvider (@Nonnull final ESMPAPIType eAPIType)
-  {
-    return eAPIType == ESMPAPIType.PEPPOL ? PeppolNaptrURLProvider.INSTANCE : BDXLURLProvider.INSTANCE;
-  }
-
   @Nullable
-  public static URI getSMURIViaNaptr (@Nonnull final ESMPAPIType eAPIType,
+  public static URI getSMURIViaNaptr (@Nonnull final ISMPURLProvider aSMPURLProvider,
                                       @Nonnull final IParticipantIdentifier aParticipantID,
                                       @Nonnull final String sSMLZoneName)
   {
     try
     {
-      return _getURLProvider (eAPIType).getSMPURIOfParticipant (aParticipantID, sSMLZoneName);
+      return aSMPURLProvider.getSMPURIOfParticipant (aParticipantID, sSMLZoneName);
     }
     catch (final SMPDNSResolutionException ex)
     {
@@ -124,16 +125,16 @@ public final class SMPQueryParams
     }
   }
 
-  public static boolean isSMPRegisteredInDNSViaNaptr (@Nonnull final ESMPAPIType eAPIType,
+  public static boolean isSMPRegisteredInDNSViaNaptr (@Nonnull final ISMPURLProvider aSMPURLProvider,
                                                       @Nonnull final IParticipantIdentifier aParticipantID,
                                                       @Nonnull final String sSMLZoneName)
   {
-    return getSMURIViaNaptr (eAPIType, aParticipantID, sSMLZoneName) != null;
+    return getSMURIViaNaptr (aSMPURLProvider, aParticipantID, sSMLZoneName) != null;
   }
 
   public boolean isSMPRegisteredInDNS ()
   {
-    return isSMPRegisteredInDNSViaNaptr (m_eSMPAPIType, m_aParticipantID, m_aSMLInfo.getDNSZone ());
+    return isSMPRegisteredInDNSViaNaptr (m_aSMPURLProvider, m_aParticipantID, m_aSMLInfo.getDNSZone ());
   }
 
   @Nullable
@@ -147,6 +148,8 @@ public final class SMPQueryParams
     final SMPQueryParams ret = new SMPQueryParams ();
     ret.m_aSMLInfo = aSMLConfig.getSMLInfo ();
     ret.m_eSMPAPIType = aSMLConfig.getSMPAPIType ();
+    ret.m_aSMPURLProvider = ret.m_eSMPAPIType == ESMPAPIType.PEPPOL ? PeppolNaptrURLProvider.INSTANCE
+                                                                    : BDXLURLProvider.INSTANCE;
     if (ret.m_eSMPAPIType == ESMPAPIType.PEPPOL)
     {
       ret.m_ePeppolNetwork = ESML.DIGIT_PRODUCTION.getID ().equals (aSMLConfig.getID ()) ? EPeppolNetwork.PRODUCTION
@@ -164,9 +167,8 @@ public final class SMPQueryParams
 
     try
     {
-      ret.m_aSMPHostURI = _getURLProvider (ret.m_eSMPAPIType).getSMPURIOfParticipant (ret.m_aParticipantID,
-                                                                                      aSMLConfig.getSMLInfo ()
-                                                                                                .getDNSZone ());
+      ret.m_aSMPHostURI = ret.m_aSMPURLProvider.getSMPURIOfParticipant (ret.m_aParticipantID,
+                                                                        aSMLConfig.getSMLInfo ().getDNSZone ());
       if ("https".equals (ret.m_aSMPHostURI.getScheme ()))
         ret.m_bTrustAllCerts = true;
     }

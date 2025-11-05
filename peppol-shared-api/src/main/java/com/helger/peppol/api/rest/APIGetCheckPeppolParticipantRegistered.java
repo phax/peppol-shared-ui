@@ -29,7 +29,6 @@ import com.helger.base.timing.StopWatch;
 import com.helger.datetime.helper.PDTFactory;
 import com.helger.json.IJsonObject;
 import com.helger.json.JsonObject;
-import com.helger.peppol.sml.ESMPAPIType;
 import com.helger.peppol.ui.types.mgr.PhotonPeppolMetaManager;
 import com.helger.peppol.ui.types.smlconfig.ISMLConfiguration;
 import com.helger.peppol.ui.types.smlconfig.ISMLConfigurationManager;
@@ -40,6 +39,7 @@ import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.peppolid.peppol.PeppolIdentifierHelper;
 import com.helger.photon.api.IAPIDescriptor;
 import com.helger.photon.app.PhotonUnifiedResponse;
+import com.helger.smpclient.url.PeppolNaptrURLProvider;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 
 import jakarta.annotation.Nonnull;
@@ -100,7 +100,7 @@ public final class APIGetCheckPeppolParticipantRegistered extends AbstractAPIExe
       bRegistered = false;
       for (final ISMLConfiguration aCurSMLConf : aSMLConfigurationMgr.getAllSorted ())
       {
-        bRegistered = SMPQueryParams.isSMPRegisteredInDNSViaNaptr (ESMPAPIType.PEPPOL,
+        bRegistered = SMPQueryParams.isSMPRegisteredInDNSViaNaptr (PeppolNaptrURLProvider.INSTANCE,
                                                                    aParticipantID,
                                                                    aCurSMLConf.getSMLInfo ().getDNSZone ());
         if (bRegistered)
@@ -112,7 +112,7 @@ public final class APIGetCheckPeppolParticipantRegistered extends AbstractAPIExe
     }
     else
     {
-      bRegistered = SMPQueryParams.isSMPRegisteredInDNSViaNaptr (ESMPAPIType.PEPPOL,
+      bRegistered = SMPQueryParams.isSMPRegisteredInDNSViaNaptr (PeppolNaptrURLProvider.INSTANCE,
                                                                  aParticipantID,
                                                                  aSMLConf.getSMLInfo ().getDNSZone ());
       if (bRegistered)
@@ -125,7 +125,7 @@ public final class APIGetCheckPeppolParticipantRegistered extends AbstractAPIExe
     if (aEffectiveSMLConf != null)
     {
       aJson.add ("smpHostURI",
-                 SMPQueryParams.getSMURIViaNaptr (ESMPAPIType.PEPPOL,
+                 SMPQueryParams.getSMURIViaNaptr (PeppolNaptrURLProvider.INSTANCE,
                                                   aParticipantID,
                                                   aEffectiveSMLConf.getSMLInfo ().getDNSZone ()));
     }
