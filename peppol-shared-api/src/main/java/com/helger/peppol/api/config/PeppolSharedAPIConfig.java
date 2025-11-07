@@ -53,8 +53,13 @@ public final class PeppolSharedAPIConfig extends AbstractGlobalSingleton
     return _getConfig ().getAsBoolean ("rest.exceptions.payload", GlobalDebug.isDebugMode ());
   }
 
-  public static long getRestAPIMaxRequestsPerSecond ()
+  public static long getRestAPILimitDurationSeconds ()
   {
-    return _getConfig ().getAsLong ("rest.limit.requestspersecond", -1);
+    return _getConfig ().getAsLong ("rest.limit.seconds", -1);
+  }
+
+  public static long getRestAPILimitRequestsInDuration ()
+  {
+    return _getConfig ().getAsLong ("rest.limit.requests", -1);
   }
 }

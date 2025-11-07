@@ -70,23 +70,26 @@ public abstract class AbstractAPIExecutor implements IAPIExecutor
     {
       m_bRateLimitEnabled = true;
 
-      final long nRequestsPerSec = PeppolSharedAPIConfig.getRestAPIMaxRequestsPerSecond ();
-      if (nRequestsPerSec > 0)
+      final long nDurationSecs = PeppolSharedAPIConfig.getRestAPILimitDurationSeconds ();
+      final long nRequestsInDuration = PeppolSharedAPIConfig.getRestAPILimitRequestsInDuration ();
+      if (nDurationSecs >= 2 && nRequestsInDuration > 0)
       {
         // 2 request per second, per key
         // Note: duration must be > 1 second
-        m_aRequestRateLimiter = new InMemorySlidingWindowRequestRateLimiter (RequestLimitRule.of (Duration.ofSeconds (2),
-                                                                                                  nRequestsPerSec * 2));
+        m_aRequestRateLimiter = new InMemorySlidingWindowRequestRateLimiter (RequestLimitRule.of (Duration.ofSeconds (nDurationSecs),
+                                                                                                  nRequestsInDuration));
         LOGGER.info ("Installed REST API rate limiter with a maximum of " +
-                     nRequestsPerSec +
-                     " requests per second for class " +
+                     nRequestsInDuration +
+                     " requests per " +
+                     nDurationSecs +
+                     " seconds for class " +
                      getClass ().getSimpleName ());
       }
       else
       {
         m_aRequestRateLimiter = null;
         if (LOGGER.isDebugEnabled ())
-          LOGGER.debug ("REST API runs without limit");
+          LOGGER.debug ("REST API runs without limit (" + nDurationSecs + "/" + nRequestsInDuration + ")");
       }
     }
     else
