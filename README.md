@@ -13,8 +13,11 @@ This project consists of the following modules, in dependency order:
 
 # News and Noteworthy
 
+v0.9.5 - 2025-11-07
+* Allowing a more fine grained rate limit configuration for the Validation API
+
 v0.9.4 - 2025-11-07
-* Allowing a more fine grained rate limit configuration
+* Allowing a more fine grained rate limit configuration for the REST API
 
 v0.9.3 - 2025-11-04
 * Removed the `https` requirement for Peppol SMP URLs in production
