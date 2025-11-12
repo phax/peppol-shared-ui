@@ -64,7 +64,7 @@
   
   <properties>
     <phive-rules.version>4.0.3</phive-rules.version>
-    <phase4.version>4.0.1</phase4.version>
+    <phase4.version>4.0.2</phase4.version>
     <ddd.version>0.7.2</ddd.version>
   </properties>
   
