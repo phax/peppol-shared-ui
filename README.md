@@ -13,6 +13,9 @@ This project consists of the following modules, in dependency order:
 
 # News and Noteworthy
 
+v0.9.6 - 2025-11-14
+* Updated to peppol-commons 12.1.3 fixing an issue with determining document types from SMP responses
+
 v0.9.5 - 2025-11-07
 * Allowing a more fine grained rate limit configuration for the Validation API
 
