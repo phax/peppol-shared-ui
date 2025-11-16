@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +41,6 @@ import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 
 import es.moki.ratelimitj.core.limiter.request.RequestLimitRule;
 import es.moki.ratelimitj.inmemory.request.InMemorySlidingWindowRequestRateLimiter;
-import jakarta.annotation.Nonnull;
 
 public abstract class AbstractAPIExecutor implements IAPIExecutor
 {
@@ -57,13 +57,13 @@ public abstract class AbstractAPIExecutor implements IAPIExecutor
    * @param sUserAgent
    *        The user agent to be used for outbound HTTP connections.
    */
-  protected AbstractAPIExecutor (@Nonnull @Nonempty final String sUserAgent)
+  protected AbstractAPIExecutor (@NonNull @Nonempty final String sUserAgent)
   {
     ValueEnforcer.notEmpty (sUserAgent, "UserAgent");
     m_aHCSModifier = hcs -> { hcs.setUserAgent (sUserAgent); };
   }
 
-  @Nonnull
+  @NonNull
   public final AbstractAPIExecutor setRateLimitEnabled (final boolean bEnabled)
   {
     if (bEnabled)
@@ -100,18 +100,18 @@ public abstract class AbstractAPIExecutor implements IAPIExecutor
     return this;
   }
 
-  protected abstract void invokeAPI (@Nonnull @Nonempty String sLogPrefix,
-                                     @Nonnull IAPIDescriptor aAPIDescriptor,
-                                     @Nonnull @Nonempty String sPath,
-                                     @Nonnull Map <String, String> aPathVariables,
-                                     @Nonnull IRequestWebScopeWithoutResponse aRequestScope,
-                                     @Nonnull PhotonUnifiedResponse aUnifiedResponse) throws Exception;
+  protected abstract void invokeAPI (@NonNull @Nonempty String sLogPrefix,
+                                     @NonNull IAPIDescriptor aAPIDescriptor,
+                                     @NonNull @Nonempty String sPath,
+                                     @NonNull Map <String, String> aPathVariables,
+                                     @NonNull IRequestWebScopeWithoutResponse aRequestScope,
+                                     @NonNull PhotonUnifiedResponse aUnifiedResponse) throws Exception;
 
-  public final void invokeAPI (@Nonnull final IAPIDescriptor aAPIDescriptor,
-                               @Nonnull @Nonempty final String sPath,
-                               @Nonnull final Map <String, String> aPathVariables,
-                               @Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
-                               @Nonnull final UnifiedResponse aUnifiedResponse) throws Exception
+  public final void invokeAPI (@NonNull final IAPIDescriptor aAPIDescriptor,
+                               @NonNull @Nonempty final String sPath,
+                               @NonNull final Map <String, String> aPathVariables,
+                               @NonNull final IRequestWebScopeWithoutResponse aRequestScope,
+                               @NonNull final UnifiedResponse aUnifiedResponse) throws Exception
   {
     final String sLogPrefix = "[API-" + COUNTER.incrementAndGet () + "] ";
 

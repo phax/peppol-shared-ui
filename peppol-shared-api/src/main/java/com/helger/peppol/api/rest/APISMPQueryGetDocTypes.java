@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.apache.hc.client5.http.HttpResponseException;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,8 +60,6 @@ import com.helger.smpclient.httpclient.SMPHttpClientSettings;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 
-import jakarta.annotation.Nonnull;
-
 public final class APISMPQueryGetDocTypes extends AbstractAPIExecutor
 {
   public static final String PARAM_VERIFY_SIGNATURE = "verifySignature";
@@ -69,18 +68,18 @@ public final class APISMPQueryGetDocTypes extends AbstractAPIExecutor
 
   private static final Logger LOGGER = LoggerFactory.getLogger (APISMPQueryGetDocTypes.class);
 
-  public APISMPQueryGetDocTypes (@Nonnull @Nonempty final String sUserAgent)
+  public APISMPQueryGetDocTypes (@NonNull @Nonempty final String sUserAgent)
   {
     super (sUserAgent);
   }
 
   @Override
-  protected void invokeAPI (@Nonnull @Nonempty final String sLogPrefix,
-                            @Nonnull final IAPIDescriptor aAPIDescriptor,
-                            @Nonnull @Nonempty final String sPath,
-                            @Nonnull final Map <String, String> aPathVariables,
-                            @Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
-                            @Nonnull final PhotonUnifiedResponse aUnifiedResponse) throws Exception
+  protected void invokeAPI (@NonNull @Nonempty final String sLogPrefix,
+                            @NonNull final IAPIDescriptor aAPIDescriptor,
+                            @NonNull @Nonempty final String sPath,
+                            @NonNull final Map <String, String> aPathVariables,
+                            @NonNull final IRequestWebScopeWithoutResponse aRequestScope,
+                            @NonNull final PhotonUnifiedResponse aUnifiedResponse) throws Exception
   {
     final ISMLConfigurationManager aSMLConfigurationMgr = PhotonPeppolMetaManager.getSMLConfigurationMgr ();
     final String sSMLID = aPathVariables.get (PeppolSharedRestAPI.PARAM_SML_ID);

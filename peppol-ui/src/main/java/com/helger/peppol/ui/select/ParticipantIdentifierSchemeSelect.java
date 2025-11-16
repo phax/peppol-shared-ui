@@ -18,15 +18,15 @@ package com.helger.peppol.ui.select;
 
 import java.util.Locale;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.peppolid.peppol.pidscheme.EPredefinedParticipantIdentifierScheme;
 import com.helger.photon.core.form.RequestField;
 import com.helger.photon.uicore.html.select.HCExtSelect;
 
-import jakarta.annotation.Nonnull;
-
 public class ParticipantIdentifierSchemeSelect extends HCExtSelect
 {
-  public ParticipantIdentifierSchemeSelect (@Nonnull final RequestField aRF, @Nonnull final Locale aDisplayLocale)
+  public ParticipantIdentifierSchemeSelect (@NonNull final RequestField aRF, @NonNull final Locale aDisplayLocale)
   {
     super (aRF);
     addOptionPleaseSelect (aDisplayLocale);

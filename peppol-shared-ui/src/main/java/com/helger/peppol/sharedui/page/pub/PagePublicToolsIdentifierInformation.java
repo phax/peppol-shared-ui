@@ -19,6 +19,7 @@ package com.helger.peppol.sharedui.page.pub;
 import java.util.Locale;
 import java.util.Map;
 
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +63,7 @@ import com.helger.statistics.impl.StatisticsManager;
 import com.helger.url.SimpleURL;
 import com.helger.url.codec.URLCoder;
 
-import jakarta.annotation.Nonnull;
+
 
 /**
  * Verify identifiers according to some predefined rules.
@@ -82,19 +83,19 @@ public class PagePublicToolsIdentifierInformation extends AbstractAppWebPage
   private static final IMutableStatisticsHandlerKeyedCounter STATS_ID_TYPE = StatisticsManager.getKeyedCounterHandler ("id.information.idtype");
   private static final String IDENTIFIER_POLICY_VERSION = "4.3";
 
-  public PagePublicToolsIdentifierInformation (@Nonnull @Nonempty final String sID)
+  public PagePublicToolsIdentifierInformation (@NonNull @Nonempty final String sID)
   {
     this (sID, "ID Information");
   }
 
-  public PagePublicToolsIdentifierInformation (@Nonnull @Nonempty final String sID,
-                                               @Nonnull @Nonempty final String sName)
+  public PagePublicToolsIdentifierInformation (@NonNull @Nonempty final String sID,
+                                               @NonNull @Nonempty final String sName)
   {
     super (sID, sName);
   }
 
   @Override
-  protected void fillContent (@Nonnull final WebPageExecutionContext aWPEC)
+  protected void fillContent (@NonNull final WebPageExecutionContext aWPEC)
   {
     final HCNodeList aNodeList = aWPEC.getNodeList ();
     final Locale aDisplayLocale = aWPEC.getDisplayLocale ();

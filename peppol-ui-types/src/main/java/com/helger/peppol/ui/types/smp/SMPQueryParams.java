@@ -18,6 +18,8 @@ package com.helger.peppol.ui.types.smp;
 
 import java.net.URI;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,9 +35,6 @@ import com.helger.smpclient.url.BDXLURLProvider;
 import com.helger.smpclient.url.ISMPURLProvider;
 import com.helger.smpclient.url.PeppolNaptrURLProvider;
 import com.helger.smpclient.url.SMPDNSResolutionException;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * The collection of needed SMP query parameters
@@ -58,19 +57,19 @@ public final class SMPQueryParams
   private SMPQueryParams ()
   {}
 
-  @Nonnull
+  @NonNull
   public ISMLInfo getSMLInfo ()
   {
     return m_aSMLInfo;
   }
 
-  @Nonnull
+  @NonNull
   public ESMPAPIType getSMPAPIType ()
   {
     return m_eSMPAPIType;
   }
 
-  @Nonnull
+  @NonNull
   public ISMPURLProvider getSMPURLProvider ()
   {
     return m_aSMPURLProvider;
@@ -87,19 +86,19 @@ public final class SMPQueryParams
     return m_ePeppolNetwork != null && m_ePeppolNetwork.isProduction ();
   }
 
-  @Nonnull
+  @NonNull
   public IIdentifierFactory getIF ()
   {
     return m_aIF;
   }
 
-  @Nonnull
+  @NonNull
   public IParticipantIdentifier getParticipantID ()
   {
     return m_aParticipantID;
   }
 
-  @Nonnull
+  @NonNull
   public URI getSMPHostURI ()
   {
     return m_aSMPHostURI;
@@ -111,9 +110,9 @@ public final class SMPQueryParams
   }
 
   @Nullable
-  public static URI getSMURIViaNaptr (@Nonnull final ISMPURLProvider aSMPURLProvider,
-                                      @Nonnull final IParticipantIdentifier aParticipantID,
-                                      @Nonnull final String sSMLZoneName)
+  public static URI getSMURIViaNaptr (@NonNull final ISMPURLProvider aSMPURLProvider,
+                                      @NonNull final IParticipantIdentifier aParticipantID,
+                                      @NonNull final String sSMLZoneName)
   {
     try
     {
@@ -125,9 +124,9 @@ public final class SMPQueryParams
     }
   }
 
-  public static boolean isSMPRegisteredInDNSViaNaptr (@Nonnull final ISMPURLProvider aSMPURLProvider,
-                                                      @Nonnull final IParticipantIdentifier aParticipantID,
-                                                      @Nonnull final String sSMLZoneName)
+  public static boolean isSMPRegisteredInDNSViaNaptr (@NonNull final ISMPURLProvider aSMPURLProvider,
+                                                      @NonNull final IParticipantIdentifier aParticipantID,
+                                                      @NonNull final String sSMLZoneName)
   {
     return getSMURIViaNaptr (aSMPURLProvider, aParticipantID, sSMLZoneName) != null;
   }
@@ -138,7 +137,7 @@ public final class SMPQueryParams
   }
 
   @Nullable
-  public static SMPQueryParams createForSMLOrNull (@Nonnull final ISMLConfiguration aSMLConfig,
+  public static SMPQueryParams createForSMLOrNull (@NonNull final ISMLConfiguration aSMLConfig,
                                                    @Nullable final String sParticipantIDScheme,
                                                    @Nullable final String sParticipantIDValue,
                                                    final boolean bLogOnError)

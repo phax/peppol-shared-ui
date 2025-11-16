@@ -36,9 +36,9 @@ import com.helger.phive.api.validity.IValidityDeterminator;
 import com.helger.phive.xml.source.IValidationSourceXML;
 import com.helger.phive.xml.source.ValidationSourceXML;
 
-public final class ValidateLargeFilesTest
+public final class ValidateLargeFilesFuncTest
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (ValidateLargeFilesTest.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (ValidateLargeFilesFuncTest.class);
 
   @Test
   @Ignore ("Takes ~15 + 14 minutes")

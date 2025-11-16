@@ -24,6 +24,8 @@ import java.util.function.Consumer;
 
 import org.apache.hc.client5.http.HttpResponseException;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,21 +52,18 @@ import com.helger.photon.app.PhotonUnifiedResponse;
 import com.helger.smpclient.httpclient.SMPHttpClientSettings;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 public final class APISMPQueryGetBusinessCard extends AbstractAPIExecutor
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (APISMPQueryGetBusinessCard.class);
 
-  public APISMPQueryGetBusinessCard (@Nonnull @Nonempty final String sUserAgent)
+  public APISMPQueryGetBusinessCard (@NonNull @Nonempty final String sUserAgent)
   {
     super (sUserAgent);
   }
 
   @Nullable
-  public static IJsonObject getBusinessCardJSON (@Nonnull final String sLogPrefix,
-                                                 @Nonnull final SMPQueryParams aSMPQueryParams,
+  public static IJsonObject getBusinessCardJSON (@NonNull final String sLogPrefix,
+                                                 @NonNull final SMPQueryParams aSMPQueryParams,
                                                  @Nullable final Consumer <? super HttpClientSettings> aHCSModifier)
   {
     final IParticipantIdentifier aParticipantID = aSMPQueryParams.getParticipantID ();
@@ -120,12 +119,12 @@ public final class APISMPQueryGetBusinessCard extends AbstractAPIExecutor
   }
 
   @Override
-  protected void invokeAPI (@Nonnull @Nonempty final String sLogPrefix,
-                            @Nonnull final IAPIDescriptor aAPIDescriptor,
-                            @Nonnull @Nonempty final String sPath,
-                            @Nonnull final Map <String, String> aPathVariables,
-                            @Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
-                            @Nonnull final PhotonUnifiedResponse aUnifiedResponse) throws Exception
+  protected void invokeAPI (@NonNull @Nonempty final String sLogPrefix,
+                            @NonNull final IAPIDescriptor aAPIDescriptor,
+                            @NonNull @Nonempty final String sPath,
+                            @NonNull final Map <String, String> aPathVariables,
+                            @NonNull final IRequestWebScopeWithoutResponse aRequestScope,
+                            @NonNull final PhotonUnifiedResponse aUnifiedResponse) throws Exception
   {
     final ISMLConfigurationManager aSMLConfigurationMgr = PhotonPeppolMetaManager.getSMLConfigurationMgr ();
     final String sSMLID = aPathVariables.get (PeppolSharedRestAPI.PARAM_SML_ID);

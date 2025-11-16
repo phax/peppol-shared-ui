@@ -16,6 +16,8 @@
  */
 package com.helger.peppol.ui.types.nicename;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,9 +45,6 @@ import com.helger.peppolid.simple.process.SimpleProcessIdentifier;
 import com.helger.xml.microdom.IMicroDocument;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.serialize.MicroReader;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 @ThreadSafe
 public final class NiceNameManager
@@ -78,9 +77,9 @@ public final class NiceNameManager
     });
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
-  public static ICommonsOrderedMap <String, NiceNameEntry> readEntries (@Nonnull final IReadableResource aRes,
+  public static ICommonsOrderedMap <String, NiceNameEntry> readEntries (@NonNull final IReadableResource aRes,
                                                                         final boolean bReadProcIDs)
   {
     LOGGER.info ("Trying to read nice name entries from '" + aRes.getPath () + "'");
@@ -145,7 +144,7 @@ public final class NiceNameManager
     return ret;
   }
 
-  public static void loadDocTypeNames (@Nonnull final IReadableResource aDocTypeIDRes)
+  public static void loadDocTypeNames (@NonNull final IReadableResource aDocTypeIDRes)
   {
     ValueEnforcer.notNull (aDocTypeIDRes, "DocTypeIDRes");
 
@@ -158,7 +157,7 @@ public final class NiceNameManager
                  "'");
   }
 
-  public static void loadProcessNames (@Nonnull final IReadableResource aProcessIDRes)
+  public static void loadProcessNames (@NonNull final IReadableResource aProcessIDRes)
   {
     ValueEnforcer.notNull (aProcessIDRes, "ProcessIDRes");
 
@@ -194,18 +193,18 @@ public final class NiceNameManager
     }
   }
 
-  public static boolean isPintDocType (@Nonnull final IDocumentTypeIdentifier aDocTypeID)
+  public static boolean isPintDocType (@NonNull final IDocumentTypeIdentifier aDocTypeID)
   {
     return PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_PEPPOL_DOCTYPE_WILDCARD.equals (aDocTypeID.getScheme ());
   }
 
-  public static boolean isWildcardDocType (@Nonnull final IDocumentTypeIdentifier aDocTypeID)
+  public static boolean isWildcardDocType (@NonNull final IDocumentTypeIdentifier aDocTypeID)
   {
     return aDocTypeID.getValue ().indexOf ('*') > 0;
   }
 
   @Nullable
-  public static NiceNameEntry getPintEnabledNiceNameEntry (@Nonnull final IDocumentTypeIdentifier aDocTypeID)
+  public static NiceNameEntry getPintEnabledNiceNameEntry (@NonNull final IDocumentTypeIdentifier aDocTypeID)
   {
     final boolean bIsPint = isPintDocType (aDocTypeID);
     final boolean bIsWildcard = isWildcardDocType (aDocTypeID);
@@ -249,14 +248,14 @@ public final class NiceNameManager
     }
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public static ICommonsOrderedMap <String, NiceNameEntry> getAllDocumentTypeMappings ()
   {
     return RW_LOCK.readLockedGet (DOCTYPE_IDS::getClone);
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public static ICommonsOrderedMap <String, NiceNameEntry> getAllProcessMappings ()
   {

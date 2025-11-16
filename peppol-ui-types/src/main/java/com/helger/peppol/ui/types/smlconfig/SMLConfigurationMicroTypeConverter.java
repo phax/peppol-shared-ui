@@ -16,6 +16,9 @@
  */
 package com.helger.peppol.ui.types.smlconfig;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.misc.ContainsSoftMigration;
 import com.helger.peppol.sml.ESMPAPIType;
 import com.helger.peppol.sml.SMLInfo;
@@ -27,9 +30,6 @@ import com.helger.xml.microdom.MicroQName;
 import com.helger.xml.microdom.convert.IMicroTypeConverter;
 import com.helger.xml.microdom.convert.MicroTypeConverter;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 public final class SMLConfigurationMicroTypeConverter implements IMicroTypeConverter <SMLConfiguration>
 {
   private static final String ELEMENT_SML_INFO = "smlinfo";
@@ -38,10 +38,10 @@ public final class SMLConfigurationMicroTypeConverter implements IMicroTypeConve
   private static final IMicroQName ATTR_PRODUCTION = new MicroQName ("prod");
   private static final IMicroQName ATTR_PRIORITY = new MicroQName ("priority");
 
-  @Nonnull
-  public IMicroElement convertToMicroElement (@Nonnull final SMLConfiguration aObj,
+  @NonNull
+  public IMicroElement convertToMicroElement (@NonNull final SMLConfiguration aObj,
                                               @Nullable final String sNamespaceURI,
-                                              @Nonnull final String sTagName)
+                                              @NonNull final String sTagName)
   {
     final IMicroElement aElement = new MicroElement (sNamespaceURI, sTagName);
     aElement.addChild (MicroTypeConverter.convertToMicroElement (aObj.getSMLInfo (), sNamespaceURI, ELEMENT_SML_INFO));
@@ -52,9 +52,9 @@ public final class SMLConfigurationMicroTypeConverter implements IMicroTypeConve
     return aElement;
   }
 
-  @Nonnull
+  @NonNull
   @ContainsSoftMigration
-  public SMLConfiguration convertToNative (@Nonnull final IMicroElement aElement)
+  public SMLConfiguration convertToNative (@NonNull final IMicroElement aElement)
   {
     final IMicroElement eSMLInfo = aElement.getFirstChildElement (ELEMENT_SML_INFO);
     final SMLInfo aSMLInfo;

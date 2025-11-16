@@ -16,6 +16,9 @@
  */
 package com.helger.peppol.ui.types.nicename;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.base.hashcode.HashCodeGenerator;
 import com.helger.base.string.StringHelper;
@@ -25,9 +28,6 @@ import com.helger.collection.commons.ICommonsList;
 import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.peppol.EPeppolCodeListItemState;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 public final class NiceNameEntry
 {
   private final String m_sName;
@@ -35,15 +35,15 @@ public final class NiceNameEntry
   private final ICommonsList <IProcessIdentifier> m_aProcIDs;
   private final String m_sSpecialLabel;
 
-  public NiceNameEntry (@Nonnull @Nonempty final String sName,
-                        @Nonnull final EPeppolCodeListItemState eState,
+  public NiceNameEntry (@NonNull @Nonempty final String sName,
+                        @NonNull final EPeppolCodeListItemState eState,
                         @Nullable final ICommonsList <IProcessIdentifier> aProcIDs)
   {
     this (sName, eState, aProcIDs, null);
   }
 
-  public NiceNameEntry (@Nonnull @Nonempty final String sName,
-                        @Nonnull final EPeppolCodeListItemState eState,
+  public NiceNameEntry (@NonNull @Nonempty final String sName,
+                        @NonNull final EPeppolCodeListItemState eState,
                         @Nullable final ICommonsList <IProcessIdentifier> aProcIDs,
                         @Nullable final String sSpecialLabel)
   {
@@ -53,14 +53,14 @@ public final class NiceNameEntry
     m_sSpecialLabel = sSpecialLabel;
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getName ()
   {
     return m_sName;
   }
 
-  @Nonnull
+  @NonNull
   public EPeppolCodeListItemState getState ()
   {
     return m_eState;
@@ -71,7 +71,7 @@ public final class NiceNameEntry
     return CollectionHelper.isNotEmpty (m_aProcIDs);
   }
 
-  public boolean containsProcessID (@Nonnull final IProcessIdentifier aProcID)
+  public boolean containsProcessID (@NonNull final IProcessIdentifier aProcID)
   {
     return m_aProcIDs != null && m_aProcIDs.containsAny (aProcID::hasSameContent);
   }
@@ -93,8 +93,8 @@ public final class NiceNameEntry
     return StringHelper.isNotEmpty (m_sSpecialLabel);
   }
 
-  @Nonnull
-  public NiceNameEntry withNewName (@Nonnull @Nonempty final String sNewName)
+  @NonNull
+  public NiceNameEntry withNewName (@NonNull @Nonempty final String sNewName)
   {
     return new NiceNameEntry (sNewName, m_eState, m_aProcIDs, m_sSpecialLabel);
   }

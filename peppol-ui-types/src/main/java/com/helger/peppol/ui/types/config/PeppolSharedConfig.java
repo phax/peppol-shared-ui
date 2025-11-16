@@ -16,6 +16,8 @@
  */
 package com.helger.peppol.ui.types.config;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.concurrent.GuardedBy;
 import com.helger.annotation.style.UsedViaReflection;
 import com.helger.base.concurrent.SimpleReadWriteLock;
@@ -23,8 +25,6 @@ import com.helger.base.enforce.ValueEnforcer;
 import com.helger.config.ConfigFactory;
 import com.helger.config.IConfig;
 import com.helger.scope.singleton.AbstractGlobalSingleton;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * This class provides access to the settings as contained in the
@@ -45,7 +45,7 @@ public final class PeppolSharedConfig extends AbstractGlobalSingleton
   private PeppolSharedConfig ()
   {}
 
-  @Nonnull
+  @NonNull
   public static IConfig getConfig ()
   {
     RW_LOCK.readLock ().lock ();
@@ -59,7 +59,7 @@ public final class PeppolSharedConfig extends AbstractGlobalSingleton
     }
   }
 
-  public static void setConfig (@Nonnull final IConfig aConfig)
+  public static void setConfig (@NonNull final IConfig aConfig)
   {
     ValueEnforcer.notNull (aConfig, "Config");
     RW_LOCK.writeLocked ( () -> s_aConfig = aConfig);

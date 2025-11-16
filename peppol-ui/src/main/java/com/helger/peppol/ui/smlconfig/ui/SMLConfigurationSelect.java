@@ -16,17 +16,17 @@
  */
 package com.helger.peppol.ui.smlconfig.ui;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.peppol.ui.types.mgr.PhotonPeppolMetaManager;
 import com.helger.peppol.ui.types.smlconfig.ISMLConfiguration;
 import com.helger.peppol.ui.types.smlconfig.ISMLConfigurationManager;
 import com.helger.photon.core.form.RequestField;
 import com.helger.photon.uicore.html.select.HCExtSelect;
 
-import jakarta.annotation.Nonnull;
-
 public class SMLConfigurationSelect extends HCExtSelect
 {
-  public SMLConfigurationSelect (@Nonnull final RequestField aRF, final boolean bAddAutoDetect)
+  public SMLConfigurationSelect (@NonNull final RequestField aRF, final boolean bAddAutoDetect)
   {
     super (aRF);
     if (bAddAutoDetect)

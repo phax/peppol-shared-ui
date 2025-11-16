@@ -32,6 +32,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -152,9 +154,8 @@ import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xsds.bdxr.smp2.bc.IDType;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 import jakarta.xml.bind.JAXBException;
+
 
 public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
 {
@@ -171,28 +172,28 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
 
   private final String m_sUserAgent;
 
-  public PagePublicToolsParticipantInformation (@Nonnull @Nonempty final String sID,
-                                                @Nonnull @Nonempty final String sUserAgent)
+  public PagePublicToolsParticipantInformation (@NonNull @Nonempty final String sID,
+                                                @NonNull @Nonempty final String sUserAgent)
   {
     this (sID, "Participant Information", sUserAgent);
   }
 
-  public PagePublicToolsParticipantInformation (@Nonnull @Nonempty final String sID,
-                                                @Nonnull @Nonempty final String sName,
-                                                @Nonnull @Nonempty final String sUserAgent)
+  public PagePublicToolsParticipantInformation (@NonNull @Nonempty final String sID,
+                                                @NonNull @Nonempty final String sName,
+                                                @NonNull @Nonempty final String sUserAgent)
   {
     super (sID, sName);
     m_sUserAgent = sUserAgent;
   }
 
-  @Nonnull
-  private static BootstrapLinkButton _createOpenInBrowser (@Nonnull final String sURL)
+  @NonNull
+  private static BootstrapLinkButton _createOpenInBrowser (@NonNull final String sURL)
   {
     return _createOpenInBrowser (sURL, "Open in browser");
   }
 
-  @Nonnull
-  private static BootstrapLinkButton _createOpenInBrowser (@Nonnull final String sURL, @Nonnull final String sLabel)
+  @NonNull
+  private static BootstrapLinkButton _createOpenInBrowser (@NonNull final String sURL, @NonNull final String sLabel)
   {
     return new BootstrapLinkButton (EBootstrapButtonSize.SMALL).setButtonType (EBootstrapButtonType.OUTLINE_INFO)
                                                                .setHref (new SimpleURL (sURL))
@@ -200,13 +201,13 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                .setTargetBlank ();
   }
 
-  @Nonnull
+  @NonNull
   private IHCNode _createTimingNode (final long nMillis)
   {
     return badgeInfo ("took " + nMillis + " milliseconds");
   }
 
-  private void _printEndpointURL (@Nonnull final IHCLI <?> aLIEndpoint,
+  private void _printEndpointURL (@NonNull final IHCLI <?> aLIEndpoint,
                                   final String sEndpointRef,
                                   final boolean bIsPeppol)
   {
@@ -233,9 +234,9 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
     }
   }
 
-  private void _printActivationDate (@Nonnull final IHCLI <?> aLIEndpoint,
+  private void _printActivationDate (@NonNull final IHCLI <?> aLIEndpoint,
                                      @Nullable final XMLOffsetDateTime aServiceActivationDate,
-                                     @Nonnull final Locale aDisplayLocale)
+                                     @NonNull final Locale aDisplayLocale)
   {
     if (aServiceActivationDate != null)
     {
@@ -247,9 +248,9 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
     }
   }
 
-  private void _printExpirationDate (@Nonnull final IHCLI <?> aLIEndpoint,
+  private void _printExpirationDate (@NonNull final IHCLI <?> aLIEndpoint,
                                      @Nullable final XMLOffsetDateTime aServiceExpirationDate,
-                                     @Nonnull final Locale aDisplayLocale)
+                                     @NonNull final Locale aDisplayLocale)
   {
     if (aServiceExpirationDate != null)
     {
@@ -261,7 +262,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
     }
   }
 
-  private void _printTransportProfile (@Nonnull final IHCLI <?> aLIEndpoint, @Nullable final String sTransportProfile)
+  private void _printTransportProfile (@NonNull final IHCLI <?> aLIEndpoint, @Nullable final String sTransportProfile)
   {
     final HCDiv aDiv = div ("Transport profile: ");
     final ESMPTransportProfile eTransportProfile = ESMPTransportProfile.getFromIDOrNull (sTransportProfile);
@@ -288,7 +289,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
     aLIEndpoint.addChild (aDiv);
   }
 
-  private void _printTecInfo (@Nonnull final IHCLI <?> aLIEndpoint, final String sTecInfo, final String sTecContact)
+  private void _printTecInfo (@NonNull final IHCLI <?> aLIEndpoint, final String sTecInfo, final String sTecContact)
   {
     final HCDiv aDiv = div ("Technical info: ");
     if (StringHelper.isNotEmpty (sTecInfo))
@@ -307,8 +308,8 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
       aLIEndpoint.addChild (aDiv);
   }
 
-  @Nonnull
-  private static String _inGroupsOf (@Nonnull final String s, final int nChars)
+  @NonNull
+  private static String _inGroupsOf (@NonNull final String s, final int nChars)
   {
     if (nChars < 1)
       return s;
@@ -331,7 +332,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                                   PeppolTrustStores.Config2025.CERTIFICATE_TEST_AP,
                                                                                   PeppolTrustStores.Config2025.CERTIFICATE_PRODUCTION_AP);
 
-  private void _queryParticipant (@Nonnull final WebPageExecutionContext aWPEC,
+  private void _queryParticipant (@NonNull final WebPageExecutionContext aWPEC,
                                   final String sParticipantIDScheme,
                                   final String sParticipantIDValue,
                                   @Nullable final ISMLConfiguration aSelectedSMLConfiguration,
@@ -1381,7 +1382,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
   }
 
   @Override
-  protected void fillContent (@Nonnull final WebPageExecutionContext aWPEC)
+  protected void fillContent (@NonNull final WebPageExecutionContext aWPEC)
   {
     final HCNodeList aNodeList = aWPEC.getNodeList ();
     final ISMLConfigurationManager aSMLConfigurationMgr = PhotonPeppolMetaManager.getSMLConfigurationMgr ();

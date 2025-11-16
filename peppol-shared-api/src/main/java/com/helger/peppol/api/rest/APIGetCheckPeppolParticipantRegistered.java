@@ -21,6 +21,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,8 +43,6 @@ import com.helger.photon.app.PhotonUnifiedResponse;
 import com.helger.smpclient.url.PeppolNaptrURLProvider;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 
-import jakarta.annotation.Nonnull;
-
 /**
  * Determine if a participant ID is registered in the Peppol Network or not.
  *
@@ -53,18 +52,18 @@ public final class APIGetCheckPeppolParticipantRegistered extends AbstractAPIExe
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (APIGetCheckPeppolParticipantRegistered.class);
 
-  public APIGetCheckPeppolParticipantRegistered (@Nonnull @Nonempty final String sUserAgent)
+  public APIGetCheckPeppolParticipantRegistered (@NonNull @Nonempty final String sUserAgent)
   {
     super (sUserAgent);
   }
 
   @Override
-  public void invokeAPI (@Nonnull @Nonempty final String sLogPrefix,
-                         @Nonnull final IAPIDescriptor aAPIDescriptor,
-                         @Nonnull @Nonempty final String sPath,
-                         @Nonnull final Map <String, String> aPathVariables,
-                         @Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
-                         @Nonnull final PhotonUnifiedResponse aUnifiedResponse) throws IOException
+  public void invokeAPI (@NonNull @Nonempty final String sLogPrefix,
+                         @NonNull final IAPIDescriptor aAPIDescriptor,
+                         @NonNull @Nonempty final String sPath,
+                         @NonNull final Map <String, String> aPathVariables,
+                         @NonNull final IRequestWebScopeWithoutResponse aRequestScope,
+                         @NonNull final PhotonUnifiedResponse aUnifiedResponse) throws IOException
   {
     final ISMLConfigurationManager aSMLConfigurationMgr = PhotonPeppolMetaManager.getSMLConfigurationMgr ();
 

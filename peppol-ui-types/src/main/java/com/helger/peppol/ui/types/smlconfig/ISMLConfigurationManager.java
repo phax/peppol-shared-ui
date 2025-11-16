@@ -18,15 +18,15 @@ package com.helger.peppol.ui.types.smlconfig;
 
 import java.util.function.Predicate;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.style.ReturnsMutableCopy;
 import com.helger.base.state.EChange;
 import com.helger.collection.commons.ICommonsList;
 import com.helger.peppol.sml.ESMPAPIType;
 import com.helger.peppolid.factory.ESMPIdentifierType;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Base interface for a manager that handles {@link ISMLConfiguration} objects.
@@ -77,16 +77,16 @@ public interface ISMLConfigurationManager
    *        The priority to use. The higher the more prior it is.
    * @return Never <code>null</code>.
    */
-  @Nonnull
-  ISMLConfiguration createSMLInfo (@Nonnull @Nonempty String sSMLInfoID,
-                                   @Nonnull @Nonempty String sDisplayName,
-                                   @Nonnull @Nonempty String sDNSZone,
-                                   @Nonnull @Nonempty String sManagementServiceURL,
-                                   @Nonnull final String sURLSuffixManageSMP,
-                                   @Nonnull final String sURLSuffixManageParticipant,
+  @NonNull
+  ISMLConfiguration createSMLInfo (@NonNull @Nonempty String sSMLInfoID,
+                                   @NonNull @Nonempty String sDisplayName,
+                                   @NonNull @Nonempty String sDNSZone,
+                                   @NonNull @Nonempty String sManagementServiceURL,
+                                   @NonNull final String sURLSuffixManageSMP,
+                                   @NonNull final String sURLSuffixManageParticipant,
                                    boolean bClientCertificateRequired,
-                                   @Nonnull ESMPAPIType eSMPAPIType,
-                                   @Nonnull ESMPIdentifierType eSMPIdentifierType,
+                                   @NonNull ESMPAPIType eSMPAPIType,
+                                   @NonNull ESMPIdentifierType eSMPIdentifierType,
                                    boolean bProduction,
                                    int nPriority);
 
@@ -127,16 +127,16 @@ public interface ISMLConfigurationManager
    *        The priority to use. The higher the more prior it is.
    * @return {@link EChange#CHANGED} if something was changed.
    */
-  @Nonnull
+  @NonNull
   EChange updateSMLInfo (@Nullable String sSMLInfoID,
-                         @Nonnull @Nonempty String sDisplayName,
-                         @Nonnull @Nonempty String sDNSZone,
-                         @Nonnull @Nonempty String sManagementServiceURL,
-                         @Nonnull final String sURLSuffixManageSMP,
-                         @Nonnull final String sURLSuffixManageParticipant,
+                         @NonNull @Nonempty String sDisplayName,
+                         @NonNull @Nonempty String sDNSZone,
+                         @NonNull @Nonempty String sManagementServiceURL,
+                         @NonNull final String sURLSuffixManageSMP,
+                         @NonNull final String sURLSuffixManageParticipant,
                          boolean bClientCertificateRequired,
-                         @Nonnull ESMPAPIType eSMPAPIType,
-                         @Nonnull ESMPIdentifierType eSMPIdentifierType,
+                         @NonNull ESMPAPIType eSMPAPIType,
+                         @NonNull ESMPIdentifierType eSMPIdentifierType,
                          boolean bProduction,
                          int nPriority);
 
@@ -154,11 +154,11 @@ public interface ISMLConfigurationManager
    * @return An unsorted collection of all contained SML information. Never <code>null</code> but
    *         maybe empty.
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   ICommonsList <ISMLConfiguration> getAll ();
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   ICommonsList <ISMLConfiguration> getAllSorted ();
 

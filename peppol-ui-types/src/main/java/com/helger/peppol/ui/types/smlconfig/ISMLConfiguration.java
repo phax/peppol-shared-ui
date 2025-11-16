@@ -16,13 +16,13 @@
  */
 package com.helger.peppol.ui.types.smlconfig;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.base.id.IHasID;
 import com.helger.base.name.IHasDisplayName;
 import com.helger.peppol.sml.ESMPAPIType;
 import com.helger.peppol.sml.ISMLInfo;
 import com.helger.peppolid.factory.ESMPIdentifierType;
-
-import jakarta.annotation.Nonnull;
 
 public interface ISMLConfiguration extends IHasID <String>, IHasDisplayName
 {
@@ -33,7 +33,7 @@ public interface ISMLConfiguration extends IHasID <String>, IHasDisplayName
   /**
    * @return The SML it's all about.
    */
-  @Nonnull
+  @NonNull
   ISMLInfo getSMLInfo ();
 
 
@@ -50,13 +50,13 @@ public interface ISMLConfiguration extends IHasID <String>, IHasDisplayName
   /**
    * @return The API type to use.
    */
-  @Nonnull
+  @NonNull
   ESMPAPIType getSMPAPIType ();
 
   /**
    * @return The SMP identifier type to use.
    */
-  @Nonnull
+  @NonNull
   ESMPIdentifierType getSMPIdentifierType ();
 
   /**

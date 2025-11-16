@@ -16,6 +16,9 @@
  */
 package com.helger.peppol.sharedui;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.base.enforce.ValueEnforcer;
@@ -24,8 +27,7 @@ import com.helger.peppol.sharedui.config.SharedUIConfig;
 import com.helger.peppol.smp.ISMPTransportProfile;
 import com.helger.peppolid.peppol.pidscheme.EPredefinedParticipantIdentifierScheme;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+
 
 /**
  * Misc utility methods
@@ -40,13 +42,13 @@ public final class SharedUIHelper
   private SharedUIHelper ()
   {}
 
-  public static void setApplicationName (@Nonnull @Nonempty final String sAppName)
+  public static void setApplicationName (@NonNull @Nonempty final String sAppName)
   {
     ValueEnforcer.notEmpty (sAppName, "AppName");
     s_sAppNamePrefix = sAppName;
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public static String getApplicationTitle ()
   {

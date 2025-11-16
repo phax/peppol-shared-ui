@@ -20,6 +20,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.base.id.IHasID;
 import com.helger.base.lang.EnumHelper;
@@ -44,9 +47,6 @@ import com.helger.peppolid.peppol.pidscheme.PeppolParticipantIdentifierSchemeMan
 import com.helger.peppolid.peppol.process.IPeppolPredefinedProcessIdentifier;
 import com.helger.peppolid.peppol.process.PredefinedProcessIdentifierManager;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 /**
  * Identifier type to validate
  *
@@ -62,30 +62,30 @@ public enum EIDType implements IHasID <String>, IHasDisplayName
   private final String m_sDisplayName;
   private final IIDTypeValidator m_aValidator;
 
-  EIDType (@Nonnull @Nonempty final String sID,
-           @Nonnull @Nonempty final String sDisplayName,
-           @Nonnull final IIDTypeValidator aValidator)
+  EIDType (@NonNull @Nonempty final String sID,
+           @NonNull @Nonempty final String sDisplayName,
+           @NonNull final IIDTypeValidator aValidator)
   {
     m_sID = sID;
     m_sDisplayName = sDisplayName;
     m_aValidator = aValidator;
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getID ()
   {
     return m_sID;
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getDisplayName ()
   {
     return m_sDisplayName;
   }
 
-  @Nonnull
+  @NonNull
   public IIDTypeValidator getValidator ()
   {
     return m_aValidator;
@@ -97,21 +97,21 @@ public enum EIDType implements IHasID <String>, IHasDisplayName
     return EnumHelper.getFromIDOrNull (EIDType.class, sID);
   }
 
-  @Nonnull
+  @NonNull
   private static IError _warn (final String s)
   {
     return SingleError.builderWarn ().errorText (s).build ();
   }
 
-  @Nonnull
+  @NonNull
   private static IError _error (final String s)
   {
     return SingleError.builderError ().errorText (s).build ();
   }
 
-  private static void _peppolParticipantID (@Nonnull @Nonempty final String sID,
-                                            @Nonnull final ErrorList aErrorList,
-                                            @Nonnull final List <KVPair> aDetails)
+  private static void _peppolParticipantID (@NonNull @Nonempty final String sID,
+                                            @NonNull final ErrorList aErrorList,
+                                            @NonNull final List <KVPair> aDetails)
   {
     // This is quicker than splitting with RegEx!
     final List <String> aSplitted = StringHelper.getExploded (CIdentifier.URL_SCHEME_VALUE_SEPARATOR, sID, 2);
@@ -273,9 +273,9 @@ public enum EIDType implements IHasID <String>, IHasDisplayName
     }
   }
 
-  private static void _peppolDocTypeID (@Nonnull @Nonempty final String sID,
-                                        @Nonnull final ErrorList aErrorList,
-                                        @Nonnull final List <KVPair> aDetails)
+  private static void _peppolDocTypeID (@NonNull @Nonempty final String sID,
+                                        @NonNull final ErrorList aErrorList,
+                                        @NonNull final List <KVPair> aDetails)
   {
     // This is quicker than splitting with RegEx!
     final List <String> aSplitted = StringHelper.getExploded (CIdentifier.URL_SCHEME_VALUE_SEPARATOR, sID, 2);
@@ -406,9 +406,9 @@ public enum EIDType implements IHasID <String>, IHasDisplayName
     }
   }
 
-  private static void _peppolProcessID (@Nonnull @Nonempty final String sID,
-                                        @Nonnull final ErrorList aErrorList,
-                                        @Nonnull final List <KVPair> aDetails)
+  private static void _peppolProcessID (@NonNull @Nonempty final String sID,
+                                        @NonNull final ErrorList aErrorList,
+                                        @NonNull final List <KVPair> aDetails)
   {
     // This is quicker than splitting with RegEx!
     final List <String> aSplitted = StringHelper.getExploded (CIdentifier.URL_SCHEME_VALUE_SEPARATOR, sID, 2);

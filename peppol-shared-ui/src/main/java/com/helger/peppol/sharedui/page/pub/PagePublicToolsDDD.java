@@ -18,6 +18,7 @@ package com.helger.peppol.sharedui.page.pub;
 
 import java.util.Comparator;
 
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -47,7 +48,7 @@ import com.helger.photon.uicore.page.WebPageExecutionContext;
 import com.helger.url.SimpleURL;
 import com.helger.xml.serialize.read.DOMReader;
 
-import jakarta.annotation.Nonnull;
+
 
 public final class PagePublicToolsDDD extends AbstractBootstrapWebPage <WebPageExecutionContext>
 {
@@ -57,18 +58,18 @@ public final class PagePublicToolsDDD extends AbstractBootstrapWebPage <WebPageE
   private static final DocumentDetailsDeterminator DDD = new DocumentDetailsDeterminator (DDD_SL,
                                                                                           DDDValueProviderList.getDefaultValueProviderList ());
 
-  public PagePublicToolsDDD (@Nonnull @Nonempty final String sID)
+  public PagePublicToolsDDD (@NonNull @Nonempty final String sID)
   {
     this (sID, "Run DDD");
   }
 
-  public PagePublicToolsDDD (@Nonnull @Nonempty final String sID, @Nonnull @Nonempty final String sName)
+  public PagePublicToolsDDD (@NonNull @Nonempty final String sID, @NonNull @Nonempty final String sName)
   {
     super (sID, sName);
   }
 
   @Override
-  public void fillContent (@Nonnull final WebPageExecutionContext aWPEC)
+  public void fillContent (@NonNull final WebPageExecutionContext aWPEC)
   {
     final HCNodeList aNodeList = aWPEC.getNodeList ();
 

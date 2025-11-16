@@ -18,11 +18,11 @@ package com.helger.peppol.ui.select;
 
 import java.util.Locale;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.photon.core.form.RequestField;
 import com.helger.photon.uicore.html.select.HCExtSelect;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * UI select for SMP transport profiles
@@ -31,7 +31,7 @@ import jakarta.annotation.Nonnull;
  */
 public class SMPTransportProfileSelect extends HCExtSelect
 {
-  public SMPTransportProfileSelect (@Nonnull final RequestField aRF, @Nonnull final Locale aDisplayLocale)
+  public SMPTransportProfileSelect (@NonNull final RequestField aRF, @NonNull final Locale aDisplayLocale)
   {
     super (aRF);
     addOptionPleaseSelect (aDisplayLocale);

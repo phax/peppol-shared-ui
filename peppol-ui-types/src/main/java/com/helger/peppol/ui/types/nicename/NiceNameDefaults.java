@@ -16,14 +16,14 @@
  */
 package com.helger.peppol.ui.types.nicename;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.style.ReturnsMutableObject;
 import com.helger.collection.commons.CommonsArrayList;
 import com.helger.collection.commons.CommonsLinkedHashMap;
 import com.helger.collection.commons.ICommonsOrderedMap;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.peppolid.peppol.EPeppolCodeListItemState;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * This class contains the default document type IDs and process IDs as defined in the Peppol code
@@ -36,8 +36,8 @@ public final class NiceNameDefaults
   private static final ICommonsOrderedMap <String, NiceNameEntry> DEFAULT_DOCTYPES = new CommonsLinkedHashMap <> ();
   private static final ICommonsOrderedMap <String, NiceNameEntry> DEFAULT_PROCESSES = new CommonsLinkedHashMap <> ();
 
-  @Nonnull
-  private static String _unifyCasing (@Nonnull final String s)
+  @NonNull
+  private static String _unifyCasing (@NonNull final String s)
   {
     String ret = s.trim ();
     if (ret.startsWith ("PEPPOL"))
@@ -71,14 +71,14 @@ public final class NiceNameDefaults
   private NiceNameDefaults ()
   {}
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableObject
   public static ICommonsOrderedMap <String, NiceNameEntry> defaultDocTypes ()
   {
     return DEFAULT_DOCTYPES;
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableObject
   public static ICommonsOrderedMap <String, NiceNameEntry> defaultProcesses ()
   {

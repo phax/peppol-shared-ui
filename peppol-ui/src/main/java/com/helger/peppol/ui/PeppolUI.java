@@ -18,6 +18,8 @@ package com.helger.peppol.ui;
 
 import java.util.List;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,9 +38,6 @@ import com.helger.photon.uicore.css.CPageParam;
 import com.helger.photon.uicore.page.IWebPageExecutionContext;
 import com.helger.url.ISimpleURL;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 @Immutable
 public final class PeppolUI
 {
@@ -56,8 +55,8 @@ public final class PeppolUI
   private PeppolUI ()
   {}
 
-  @Nonnull
-  private static String _getString (@Nonnull final Throwable t)
+  @NonNull
+  private static String _getString (@NonNull final Throwable t)
   {
     return StringHelper.getConcatenatedOnDemand (ClassHelper.getClassLocalName (t.getClass ()), " - ", t.getMessage ());
   }
@@ -106,20 +105,20 @@ public final class PeppolUI
     return ret.toString ();
   }
 
-  @Nonnull
-  public static ISimpleURL getViewLink (@Nonnull final IWebPageExecutionContext aWPEC,
-                                        @Nonnull @Nonempty final String sMenuItemID,
-                                        @Nonnull final ITypedObject <String> aObject)
+  @NonNull
+  public static ISimpleURL getViewLink (@NonNull final IWebPageExecutionContext aWPEC,
+                                        @NonNull @Nonempty final String sMenuItemID,
+                                        @NonNull final ITypedObject <String> aObject)
   {
     ValueEnforcer.notNull (aObject, "Object");
 
     return getViewLink (aWPEC, sMenuItemID, aObject.getID ());
   }
 
-  @Nonnull
-  public static ISimpleURL getViewLink (@Nonnull final IWebPageExecutionContext aWPEC,
-                                        @Nonnull @Nonempty final String sMenuItemID,
-                                        @Nonnull final String sObjectID)
+  @NonNull
+  public static ISimpleURL getViewLink (@NonNull final IWebPageExecutionContext aWPEC,
+                                        @NonNull @Nonempty final String sMenuItemID,
+                                        @NonNull final String sObjectID)
   {
     return aWPEC.getLinkToMenuItem (sMenuItemID)
                 .add (CPageParam.PARAM_ACTION, CPageParam.ACTION_VIEW)

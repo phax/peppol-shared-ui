@@ -19,6 +19,9 @@ package com.helger.peppol.api.json;
 import java.util.Locale;
 import java.util.Map;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.base.rt.StackTraceHelper;
 import com.helger.base.state.ETriState;
@@ -37,9 +40,6 @@ import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.smpclient.json.SMPJsonResponse;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 @Immutable
 public final class PeppolSharedSMPJsonHelper
 {
@@ -50,8 +50,8 @@ public final class PeppolSharedSMPJsonHelper
   private PeppolSharedSMPJsonHelper ()
   {}
 
-  @Nonnull
-  public static String getErrorLevel (@Nonnull final IErrorLevel aErrorLevel)
+  @NonNull
+  public static String getErrorLevel (@NonNull final IErrorLevel aErrorLevel)
   {
     if (aErrorLevel.isGE (EErrorLevel.ERROR))
       return "ERROR";
@@ -60,8 +60,8 @@ public final class PeppolSharedSMPJsonHelper
     return "SUCCESS";
   }
 
-  @Nonnull
-  public static String getTriState (@Nonnull final ETriState eTriState)
+  @NonNull
+  public static String getTriState (@NonNull final ETriState eTriState)
   {
     if (eTriState.isTrue ())
       return "TRUE";
@@ -80,12 +80,12 @@ public final class PeppolSharedSMPJsonHelper
                             .add ("stackTrace", StackTraceHelper.getStackAsString (t));
   }
 
-  @Nonnull
-  public static IJsonObject createItem (@Nonnull final IErrorLevel aErrorLevel,
+  @NonNull
+  public static IJsonObject createItem (@NonNull final IErrorLevel aErrorLevel,
                                         @Nullable final String sErrorID,
                                         @Nullable final String sErrorFieldName,
                                         @Nullable final String sErrorLocation,
-                                        @Nonnull final String sErrorText,
+                                        @NonNull final String sErrorText,
                                         @Nullable final Throwable t)
   {
     return new JsonObject ().add ("errorLevel", getErrorLevel (aErrorLevel))
@@ -96,8 +96,8 @@ public final class PeppolSharedSMPJsonHelper
                             .addIfNotNull ("exception", getStackTrace (t));
   }
 
-  @Nonnull
-  public static IJsonObject createItem (@Nonnull final IError aError, @Nonnull final Locale aDisplayLocale)
+  @NonNull
+  public static IJsonObject createItem (@NonNull final IError aError, @NonNull final Locale aDisplayLocale)
   {
     return createItem (aError.getErrorLevel (),
                        aError.getErrorID (),
@@ -107,11 +107,11 @@ public final class PeppolSharedSMPJsonHelper
                        aError.getLinkedException ());
   }
 
-  @Nonnull
-  public static IJsonObject convert (@Nonnull final ESMPAPIType eSMPAPIType,
-                                     @Nonnull final IParticipantIdentifier aParticipantID,
-                                     @Nonnull final Map <String, String> aSGHrefs,
-                                     @Nonnull final IIdentifierFactory aIF)
+  @NonNull
+  public static IJsonObject convert (@NonNull final ESMPAPIType eSMPAPIType,
+                                     @NonNull final IParticipantIdentifier aParticipantID,
+                                     @NonNull final Map <String, String> aSGHrefs,
+                                     @NonNull final IIdentifierFactory aIF)
   {
     final IJsonObject aJson = SMPJsonResponse.convert (eSMPAPIType, aParticipantID, aSGHrefs, aIF);
     final IJsonArray aURLsArray = aJson.getAsArray (SMPJsonResponse.JSON_URLS);

@@ -19,6 +19,9 @@ package com.helger.peppol.validate;
 import java.util.Comparator;
 import java.util.Locale;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.annotation.style.ReturnsMutableCopy;
 import com.helger.base.name.IHasDisplayName;
@@ -63,9 +66,6 @@ import com.helger.phive.zatca.ZATCAValidation;
 import com.helger.phive.zugferd.ZugferdValidation;
 import com.helger.text.compare.ComparatorHelper;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 @SuppressWarnings ("deprecation")
 @Immutable
 public final class VESRegistry
@@ -109,9 +109,9 @@ public final class VESRegistry
   private VESRegistry ()
   {}
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
-  public static ICommonsOrderedMap <DVRCoordinate, IValidationExecutorSet <IValidationSourceXML>> getAllSortedByDisplayName (@Nonnull final Locale aDisplayLocale)
+  public static ICommonsOrderedMap <DVRCoordinate, IValidationExecutorSet <IValidationSourceXML>> getAllSortedByDisplayName (@NonNull final Locale aDisplayLocale)
   {
     final ICommonsMap <DVRCoordinate, IValidationExecutorSet <IValidationSourceXML>> aMap = new CommonsHashMap <> (VES_REGISTRY.getAll (),
                                                                                                                    IValidationExecutorSet::getID,
@@ -120,7 +120,7 @@ public final class VESRegistry
                                                                            aDisplayLocale));
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public static ICommonsOrderedMap <DVRCoordinate, IValidationExecutorSet <IValidationSourceXML>> getAllSortedByID ()
   {
@@ -136,7 +136,7 @@ public final class VESRegistry
     return VES_REGISTRY.getOfID (aID);
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public static ICommonsList <IValidationExecutorSet <IValidationSourceXML>> getAll ()
   {
@@ -148,7 +148,7 @@ public final class VESRegistry
     VES_REGISTRY.removeAll ();
   }
 
-  @Nonnull
+  @NonNull
   public static IJsonArray getAllAsJson ()
   {
     final IJsonArray aJsonArray = new JsonArray ();

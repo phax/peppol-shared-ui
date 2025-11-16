@@ -16,6 +16,9 @@
  */
 package com.helger.peppol.ui.types.smlconfig;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.style.ReturnsMutableCopy;
 import com.helger.base.state.EChange;
@@ -29,20 +32,17 @@ import com.helger.peppolid.factory.ESMPIdentifierType;
 import com.helger.photon.audit.AuditHelper;
 import com.helger.photon.io.dao.AbstractPhotonMapBasedWALDAO;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 public final class SMLConfigurationManager extends AbstractPhotonMapBasedWALDAO <ISMLConfiguration, SMLConfiguration>
                                            implements
                                            ISMLConfigurationManager
 {
-  public SMLConfigurationManager (@Nonnull @Nonempty final String sFilename) throws DAOException
+  public SMLConfigurationManager (@NonNull @Nonempty final String sFilename) throws DAOException
   {
     super (SMLConfiguration.class, sFilename);
   }
 
   @Override
-  @Nonnull
+  @NonNull
   protected EChange onInit ()
   {
     // Add the default transport profiles
@@ -51,16 +51,16 @@ public final class SMLConfigurationManager extends AbstractPhotonMapBasedWALDAO 
     return EChange.CHANGED;
   }
 
-  @Nonnull
-  public ISMLConfiguration createSMLInfo (@Nonnull @Nonempty final String sSMLInfoID,
-                                          @Nonnull @Nonempty final String sDisplayName,
-                                          @Nonnull @Nonempty final String sDNSZone,
-                                          @Nonnull @Nonempty final String sManagementServiceURL,
-                                          @Nonnull final String sURLSuffixManageSMP,
-                                          @Nonnull final String sURLSuffixManageParticipant,
+  @NonNull
+  public ISMLConfiguration createSMLInfo (@NonNull @Nonempty final String sSMLInfoID,
+                                          @NonNull @Nonempty final String sDisplayName,
+                                          @NonNull @Nonempty final String sDNSZone,
+                                          @NonNull @Nonempty final String sManagementServiceURL,
+                                          @NonNull final String sURLSuffixManageSMP,
+                                          @NonNull final String sURLSuffixManageParticipant,
                                           final boolean bClientCertificateRequired,
-                                          @Nonnull final ESMPAPIType eSMPAPIType,
-                                          @Nonnull final ESMPIdentifierType eSMPIdentifierType,
+                                          @NonNull final ESMPAPIType eSMPAPIType,
+                                          @NonNull final ESMPIdentifierType eSMPIdentifierType,
                                           final boolean bProduction,
                                           final int nPriority)
   {
@@ -95,16 +95,16 @@ public final class SMLConfigurationManager extends AbstractPhotonMapBasedWALDAO 
     return aExtSMLInfo;
   }
 
-  @Nonnull
+  @NonNull
   public EChange updateSMLInfo (@Nullable final String sSMLInfoID,
-                                @Nonnull @Nonempty final String sDisplayName,
-                                @Nonnull @Nonempty final String sDNSZone,
-                                @Nonnull @Nonempty final String sManagementServiceURL,
-                                @Nonnull final String sURLSuffixManageSMP,
-                                @Nonnull final String sURLSuffixManageParticipant,
+                                @NonNull @Nonempty final String sDisplayName,
+                                @NonNull @Nonempty final String sDNSZone,
+                                @NonNull @Nonempty final String sManagementServiceURL,
+                                @NonNull final String sURLSuffixManageSMP,
+                                @NonNull final String sURLSuffixManageParticipant,
                                 final boolean bClientCertificateRequired,
-                                @Nonnull final ESMPAPIType eSMPAPIType,
-                                @Nonnull final ESMPIdentifierType eSMPIdentifierType,
+                                @NonNull final ESMPAPIType eSMPAPIType,
+                                @NonNull final ESMPIdentifierType eSMPIdentifierType,
                                 final boolean bProduction,
                                 final int nPriority)
   {
@@ -183,7 +183,7 @@ public final class SMLConfigurationManager extends AbstractPhotonMapBasedWALDAO 
     return EChange.CHANGED;
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public ICommonsList <ISMLConfiguration> getAllSorted ()
   {

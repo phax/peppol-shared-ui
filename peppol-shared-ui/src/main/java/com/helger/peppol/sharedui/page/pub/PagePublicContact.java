@@ -18,6 +18,7 @@ package com.helger.peppol.sharedui.page.pub;
 
 import java.util.Locale;
 
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,8 +54,6 @@ import com.helger.smtp.data.EEmailType;
 import com.helger.smtp.data.EmailData;
 import com.helger.smtp.scope.ScopedMailAPI;
 
-import jakarta.annotation.Nonnull;
-
 public final class PagePublicContact extends AbstractAppWebPage
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (PagePublicContact.class);
@@ -65,7 +64,7 @@ public final class PagePublicContact extends AbstractAppWebPage
   private static final String FIELD_TEXT = "topic";
   private static final String FIELD_CAPTCHA = "captcha";
 
-  public PagePublicContact (@Nonnull @Nonempty final String sID)
+  public PagePublicContact (@NonNull @Nonempty final String sID)
   {
     super (sID, "Contact form");
   }
@@ -116,7 +115,7 @@ public final class PagePublicContact extends AbstractAppWebPage
                                                "//www.vidnami.com",
                                                "//www.zerocost-ad-posting.xyz" };
 
-  private static boolean _isSpamBody (@Nonnull final String sTopic)
+  private static boolean _isSpamBody (@NonNull final String sTopic)
   {
     final String sLowerCase = sTopic.toLowerCase (Locale.ROOT);
     for (final String s : SPAM_KEYS)
@@ -126,7 +125,7 @@ public final class PagePublicContact extends AbstractAppWebPage
   }
 
   @Override
-  protected void fillContent (@Nonnull final WebPageExecutionContext aWPEC)
+  protected void fillContent (@NonNull final WebPageExecutionContext aWPEC)
   {
     final HCNodeList aNodeList = aWPEC.getNodeList ();
     final Locale aDisplayLocale = aWPEC.getDisplayLocale ();

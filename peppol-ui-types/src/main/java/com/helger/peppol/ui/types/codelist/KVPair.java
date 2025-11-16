@@ -16,11 +16,11 @@
  */
 package com.helger.peppol.ui.types.codelist;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.base.string.StringHelper;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Key value pair
@@ -34,19 +34,19 @@ public final class KVPair
   private final String m_sValue;
   private final int m_nIndent;
 
-  public KVPair (@Nonnull final String sKey, @Nullable final String sValue)
+  public KVPair (@NonNull final String sKey, @Nullable final String sValue)
   {
     this (sKey, sValue, 0);
   }
 
-  public KVPair (@Nonnull final String sKey, @Nullable final String sValue, final int nIndent)
+  public KVPair (@NonNull final String sKey, @Nullable final String sValue, final int nIndent)
   {
     m_sKey = sKey;
     m_sValue = sValue;
     m_nIndent = nIndent;
   }
 
-  @Nonnull
+  @NonNull
   public String getKey ()
   {
     return m_sKey;

@@ -18,10 +18,10 @@ package com.helger.peppol.ui.types.codelist;
 
 import java.util.List;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.Nonempty;
 import com.helger.diagnostics.error.list.ErrorList;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Callback interface
@@ -31,5 +31,5 @@ import jakarta.annotation.Nonnull;
 @FunctionalInterface
 public interface IIDTypeValidator
 {
-  void validate (@Nonnull @Nonempty String sID, @Nonnull ErrorList aErrorList, @Nonnull List <KVPair> aDetails);
+  void validate (@NonNull @Nonempty String sID, @NonNull ErrorList aErrorList, @NonNull List <KVPair> aDetails);
 }

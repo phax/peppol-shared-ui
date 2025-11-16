@@ -16,6 +16,9 @@
  */
 package com.helger.peppol.ui.nicename;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.html.hc.IHCNode;
 import com.helger.html.hc.html.textlevel.HCCode;
@@ -30,17 +33,14 @@ import com.helger.peppolid.peppol.EPeppolCodeListItemState;
 import com.helger.photon.bootstrap4.badge.BootstrapBadge;
 import com.helger.photon.bootstrap4.badge.EBootstrapBadgeType;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 @Immutable
 public final class NiceNameUI
 {
   private NiceNameUI ()
   {}
 
-  @Nonnull
-  public static IHCNode createFormattedID (@Nonnull final String sID,
+  @NonNull
+  public static IHCNode createFormattedID (@NonNull final String sID,
                                            @Nullable final String sName,
                                            @Nullable final EBootstrapBadgeType eType,
                                            @Nullable final IHCNode aWarningsNode,
@@ -74,7 +74,7 @@ public final class NiceNameUI
   }
 
   @Nullable
-  public static BootstrapBadge createStateBadge (@Nonnull final EPeppolCodeListItemState eState)
+  public static BootstrapBadge createStateBadge (@NonNull final EPeppolCodeListItemState eState)
   {
     if (eState.isRemoved ())
       return new BootstrapBadge (EBootstrapBadgeType.DANGER).addChild ("Identifier is removed");
@@ -83,8 +83,8 @@ public final class NiceNameUI
     return null;
   }
 
-  @Nonnull
-  private static IHCNode _createID (@Nonnull final String sID,
+  @NonNull
+  private static IHCNode _createID (@NonNull final String sID,
                                     @Nullable final NiceNameEntry aNiceName,
                                     final boolean bInDetails)
   {
@@ -107,16 +107,16 @@ public final class NiceNameUI
                               bInDetails);
   }
 
-  @Nonnull
-  public static IHCNode createDocTypeID (@Nonnull final IDocumentTypeIdentifier aDocTypeID, final boolean bInDetails)
+  @NonNull
+  public static IHCNode createDocTypeID (@NonNull final IDocumentTypeIdentifier aDocTypeID, final boolean bInDetails)
   {
     final NiceNameEntry aNN = NiceNameManager.getPintEnabledNiceNameEntry (aDocTypeID);
     return _createID (aDocTypeID.getURIEncoded (), aNN, bInDetails);
   }
 
-  @Nonnull
-  public static IHCNode createProcessID (@Nonnull final IDocumentTypeIdentifier aDocTypeID,
-                                         @Nonnull final IProcessIdentifier aProcessID,
+  @NonNull
+  public static IHCNode createProcessID (@NonNull final IDocumentTypeIdentifier aDocTypeID,
+                                         @NonNull final IProcessIdentifier aProcessID,
                                          final boolean bInDetails)
   {
     final String sURI = aProcessID.getURIEncoded ();

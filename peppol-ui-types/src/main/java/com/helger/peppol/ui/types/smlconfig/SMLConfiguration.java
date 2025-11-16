@@ -16,6 +16,8 @@
  */
 package com.helger.peppol.ui.types.smlconfig;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.style.ReturnsMutableObject;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.hashcode.HashCodeGenerator;
@@ -26,8 +28,6 @@ import com.helger.peppol.sml.ESMPAPIType;
 import com.helger.peppol.sml.SMLInfo;
 import com.helger.peppolid.factory.ESMPIdentifierType;
 
-import jakarta.annotation.Nonnull;
-
 public final class SMLConfiguration implements ISMLConfiguration
 {
   private SMLInfo m_aSMLInfo;
@@ -36,9 +36,9 @@ public final class SMLConfiguration implements ISMLConfiguration
   private boolean m_bProduction;
   private int m_nPriority;
 
-  public SMLConfiguration (@Nonnull final SMLInfo aSMLInfo,
-                           @Nonnull final ESMPAPIType eSMPAPIType,
-                           @Nonnull final ESMPIdentifierType eSMPIdentifierType,
+  public SMLConfiguration (@NonNull final SMLInfo aSMLInfo,
+                           @NonNull final ESMPAPIType eSMPAPIType,
+                           @NonNull final ESMPIdentifierType eSMPIdentifierType,
                            final boolean bProduction,
                            final int nPriority)
   {
@@ -49,15 +49,15 @@ public final class SMLConfiguration implements ISMLConfiguration
     setPriority (nPriority);
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableObject
   public SMLInfo getSMLInfo ()
   {
     return m_aSMLInfo;
   }
 
-  @Nonnull
-  public EChange setSMLInfo (@Nonnull final SMLInfo aSMLInfo)
+  @NonNull
+  public EChange setSMLInfo (@NonNull final SMLInfo aSMLInfo)
   {
     ValueEnforcer.notNull (aSMLInfo, "SMLInfo");
     if (aSMLInfo.equals (m_aSMLInfo))
@@ -66,14 +66,14 @@ public final class SMLConfiguration implements ISMLConfiguration
     return EChange.CHANGED;
   }
 
-  @Nonnull
+  @NonNull
   public ESMPAPIType getSMPAPIType ()
   {
     return m_eSMPAPIType;
   }
 
-  @Nonnull
-  public EChange setSMPAPIType (@Nonnull final ESMPAPIType eSMPAPIType)
+  @NonNull
+  public EChange setSMPAPIType (@NonNull final ESMPAPIType eSMPAPIType)
   {
     ValueEnforcer.notNull (eSMPAPIType, "SMPAPIType");
     if (eSMPAPIType.equals (m_eSMPAPIType))
@@ -82,14 +82,14 @@ public final class SMLConfiguration implements ISMLConfiguration
     return EChange.CHANGED;
   }
 
-  @Nonnull
+  @NonNull
   public ESMPIdentifierType getSMPIdentifierType ()
   {
     return m_eSMPIdentifierType;
   }
 
-  @Nonnull
-  public EChange setSMPIdentifierType (@Nonnull final ESMPIdentifierType eSMPIdentifierType)
+  @NonNull
+  public EChange setSMPIdentifierType (@NonNull final ESMPIdentifierType eSMPIdentifierType)
   {
     ValueEnforcer.notNull (eSMPIdentifierType, "SMPIdentifierType");
     if (eSMPIdentifierType.equals (m_eSMPIdentifierType))
@@ -103,7 +103,7 @@ public final class SMLConfiguration implements ISMLConfiguration
     return m_bProduction;
   }
 
-  @Nonnull
+  @NonNull
   public EChange setProduction (final boolean bProduction)
   {
     if (bProduction == m_bProduction)
@@ -117,7 +117,7 @@ public final class SMLConfiguration implements ISMLConfiguration
     return m_nPriority;
   }
 
-  @Nonnull
+  @NonNull
   public EChange setPriority (final int nPriority)
   {
     if (nPriority == m_nPriority)
@@ -126,8 +126,8 @@ public final class SMLConfiguration implements ISMLConfiguration
     return EChange.CHANGED;
   }
 
-  @Nonnull
-  public static SMLConfiguration createForPeppol (@Nonnull final ESML eSML)
+  @NonNull
+  public static SMLConfiguration createForPeppol (@NonNull final ESML eSML)
   {
     final boolean bIsProd = eSML == ESML.DIGIT_PRODUCTION;
     return new SMLConfiguration (SMLInfo.builder (eSML).build (),

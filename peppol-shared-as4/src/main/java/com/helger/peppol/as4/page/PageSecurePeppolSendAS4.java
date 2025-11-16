@@ -21,6 +21,7 @@ import java.security.KeyStore.PrivateKeyEntry;
 import java.security.cert.X509Certificate;
 import java.util.function.Supplier;
 
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -81,8 +82,6 @@ import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.smpclient.url.SMPDNSResolutionException;
 import com.helger.xml.serialize.read.DOMReader;
 import com.helger.xml.serialize.write.XMLWriter;
-
-import jakarta.annotation.Nonnull;
 
 public class PageSecurePeppolSendAS4 extends AbstractBootstrapWebPage <WebPageExecutionContext>
 {
@@ -155,18 +154,18 @@ public class PageSecurePeppolSendAS4 extends AbstractBootstrapWebPage <WebPageEx
     }
   }
 
-  public PageSecurePeppolSendAS4 (@Nonnull @Nonempty final String sID)
+  public PageSecurePeppolSendAS4 (@NonNull @Nonempty final String sID)
   {
     this (sID, "Send Peppol AS4 message");
   }
 
-  public PageSecurePeppolSendAS4 (@Nonnull @Nonempty final String sID, @Nonnull @Nonempty final String sName)
+  public PageSecurePeppolSendAS4 (@NonNull @Nonempty final String sID, @NonNull @Nonempty final String sName)
   {
     super (sID, sName);
   }
 
   @Override
-  protected IValidityIndicator isValidToDisplayPage (@Nonnull final WebPageExecutionContext aWPEC)
+  protected IValidityIndicator isValidToDisplayPage (@NonNull final WebPageExecutionContext aWPEC)
   {
     final HCNodeList aNodeList = aWPEC.getNodeList ();
     if (AS4_CF == null)
@@ -178,7 +177,7 @@ public class PageSecurePeppolSendAS4 extends AbstractBootstrapWebPage <WebPageEx
   }
 
   @Override
-  protected void fillContent (@Nonnull final WebPageExecutionContext aWPEC)
+  protected void fillContent (@NonNull final WebPageExecutionContext aWPEC)
   {
     final HCNodeList aNodeList = aWPEC.getNodeList ();
     final IIdentifierFactory aIF = Phase4PeppolSender.IF;

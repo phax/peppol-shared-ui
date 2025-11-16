@@ -18,6 +18,8 @@ package com.helger.peppol.validate.ctrl;
 
 import java.util.Locale;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.Nonempty;
 import com.helger.collection.commons.CommonsArrayList;
 import com.helger.collection.commons.CommonsHashSet;
@@ -32,8 +34,6 @@ import com.helger.phive.xml.source.IValidationSourceXML;
 import com.helger.photon.uicore.html.select.HCExtSelect;
 import com.helger.text.compare.ComparatorHelper;
 import com.helger.text.compare.NaturalNumericOrderComparator;
-
-import jakarta.annotation.Nonnull;
 
 @SuppressWarnings ("deprecation")
 public final class HCVESSelect extends HCExtSelect
@@ -51,9 +51,9 @@ public final class HCVESSelect extends HCExtSelect
                                                                                        PeppolValidation3_10_0.VID_OPENPEPPOL_T110_V3,
                                                                                        PeppolValidation3_10_0.VID_OPENPEPPOL_T111_V3);
 
-  @Nonnull
+  @NonNull
   @Nonempty
-  public static ICommonsList <IValidationExecutorSet <IValidationSourceXML>> getAllSortedCorrect (@Nonnull final Locale aDisplayLocale)
+  public static ICommonsList <IValidationExecutorSet <IValidationSourceXML>> getAllSortedCorrect (@NonNull final Locale aDisplayLocale)
   {
     final ICommonsList <IValidationExecutorSet <IValidationSourceXML>> aAll = new CommonsArrayList <> ();
     for (final IValidationExecutorSet <IValidationSourceXML> aEntry : VESRegistry.getAll ())
@@ -68,7 +68,7 @@ public final class HCVESSelect extends HCExtSelect
     });
   }
 
-  public HCVESSelect (@Nonnull final IHCRequestField aRF, @Nonnull final Locale aDisplayLocale)
+  public HCVESSelect (@NonNull final IHCRequestField aRF, @NonNull final Locale aDisplayLocale)
   {
     super (aRF);
 

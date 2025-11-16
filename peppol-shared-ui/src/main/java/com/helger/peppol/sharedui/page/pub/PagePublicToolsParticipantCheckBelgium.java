@@ -16,6 +16,7 @@
  */
 package com.helger.peppol.sharedui.page.pub;
 
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +49,7 @@ import com.helger.photon.uictrls.famfam.EFamFamIcon;
 import com.helger.url.ISimpleURL;
 import com.helger.url.SimpleURL;
 
-import jakarta.annotation.Nonnull;
+
 
 public class PagePublicToolsParticipantCheckBelgium extends AbstractAppWebPage
 {
@@ -56,27 +57,27 @@ public class PagePublicToolsParticipantCheckBelgium extends AbstractAppWebPage
 
   private static final Logger LOGGER = LoggerFactory.getLogger (PagePublicToolsParticipantCheckBelgium.class);
 
-  public PagePublicToolsParticipantCheckBelgium (@Nonnull @Nonempty final String sID)
+  public PagePublicToolsParticipantCheckBelgium (@NonNull @Nonempty final String sID)
   {
     this (sID, "Belgium Participant Check");
   }
 
-  public PagePublicToolsParticipantCheckBelgium (@Nonnull @Nonempty final String sID,
-                                                 @Nonnull @Nonempty final String sName)
+  public PagePublicToolsParticipantCheckBelgium (@NonNull @Nonempty final String sID,
+                                                 @NonNull @Nonempty final String sName)
   {
     super (sID, sName);
   }
 
-  @Nonnull
-  static IHCNode createPeppolDirectoryButton (@Nonnull final IParticipantIdentifier aPID)
+  @NonNull
+  static IHCNode createPeppolDirectoryButton (@NonNull final IParticipantIdentifier aPID)
   {
     final ISimpleURL aDirectoryURL = new SimpleURL ("https://directory.peppol.eu/participant/" +
                                                     aPID.getURIPercentEncoded ());
     return new BootstrapLinkButton ().addChild ("Peppol Directory Lookup").setHref (aDirectoryURL).setTargetBlank ();
   }
 
-  private void _checkParticipant (@Nonnull final WebPageExecutionContext aWPEC,
-                                  @Nonnull final String sParticipantIDValue)
+  private void _checkParticipant (@NonNull final WebPageExecutionContext aWPEC,
+                                  @NonNull final String sParticipantIDValue)
   {
     final HCNodeList aNodeList = aWPEC.getNodeList ();
     final ISMLConfigurationManager aSMLConfigurationMgr = PhotonPeppolMetaManager.getSMLConfigurationMgr ();
@@ -154,7 +155,7 @@ public class PagePublicToolsParticipantCheckBelgium extends AbstractAppWebPage
   }
 
   @Override
-  protected void fillContent (@Nonnull final WebPageExecutionContext aWPEC)
+  protected void fillContent (@NonNull final WebPageExecutionContext aWPEC)
   {
     final HCNodeList aNodeList = aWPEC.getNodeList ();
     final FormErrorList aFormErrors = new FormErrorList ();

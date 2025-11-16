@@ -16,6 +16,8 @@
  */
 package com.helger.peppol.sharedui.page.pub;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.Nonempty;
 import com.helger.base.string.StringHelper;
 import com.helger.cache.regex.RegExHelper;
@@ -51,7 +53,7 @@ import com.helger.photon.uictrls.famfam.EFamFamIcon;
 import com.helger.url.ISimpleURL;
 import com.helger.url.SimpleURL;
 
-import jakarta.annotation.Nonnull;
+
 
 public class PagePublicToolsParticipantCheck extends AbstractAppWebPage
 {
@@ -63,19 +65,19 @@ public class PagePublicToolsParticipantCheck extends AbstractAppWebPage
 
   public static final String DEFAULT_ID_SCHEME = PeppolIdentifierHelper.DEFAULT_PARTICIPANT_SCHEME;
 
-  public PagePublicToolsParticipantCheck (@Nonnull @Nonempty final String sID)
+  public PagePublicToolsParticipantCheck (@NonNull @Nonempty final String sID)
   {
     this (sID, "Participant Check");
   }
 
-  public PagePublicToolsParticipantCheck (@Nonnull @Nonempty final String sID, @Nonnull @Nonempty final String sName)
+  public PagePublicToolsParticipantCheck (@NonNull @Nonempty final String sID, @NonNull @Nonempty final String sName)
   {
     super (sID, sName);
   }
 
-  private boolean _checkParticipant (@Nonnull final WebPageExecutionContext aWPEC,
-                                     @Nonnull final ISMLConfiguration aSMLConfiguration,
-                                     @Nonnull final IParticipantIdentifier aPID,
+  private boolean _checkParticipant (@NonNull final WebPageExecutionContext aWPEC,
+                                     @NonNull final ISMLConfiguration aSMLConfiguration,
+                                     @NonNull final IParticipantIdentifier aPID,
                                      final boolean bIsRegisteredInDNS,
                                      final boolean bIsProdSML)
   {
@@ -129,7 +131,7 @@ public class PagePublicToolsParticipantCheck extends AbstractAppWebPage
   }
 
   @Override
-  protected void fillContent (@Nonnull final WebPageExecutionContext aWPEC)
+  protected void fillContent (@NonNull final WebPageExecutionContext aWPEC)
   {
     final HCNodeList aNodeList = aWPEC.getNodeList ();
     final ISMLConfigurationManager aSMLConfigurationMgr = PhotonPeppolMetaManager.getSMLConfigurationMgr ();

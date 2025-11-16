@@ -17,6 +17,8 @@
 package com.helger.peppol.api.rest;
 
 import org.apache.hc.client5.http.HttpResponseException;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,8 +31,6 @@ import com.helger.photon.api.InvokableAPIDescriptor;
 import com.helger.servlet.response.UnifiedResponse;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
@@ -42,7 +42,7 @@ public class APIExceptionMapper extends AbstractAPIExceptionMapper
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (APIExceptionMapper.class);
 
-  private static void _logRestException (@Nonnull final String sMsg, @Nonnull final Throwable t)
+  private static void _logRestException (@NonNull final String sMsg, @NonNull final Throwable t)
   {
     if (PeppolSharedAPIConfig.isRestLogExceptions ())
       LOGGER.error (sMsg, t);
@@ -53,7 +53,7 @@ public class APIExceptionMapper extends AbstractAPIExceptionMapper
                     " (turn on REST exception logging to see all details)");
   }
 
-  private static void _setSimpleTextResponse (@Nonnull final UnifiedResponse aUnifiedResponse,
+  private static void _setSimpleTextResponse (@NonNull final UnifiedResponse aUnifiedResponse,
                                               final int nStatusCode,
                                               @Nullable final String sContent)
   {
@@ -71,11 +71,11 @@ public class APIExceptionMapper extends AbstractAPIExceptionMapper
     }
   }
 
-  @Nonnull
-  public EHandled applyExceptionOnResponse (@Nonnull final InvokableAPIDescriptor aInvokableDescriptor,
-                                            @Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
-                                            @Nonnull final UnifiedResponse aUnifiedResponse,
-                                            @Nonnull final Throwable aThrowable)
+  @NonNull
+  public EHandled applyExceptionOnResponse (@NonNull final InvokableAPIDescriptor aInvokableDescriptor,
+                                            @NonNull final IRequestWebScopeWithoutResponse aRequestScope,
+                                            @NonNull final UnifiedResponse aUnifiedResponse,
+                                            @NonNull final Throwable aThrowable)
   {
     // From specific to general
     if (aThrowable instanceof final HttpResponseException aEx)
