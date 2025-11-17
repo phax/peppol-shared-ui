@@ -22,7 +22,6 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
-import org.apache.hc.client5.http.HttpResponseException;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
@@ -35,7 +34,6 @@ import com.helger.base.timing.StopWatch;
 import com.helger.collection.commons.CommonsTreeMap;
 import com.helger.collection.commons.ICommonsSortedMap;
 import com.helger.datetime.helper.PDTFactory;
-import com.helger.http.CHttp;
 import com.helger.httpclient.HttpClientManager;
 import com.helger.httpclient.response.ResponseHandlerByteArray;
 import com.helger.json.IJsonObject;
@@ -84,8 +82,8 @@ public final class APISMPQueryGetDocTypes extends AbstractAPIExecutor
     final ISMLConfigurationManager aSMLConfigurationMgr = PhotonPeppolMetaManager.getSMLConfigurationMgr ();
     final String sSMLID = aPathVariables.get (PeppolSharedRestAPI.PARAM_SML_ID);
     final boolean bSMLAutoDetect = ISMLConfigurationManager.ID_AUTO_DETECT.equals (sSMLID);
-    ISMLConfiguration aSML = aSMLConfigurationMgr.getSMLInfoOfID (sSMLID);
-    if (aSML == null && !bSMLAutoDetect)
+    ISMLConfiguration aSMLConfig = aSMLConfigurationMgr.getSMLInfoOfID (sSMLID);
+    if (aSMLConfig == null && !bSMLAutoDetect)
       throw new APIParamException ("Unsupported SML ID '" + sSMLID + "' provided.");
 
     final String sParticipantID = aPathVariables.get (PeppolSharedRestAPI.PARAM_PARTICIPANT_ID);
@@ -109,28 +107,35 @@ public final class APISMPQueryGetDocTypes extends AbstractAPIExecutor
         if (aSMPQueryParams != null && aSMPQueryParams.isSMPRegisteredInDNS ())
         {
           // Found it
-          aSML = aCurSML;
+          aSMLConfig = aCurSML;
           break;
         }
       }
 
       // Ensure to go into the exception handler
-      if (aSML == null)
-        throw new HttpResponseException (CHttp.HTTP_NOT_FOUND,
-                                         "The participant identifier '" +
-                                                               sParticipantID +
-                                                               "' could not be found in any SML.");
+      if (aSMLConfig == null)
+      {
+        final String sMsg = "The participant identifier '" + sParticipantID + "' could not be found in any SML.";
+        LOGGER.warn (sLogPrefix + sMsg);
+        aUnifiedResponse.createNotFound ().text (sMsg);
+        return;
+      }
     }
     else
     {
-      aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aSML, aPID.getScheme (), aPID.getValue (), true);
+      aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aSMLConfig, aPID.getScheme (), aPID.getValue (), true);
     }
     if (aSMPQueryParams == null)
-      throw new APIParamException ("Failed to resolve participant ID '" +
-                                   sParticipantID +
-                                   "' for the provided SML '" +
-                                   aSML.getID () +
-                                   "'");
+    {
+      final String sMsg = "Failed to resolve participant ID '" +
+                          sParticipantID +
+                          "' for the provided SML '" +
+                          aSMLConfig.getID () +
+                          "'";
+      LOGGER.warn (sLogPrefix + sMsg);
+      aUnifiedResponse.createNotFound ().text (sMsg);
+      return;
+    }
 
     final IParticipantIdentifier aParticipantID = aSMPQueryParams.getParticipantID ();
     final IIdentifierFactory aIF = aSMPQueryParams.getIF ();
@@ -144,7 +149,7 @@ public final class APISMPQueryGetDocTypes extends AbstractAPIExecutor
                  "' from '" +
                  aSMPQueryParams.getSMPHostURI () +
                  "' using SML '" +
-                 aSML.getID () +
+                 aSMLConfig.getID () +
                  "'; XSD validation=" +
                  bXMLSchemaValidation +
                  "; signature verification=" +
@@ -276,8 +281,13 @@ public final class APISMPQueryGetDocTypes extends AbstractAPIExecutor
 
     if (aJson == null)
     {
-      LOGGER.error (sLogPrefix + "Failed to perform the SMP lookup");
-      aUnifiedResponse.createNotFound ();
+      final String sMsg = "Failed to perform the SMP lookup for participant ID '" +
+                          sParticipantID +
+                          "' for the provided SML '" +
+                          aSMLConfig.getID () +
+                          "'";
+      LOGGER.warn (sLogPrefix + sMsg);
+      aUnifiedResponse.createNotFound ().text (sMsg);
     }
     else
     {

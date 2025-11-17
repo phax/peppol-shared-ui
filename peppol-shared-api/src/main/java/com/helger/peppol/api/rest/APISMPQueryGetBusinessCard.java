@@ -22,7 +22,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import org.apache.hc.client5.http.HttpResponseException;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -34,7 +33,6 @@ import com.helger.base.CGlobal;
 import com.helger.base.string.StringHelper;
 import com.helger.base.timing.StopWatch;
 import com.helger.datetime.helper.PDTFactory;
-import com.helger.http.CHttp;
 import com.helger.httpclient.HttpClientManager;
 import com.helger.httpclient.HttpClientSettings;
 import com.helger.httpclient.response.ResponseHandlerByteArray;
@@ -157,21 +155,28 @@ public final class APISMPQueryGetBusinessCard extends AbstractAPIExecutor
 
       // Ensure to go into the exception handler
       if (aSMLConfig == null)
-        throw new HttpResponseException (CHttp.HTTP_NOT_FOUND,
-                                         "The participant identifier '" +
-                                                               sParticipantID +
-                                                               "' could not be found in any SML.");
+      {
+        final String sMsg = "The participant identifier '" + sParticipantID + "' could not be found in any SML.";
+        LOGGER.warn (sLogPrefix + sMsg);
+        aUnifiedResponse.createNotFound ().text (sMsg);
+        return;
+      }
     }
     else
     {
       aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aSMLConfig, aPID.getScheme (), aPID.getValue (), true);
     }
     if (aSMPQueryParams == null)
-      throw new APIParamException ("Failed to resolve participant ID '" +
-                                   sParticipantID +
-                                   "' for the provided SML '" +
-                                   aSMLConfig.getID () +
-                                   "'");
+    {
+      final String sMsg = "Failed to resolve participant ID '" +
+                          sParticipantID +
+                          "' for the provided SML '" +
+                          aSMLConfig.getID () +
+                          "'";
+      LOGGER.warn (sLogPrefix + sMsg);
+      aUnifiedResponse.createNotFound ().text (sMsg);
+      return;
+    }
 
     final IJsonObject aBCJson = getBusinessCardJSON (sLogPrefix, aSMPQueryParams, m_aHCSModifier);
 
@@ -179,8 +184,13 @@ public final class APISMPQueryGetBusinessCard extends AbstractAPIExecutor
 
     if (aBCJson == null)
     {
-      LOGGER.error (sLogPrefix + "Failed to perform the BusinessCard SMP lookup");
-      aUnifiedResponse.createNotFound ();
+      final String sMsg = "Failed to resolve BusinessCard for participant ID '" +
+                          sParticipantID +
+                          "' for the provided SML '" +
+                          aSMLConfig.getID () +
+                          "'";
+      LOGGER.warn (sLogPrefix + sMsg);
+      aUnifiedResponse.createNotFound ().text (sMsg);
     }
     else
     {
