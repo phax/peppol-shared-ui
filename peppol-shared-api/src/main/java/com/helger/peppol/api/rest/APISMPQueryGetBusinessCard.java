@@ -113,9 +113,9 @@ public final class APISMPQueryGetBusinessCard extends AbstractAPIExecutor
     }
 
     final PDBusinessCard aBC = PeppolAPIHelper.retrieveBusinessCardParsed (sLogPrefix,
-                                                                      aSMPQueryParams,
-                                                                      m_aHCSModifier,
-                                                                      new MiniCallbackLog (LOGGER, sLogPrefix));
+                                                                           aSMPQueryParams,
+                                                                           m_aHCSModifier,
+                                                                           new MiniCallbackLog (LOGGER, sLogPrefix));
     final IJsonObject aBCJson = aBC == null ? null : aBC.getAsJson ();
 
     aSW.stop ();
