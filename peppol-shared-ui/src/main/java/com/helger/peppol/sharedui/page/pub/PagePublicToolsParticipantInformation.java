@@ -28,10 +28,8 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Locale;
 import java.util.Map;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -46,6 +44,7 @@ import org.xbill.DNS.Type;
 
 import com.helger.annotation.Nonempty;
 import com.helger.base.email.EmailAddressHelper;
+import com.helger.base.id.factory.GlobalIDFactory;
 import com.helger.base.numeric.mutable.MutableInt;
 import com.helger.base.state.ETriState;
 import com.helger.base.string.StringHelper;
@@ -81,17 +80,24 @@ import com.helger.html.hc.html.sections.HCH4;
 import com.helger.html.hc.html.textlevel.HCA;
 import com.helger.html.hc.impl.HCNodeList;
 import com.helger.html.hc.impl.HCTextNode;
-import com.helger.httpclient.HttpClientManager;
-import com.helger.httpclient.response.ResponseHandlerByteArray;
+import com.helger.html.jquery.JQuery;
+import com.helger.html.jquery.JQueryAjaxBuilder;
+import com.helger.html.jquery.JQueryInvocation;
+import com.helger.html.js.EJSEvent;
+import com.helger.html.jscode.JSAnonymousFunction;
+import com.helger.html.jscode.JSAssocArray;
+import com.helger.html.jscode.JSParam;
+import com.helger.http.EHttpMethod;
 import com.helger.jaxb.GenericJAXBMarshaller;
 import com.helger.jaxb.validation.DoNothingValidationEventHandler;
+import com.helger.peppol.api.rest.APISMPQueryGetBusinessCard;
 import com.helger.peppol.businesscard.generic.PDBusinessCard;
 import com.helger.peppol.businesscard.generic.PDBusinessEntity;
 import com.helger.peppol.businesscard.generic.PDContact;
 import com.helger.peppol.businesscard.generic.PDIdentifier;
 import com.helger.peppol.businesscard.generic.PDName;
+import com.helger.peppol.businesscard.helper.IPDBusinessCardMarshallerCustomizer;
 import com.helger.peppol.businesscard.helper.PDBusinessCardHelper;
-import com.helger.peppol.businesscard.helper.PDBusinessCardHelper.EBusinessCardVersion;
 import com.helger.peppol.security.PeppolTrustStores;
 import com.helger.peppol.servicedomain.EPeppolNetwork;
 import com.helger.peppol.sharedui.page.AbstractAppWebPage;
@@ -99,6 +105,7 @@ import com.helger.peppol.sml.ESMPAPIType;
 import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppol.smp.ESMPTransportProfileState;
 import com.helger.peppol.ui.PeppolUI;
+import com.helger.peppol.ui.minicallback.MiniCallbackAddToNode;
 import com.helger.peppol.ui.nicename.NiceNameUI;
 import com.helger.peppol.ui.smlconfig.ui.SMLConfigurationSelect;
 import com.helger.peppol.ui.types.PeppolUITypes;
@@ -112,7 +119,10 @@ import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.peppolid.peppol.PeppolIdentifierHelper;
+import com.helger.peppolid.peppol.pidscheme.IPeppolParticipantIdentifierScheme;
+import com.helger.peppolid.peppol.pidscheme.PeppolParticipantIdentifierSchemeManager;
 import com.helger.peppolid.simple.process.SimpleProcessIdentifier;
+import com.helger.photon.ajax.decl.AjaxFunctionDeclaration;
 import com.helger.photon.audit.AuditHelper;
 import com.helger.photon.bootstrap4.CBootstrapCSS;
 import com.helger.photon.bootstrap4.alert.BootstrapErrorBox;
@@ -169,7 +179,38 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
 
   private static final Logger LOGGER = LoggerFactory.getLogger (PagePublicToolsParticipantInformation.class);
 
+  // Contain AP G2 and AP G3
+  private static final TrustedCAChecker PEPPOL_CA_AP_FULL = new TrustedCAChecker (PeppolTrustStores.Config2018.CERTIFICATE_PILOT_AP,
+                                                                                  PeppolTrustStores.Config2018.CERTIFICATE_PRODUCTION_AP,
+                                                                                  PeppolTrustStores.Config2025.CERTIFICATE_TEST_AP,
+                                                                                  PeppolTrustStores.Config2025.CERTIFICATE_PRODUCTION_AP);
+
   private final String m_sUserAgent;
+
+  @NonNull
+  public static String getSchemeHelpText (@Nullable String sPIValue)
+  {
+    LOGGER.info ("Getting details from '" + sPIValue + "'");
+    if (StringHelper.getLength (sPIValue) < 4)
+      return "";
+
+    final String sScheme = sPIValue.substring (0, 4);
+    IPeppolParticipantIdentifierScheme aScheme = PeppolParticipantIdentifierSchemeManager.getSchemeOfISO6523Code (sScheme);
+    if (aScheme == null)
+      return "Unkwnown scheme (" + sScheme + ")";
+
+    String sCountry = aScheme.getCountryCode ();
+    final Locale aCountryLocale = CountryCache.getInstance ().getCountry (sCountry);
+    if (aCountryLocale != null)
+      sCountry = aCountryLocale.getDisplayName (PeppolUITypes.LOCALE_EN) + " (" + sCountry + ")";
+    return sCountry + " - " + aScheme.getSchemeName ();
+  }
+
+  private static final AjaxFunctionDeclaration AJAX_FIND_PI_SCHEME = addAjax ( (aRequestScope, aAjaxResponse) -> {
+    final String sPIValue = aRequestScope.params ().getAsString (FIELD_ID_VALUE);
+    final String ret = getSchemeHelpText (sPIValue);
+    aAjaxResponse.text (ret).disableCaching ();
+  });
 
   public PagePublicToolsParticipantInformation (@NonNull @Nonempty final String sID,
                                                 @NonNull @Nonempty final String sUserAgent)
@@ -324,12 +365,6 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
     }
     return aSB.toString ();
   }
-
-  // Contain AP G2 and AP G3
-  private static final TrustedCAChecker PEPPOL_CA_AP_FULL = new TrustedCAChecker (PeppolTrustStores.Config2018.CERTIFICATE_PILOT_AP,
-                                                                                  PeppolTrustStores.Config2018.CERTIFICATE_PRODUCTION_AP,
-                                                                                  PeppolTrustStores.Config2025.CERTIFICATE_TEST_AP,
-                                                                                  PeppolTrustStores.Config2025.CERTIFICATE_PRODUCTION_AP);
 
   private void _queryParticipant (@NonNull final WebPageExecutionContext aWPEC,
                                   final String sParticipantIDScheme,
@@ -527,10 +562,20 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
               else
                 aDiv1.addChild (" - reverse lookup failed");
 
-              final HCDiv aDiv2 = div (_createOpenInBrowser ("http://" + sURL2, "Open IP in browser [may fail]"));
+              final HCDiv aDiv2 = div (_createOpenInBrowser ("http://" + sURL2,
+                                                             "Open IP in browser (http) [may fail]"));
+              aDiv2.addChild (" ")
+                   .addChild (_createOpenInBrowser ("https://" + sURL2, "Open IP in browser (https) [may fail]"));
+
               if (sURL3 != null && !sURL2.equals (sURL3))
+              {
                 aDiv2.addChild (" ")
-                     .addChild (_createOpenInBrowser ("http://" + sURL3, "Open reverse lookup in browser [may fail]"));
+                     .addChild (_createOpenInBrowser ("http://" + sURL3,
+                                                      "Open reverse lookup in browser (https) [may fail]"));
+                aDiv2.addChild (" ")
+                     .addChild (_createOpenInBrowser ("https://" + sURL3,
+                                                      "Open reverse lookup in browser (https) [may fail]"));
+              }
               aUL.addItem (aDiv1, aDiv2);
             }
           aSWDNSLookup.stop ();
@@ -562,8 +607,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                 final HCDiv aButtons = div (_createOpenInBrowser ("http://" + sURL2,
                                                                   "Open IP in browser (http) [may fail]"));
                 aButtons.addChild (" ")
-                        .addChild (div (_createOpenInBrowser ("https://" + sURL2,
-                                                              "Open IP in browser (https) [may fail]")));
+                        .addChild (_createOpenInBrowser ("https://" + sURL2, "Open IP in browser (https) [may fail]"));
                 if (!sURL2.equals (sURL3))
                 {
                   aButtons.addChild (" ")
@@ -588,8 +632,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                 final HCDiv aButtons = div (_createOpenInBrowser ("http://" + sURL2,
                                                                   "Open IP in browser (http) [may fail]"));
                 aButtons.addChild (" ")
-                        .addChild (div (_createOpenInBrowser ("https://" + sURL2,
-                                                              "Open IP in browser (https) [may fail]")));
+                        .addChild (_createOpenInBrowser ("https://" + sURL2, "Open IP in browser (https) [may fail]"));
 
                 if (!sURL2.equals (sURL3))
                 {
@@ -1194,44 +1237,31 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
       // Query for Business Card
       if (bQueryBusinessCard)
       {
+        EFamFamFlagIcon.registerResourcesForThisRequest ();
+
         final StopWatch aSWGetBC = StopWatch.createdStarted ();
         aNodeList.addChild (h3 ("Business Card details"));
 
-        EFamFamFlagIcon.registerResourcesForThisRequest ();
-        final String sBCURL = StringHelper.trimEnd (aSMPHost.toExternalForm (), '/') +
-                              "/businesscard/" +
-                              aParticipantID.getURIEncoded ();
-        LOGGER.info ("Querying BC from '" + sBCURL + "'");
-        byte [] aData;
-
-        final SMPHttpClientSettings aHCS = new SMPHttpClientSettings ();
-        aHCSModifier.accept (aHCS);
-
-        try (final HttpClientManager aHttpClientMgr = HttpClientManager.create (aHCS))
-        {
-          final HttpGet aGet = new HttpGet (sBCURL);
-          aData = aHttpClientMgr.execute (aGet, new ResponseHandlerByteArray ());
-        }
-        catch (final Exception ex)
-        {
-          aData = null;
-        }
+        byte [] aBCBytes = APISMPQueryGetBusinessCard.retrieveBusinessCard ("",
+                                                                            aSMPQueryParams,
+                                                                            aHCSModifier,
+                                                                            new MiniCallbackAddToNode (aNodeList));
         aSWGetBC.stop ();
 
-        if (aData == null)
+        if (aBCBytes == null)
           aNodeList.addChild (warn ("No Business Card is available for that participant."));
         else
         {
           final ICommonsList <JAXBException> aPDExceptions = new CommonsArrayList <> ();
-          final BiConsumer <GenericJAXBMarshaller <?>, EBusinessCardVersion> aPMarshallerCustomizer = (m, v) -> {
-            aPDExceptions.clear ();
+          final IPDBusinessCardMarshallerCustomizer aPMarshallerCustomizer = (m, v) -> {
             m.setValidationEventHandler (new DoNothingValidationEventHandler ());
             // Remember errors
+            aPDExceptions.clear ();
             m.readExceptionCallbacks ().set (aPDExceptions::add);
             m.setCharset (StandardCharsets.UTF_8);
           };
 
-          final PDBusinessCard aBC = PDBusinessCardHelper.parseBusinessCard (aData, aPMarshallerCustomizer);
+          final PDBusinessCard aBC = PDBusinessCardHelper.parseBusinessCard (aBCBytes, aPMarshallerCustomizer);
           if (aBC == null)
           {
             final BootstrapErrorBox aError = error ("Failed to parse the response data as a Business Card.");
@@ -1242,7 +1272,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
             if (bShowTime)
               aNodeList.addChild (div (_createTimingNode (aSWGetBC.getMillis ())));
 
-            final String sBC = new String (aData, StandardCharsets.UTF_8);
+            final String sBC = new String (aBCBytes, StandardCharsets.UTF_8);
             if (StringHelper.isNotEmpty (sBC))
               aNodeList.addChild (new HCPrismJS (EPrismLanguage.MARKUP).addChild (sBC));
             LOGGER.error ("Failed to parse BC:\n" + sBC);
@@ -1264,6 +1294,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                 aH4.addChild (" ").addChild (_createTimingNode (aSWGetBC.getMillis ()));
               aNodeList.addChild (aH4);
 
+              final String sBCURL = APISMPQueryGetBusinessCard.getBusinessCardURL (aSMPQueryParams);
               final HCDiv aButtonDiv = aNodeList.addAndReturnChild (div (_createOpenInBrowser (sBCURL)));
 
               final EPeppolNetwork ePN = aSMPQueryParams.getPeppolNetwork ();
@@ -1402,6 +1433,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
   @Override
   protected void fillContent (@NonNull final WebPageExecutionContext aWPEC)
   {
+    IRequestWebScopeWithoutResponse aRequestScope = aWPEC.getRequestScope ();
     final HCNodeList aNodeList = aWPEC.getNodeList ();
     final ISMLConfigurationManager aSMLConfigurationMgr = PhotonPeppolMetaManager.getSMLConfigurationMgr ();
     final FormErrorList aFormErrors = new FormErrorList ();
@@ -1486,11 +1518,30 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                                            sParticipantIDScheme)).setPlaceholder ("Identifier scheme"))
                                                    .setHelpText (div ("The most common identifier scheme is ").addChild (code (DEFAULT_ID_SCHEME)))
                                                    .setErrorList (aFormErrors.getListOfField (FIELD_ID_SCHEME)));
-      aForm.addFormGroup (new BootstrapFormGroup ().setLabelMandatory ("Identifier value")
-                                                   .setCtrl (new HCEdit (new RequestField (FIELD_ID_VALUE,
-                                                                                           sParticipantIDValue)).setPlaceholder ("Identifier value"))
-                                                   .setHelpText (div ("The identifier value must look like ").addChild (code ("9915:test")))
-                                                   .setErrorList (aFormErrors.getListOfField (FIELD_ID_VALUE)));
+      {
+        final String sHelpFieldID = GlobalIDFactory.getNewStringID ();
+        final JSParam aSuccessParam = new JSParam ("val");
+        final JQueryInvocation aOnChange = new JQueryAjaxBuilder ().url (AJAX_FIND_PI_SCHEME.getInvocationURI (aRequestScope))
+                                                                   .method (EHttpMethod.POST)
+                                                                   .data (new JSAssocArray ().add (FIELD_ID_VALUE,
+                                                                                                   JQuery.nameAttrRef (FIELD_ID_VALUE)
+                                                                                                         .val ()))
+                                                                   .success (new JSAnonymousFunction (aSuccessParam,
+                                                                                                      JQuery.idRef (sHelpFieldID)
+                                                                                                            .val (aSuccessParam)))
+                                                                   .build ();
+        final RequestField aRF = new RequestField (FIELD_ID_VALUE, sParticipantIDValue);
+        aForm.addFormGroup (new BootstrapFormGroup ().setLabelMandatory ("Identifier value")
+                                                     .setCtrl (new HCEdit (aRF).setPlaceholder ("Identifier value")
+                                                                               .addEventHandler (EJSEvent.CHANGE,
+                                                                                                 aOnChange),
+                                                               new HCEdit ().setValue (getSchemeHelpText (aRF.getRequestValue ()))
+                                                                            .setReadOnly (true)
+                                                                            .setID (sHelpFieldID))
+                                                     .setHelpText (div ("The identifier value must look like ").addChild (code ("9915:test")))
+                                                     .setErrorList (aFormErrors.getListOfField (FIELD_ID_VALUE)));
+      }
+
       aForm.addFormGroup (new BootstrapFormGroup ().setLabelMandatory ("SML to use")
                                                    .setCtrl (new SMLConfigurationSelect (new RequestField (FIELD_SML,
                                                                                                            ISMLConfigurationManager.ID_AUTO_DETECT),
