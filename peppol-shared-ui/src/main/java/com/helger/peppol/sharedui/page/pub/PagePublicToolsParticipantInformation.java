@@ -90,7 +90,7 @@ import com.helger.html.jscode.JSParam;
 import com.helger.http.EHttpMethod;
 import com.helger.jaxb.GenericJAXBMarshaller;
 import com.helger.jaxb.validation.DoNothingValidationEventHandler;
-import com.helger.peppol.api.rest.APISMPQueryGetBusinessCard;
+import com.helger.peppol.api.rest.PeppolAPIHelper;
 import com.helger.peppol.businesscard.generic.PDBusinessCard;
 import com.helger.peppol.businesscard.generic.PDBusinessEntity;
 import com.helger.peppol.businesscard.generic.PDContact;
@@ -1215,11 +1215,10 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
         final StopWatch aSWGetBC = StopWatch.createdStarted ();
         aNodeList.addChild (h3 ("Business Card details"));
 
-        byte [] aBCBytes = APISMPQueryGetBusinessCard.retrieveBusinessCard ("",
-                                                                            aSMPQueryParams,
-                                                                            aHCSModifier,
-                                                                            new MiniCallbackAddToNode (aNodeList,
-                                                                                                       aDisplayLocale));
+        byte [] aBCBytes = PeppolAPIHelper.retrieveBusinessCard ("",
+                                                                 aSMPQueryParams,
+                                                                 aHCSModifier,
+                                                                 new MiniCallbackAddToNode (aNodeList, aDisplayLocale));
         aSWGetBC.stop ();
 
         if (aBCBytes == null)
@@ -1268,18 +1267,16 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                 aH4.addChild (" ").addChild (_createTimingNode (aSWGetBC.getMillis ()));
               aNodeList.addChild (aH4);
 
-              final String sBCURL = APISMPQueryGetBusinessCard.getBusinessCardURL (aSMPQueryParams);
+              final String sBCURL = PeppolAPIHelper.getBusinessCardURL (aSMPQueryParams);
               final HCDiv aButtonDiv = aNodeList.addAndReturnChild (div (_createOpenInBrowser (sBCURL)));
 
               final EPeppolNetwork ePN = aSMPQueryParams.getPeppolNetwork ();
               if (ePN != null)
               {
-                // TODO bug in Directory URL peppol-commons 9.6.0
                 aButtonDiv.addChild (" ")
-                          .addChild (_createOpenInBrowser ((ePN.isProduction () ? "https://directory.peppol.eu" : ePN
-                                                                                                                     .getDirectoryURL ()) +
+                          .addChild (_createOpenInBrowser (ePN.getDirectoryURL () +
                                                            "/participant/" +
-                                                           aParticipantID.getURIEncoded (),
+                                                           aParticipantID.getURIPercentEncoded (),
                                                            "Show in Peppol Directory"));
               }
 

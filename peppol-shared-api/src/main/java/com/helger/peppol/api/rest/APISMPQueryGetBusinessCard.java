@@ -16,32 +16,21 @@
  */
 package com.helger.peppol.api.rest;
 
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
-import java.util.function.Consumer;
 
-import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.annotation.Nonempty;
 import com.helger.base.CGlobal;
-import com.helger.base.string.StringHelper;
 import com.helger.base.timing.StopWatch;
 import com.helger.datetime.helper.PDTFactory;
-import com.helger.httpclient.HttpClientManager;
-import com.helger.httpclient.HttpClientSettings;
-import com.helger.httpclient.response.ResponseHandlerByteArray;
 import com.helger.json.IJsonObject;
 import com.helger.peppol.businesscard.generic.PDBusinessCard;
-import com.helger.peppol.businesscard.helper.PDBusinessCardHelper;
 import com.helger.peppol.ui.types.mgr.PhotonPeppolMetaManager;
-import com.helger.peppol.ui.types.minicallback.IMiniCallback;
 import com.helger.peppol.ui.types.minicallback.MiniCallbackLog;
 import com.helger.peppol.ui.types.smlconfig.ISMLConfiguration;
 import com.helger.peppol.ui.types.smlconfig.ISMLConfigurationManager;
@@ -50,7 +39,6 @@ import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.photon.api.IAPIDescriptor;
 import com.helger.photon.app.PhotonUnifiedResponse;
-import com.helger.smpclient.httpclient.SMPHttpClientSettings;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 
 public final class APISMPQueryGetBusinessCard extends AbstractAPIExecutor
@@ -60,75 +48,6 @@ public final class APISMPQueryGetBusinessCard extends AbstractAPIExecutor
   public APISMPQueryGetBusinessCard (@NonNull @Nonempty final String sUserAgent)
   {
     super (sUserAgent);
-  }
-
-  @NonNull
-  public static String getBusinessCardURL (@NonNull final SMPQueryParams aSMPQueryParams)
-  {
-    final IParticipantIdentifier aParticipantID = aSMPQueryParams.getParticipantID ();
-    final URI aSMPHostURI = aSMPQueryParams.getSMPHostURI ();
-    return StringHelper.trimEnd (aSMPHostURI.toString (), '/') + "/businesscard/" + aParticipantID.getURIEncoded ();
-  }
-
-  @Nullable
-  public static byte [] retrieveBusinessCard (@NonNull final String sLogPrefix,
-                                              @NonNull final SMPQueryParams aSMPQueryParams,
-                                              @Nullable final Consumer <? super SMPHttpClientSettings> aHCSModifier,
-                                              @NonNull final IMiniCallback aMiniCallback)
-  {
-    LOGGER.info (sLogPrefix +
-                 "BusinessCard of '" +
-                 aSMPQueryParams.getParticipantID ().getURIEncoded () +
-                 "' is queried using SMP API '" +
-                 aSMPQueryParams.getSMPAPIType () +
-                 "' from '" +
-                 aSMPQueryParams.getSMPHostURI () +
-                 "' using SML '" +
-                 aSMPQueryParams.getSMLInfo ().getID () +
-                 "'");
-
-    final String sBCURL = getBusinessCardURL (aSMPQueryParams);
-    LOGGER.info (sLogPrefix + "Querying BC from '" + sBCURL + "'");
-
-    final SMPHttpClientSettings aHCS = new SMPHttpClientSettings ();
-    if (aHCSModifier != null)
-      aHCSModifier.accept (aHCS);
-
-    byte [] aBCBytes;
-    try (final HttpClientManager aHttpClientMgr = HttpClientManager.create (aHCS))
-    {
-      final HttpGet aGet = new HttpGet (sBCURL);
-      aBCBytes = aHttpClientMgr.execute (aGet, new ResponseHandlerByteArray ());
-    }
-    catch (final Exception ex)
-    {
-      aBCBytes = null;
-    }
-
-    if (aBCBytes == null)
-      aMiniCallback.warn ("No Business Card is available for that participant.");
-
-    return aBCBytes;
-  }
-
-  @Nullable
-  public static PDBusinessCard getBusinessCardParsed (@NonNull final String sLogPrefix,
-                                                      @NonNull final SMPQueryParams aSMPQueryParams,
-                                                      @Nullable final Consumer <? super HttpClientSettings> aHCSModifier,
-                                                      @NonNull final IMiniCallback aMiniCallback)
-  {
-    final byte [] aBCBytes = retrieveBusinessCard (sLogPrefix, aSMPQueryParams, aHCSModifier, aMiniCallback);
-    if (aBCBytes != null)
-    {
-      final PDBusinessCard aBC = PDBusinessCardHelper.parseBusinessCard (aBCBytes, StandardCharsets.UTF_8);
-      if (aBC != null)
-      {
-        // Business Card found
-        return aBC;
-      }
-      aMiniCallback.error ("Failed to parse BC:\n" + new String (aBCBytes, StandardCharsets.UTF_8));
-    }
-    return null;
   }
 
   @Override
@@ -193,10 +112,10 @@ public final class APISMPQueryGetBusinessCard extends AbstractAPIExecutor
       return;
     }
 
-    final PDBusinessCard aBC = getBusinessCardParsed (sLogPrefix,
-                                                      aSMPQueryParams,
-                                                      m_aHCSModifier,
-                                                      new MiniCallbackLog (LOGGER, sLogPrefix));
+    final PDBusinessCard aBC = PeppolAPIHelper.retrieveBusinessCardParsed (sLogPrefix,
+                                                                      aSMPQueryParams,
+                                                                      m_aHCSModifier,
+                                                                      new MiniCallbackLog (LOGGER, sLogPrefix));
     final IJsonObject aBCJson = aBC == null ? null : aBC.getAsJson ();
 
     aSW.stop ();

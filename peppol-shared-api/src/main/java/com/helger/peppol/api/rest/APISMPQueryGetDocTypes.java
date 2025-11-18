@@ -16,34 +16,29 @@
  */
 package com.helger.peppol.api.rest;
 
-import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
-import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.annotation.Nonempty;
 import com.helger.base.CGlobal;
-import com.helger.base.string.StringHelper;
 import com.helger.base.timing.StopWatch;
 import com.helger.collection.commons.CommonsTreeMap;
 import com.helger.collection.commons.ICommonsSortedMap;
 import com.helger.datetime.helper.PDTFactory;
-import com.helger.httpclient.HttpClientManager;
-import com.helger.httpclient.response.ResponseHandlerByteArray;
 import com.helger.json.IJsonObject;
 import com.helger.json.JsonObject;
 import com.helger.peppol.api.json.PeppolSharedSMPJsonHelper;
 import com.helger.peppol.businesscard.generic.PDBusinessCard;
-import com.helger.peppol.businesscard.helper.PDBusinessCardHelper;
 import com.helger.peppol.sml.ESMPAPIType;
 import com.helger.peppol.ui.types.PeppolUITypes;
 import com.helger.peppol.ui.types.mgr.PhotonPeppolMetaManager;
+import com.helger.peppol.ui.types.minicallback.MiniCallbackLog;
 import com.helger.peppol.ui.types.smlconfig.ISMLConfiguration;
 import com.helger.peppol.ui.types.smlconfig.ISMLConfigurationManager;
 import com.helger.peppol.ui.types.smp.SMPQueryParams;
@@ -54,7 +49,6 @@ import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.photon.api.IAPIDescriptor;
 import com.helger.photon.app.PhotonUnifiedResponse;
 import com.helger.smpclient.bdxr1.BDXRClientReadOnly;
-import com.helger.smpclient.httpclient.SMPHttpClientSettings;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 
@@ -237,43 +231,16 @@ public final class APISMPQueryGetDocTypes extends AbstractAPIExecutor
 
     if (bQueryBusinessCard)
     {
-      final SMPHttpClientSettings aHCS = new SMPHttpClientSettings ();
-      m_aHCSModifier.accept (aHCS);
-
-      final String sBCURL = StringHelper.trimEnd (aSMPQueryParams.getSMPHostURI ().toString (), '/') +
-                            "/businesscard/" +
-                            aParticipantID.getURIEncoded ();
-      LOGGER.info (sLogPrefix + "Querying BC from '" + sBCURL + "'");
-
-      byte [] aData;
-      try (final HttpClientManager aHttpClientMgr = HttpClientManager.create (aHCS))
+      final PDBusinessCard aBC = PeppolAPIHelper.retrieveBusinessCardParsed (sLogPrefix,
+                                                                             aSMPQueryParams,
+                                                                             m_aHCSModifier,
+                                                                             new MiniCallbackLog (LOGGER, sLogPrefix));
+      if (aBC != null)
       {
-        final HttpGet aGet = new HttpGet (sBCURL);
-        aData = aHttpClientMgr.execute (aGet, new ResponseHandlerByteArray ());
-      }
-      catch (final Exception ex)
-      {
-        aData = null;
-      }
-
-      if (aData == null)
-      {
-        LOGGER.warn (sLogPrefix + "No Business Card is available for that participant.");
-      }
-      else
-      {
-        final PDBusinessCard aBC = PDBusinessCardHelper.parseBusinessCard (aData, StandardCharsets.UTF_8);
-        if (aBC == null)
-        {
-          LOGGER.error (sLogPrefix + "Failed to parse BC:\n" + new String (aData, StandardCharsets.UTF_8));
-        }
-        else
-        {
-          // Business Card found
-          if (aJson == null)
-            aJson = new JsonObject ();
-          aJson.add (PARAM_BUSINESS_CARD, aBC.getAsJson ());
-        }
+        // Business Card found
+        if (aJson == null)
+          aJson = new JsonObject ();
+        aJson.add (PARAM_BUSINESS_CARD, aBC.getAsJson ());
       }
     }
 
