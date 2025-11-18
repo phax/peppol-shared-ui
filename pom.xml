@@ -63,7 +63,7 @@
   </developers>
   
   <properties>
-    <phive-rules.version>4.1.0</phive-rules.version>
+    <phive-rules.version>4.1.1</phive-rules.version>
     <phase4.version>4.1.0</phase4.version>
     <ddd.version>0.8.0</ddd.version>
   </properties>

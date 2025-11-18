@@ -156,7 +156,6 @@ import com.helger.xsds.bdxr.smp2.bc.IDType;
 
 import jakarta.xml.bind.JAXBException;
 
-
 public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
 {
   public static final String DEFAULT_ID_SCHEME = PeppolIdentifierHelper.DEFAULT_PARTICIPANT_SCHEME;
@@ -560,11 +559,20 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                 aItem.addChild (div ("IP v4 address: ").addChild (code (sURL2))
                                                        .addChild (" - reverse lookup: ")
                                                        .addChild (code (sURL3)));
-                final HCDiv aButtons = div (_createOpenInBrowser ("http://" + sURL2, "Open IP in browser [may fail]"));
+                final HCDiv aButtons = div (_createOpenInBrowser ("http://" + sURL2,
+                                                                  "Open IP in browser (http) [may fail]"));
+                aButtons.addChild (" ")
+                        .addChild (div (_createOpenInBrowser ("https://" + sURL2,
+                                                              "Open IP in browser (https) [may fail]")));
                 if (!sURL2.equals (sURL3))
+                {
                   aButtons.addChild (" ")
                           .addChild (_createOpenInBrowser ("http://" + sURL3,
-                                                           "Open reverse lookup in browser [may fail]"));
+                                                           "Open reverse lookup in browser (http) [may fail]"));
+                  aButtons.addChild (" ")
+                          .addChild (_createOpenInBrowser ("https://" + sURL3,
+                                                           "Open reverse lookup in browser (https) [may fail]"));
+                }
                 aItem.addChild (aButtons);
               }
               else
@@ -577,11 +585,21 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                 aItem.addChild (div ("IP v6 address: ").addChild (code (sURL2))
                                                        .addChild (" - reverse lookup: ")
                                                        .addChild (code (sURL3)));
-                final HCDiv aButtons = div (_createOpenInBrowser ("http://" + sURL2, "Open IP in browser [may fail]"));
+                final HCDiv aButtons = div (_createOpenInBrowser ("http://" + sURL2,
+                                                                  "Open IP in browser (http) [may fail]"));
+                aButtons.addChild (" ")
+                        .addChild (div (_createOpenInBrowser ("https://" + sURL2,
+                                                              "Open IP in browser (https) [may fail]")));
+
                 if (!sURL2.equals (sURL3))
+                {
                   aButtons.addChild (" ")
                           .addChild (_createOpenInBrowser ("http://" + sURL3,
-                                                           "Open reverse lookup in browser [may fail]"));
+                                                           "Open reverse lookup in browser (http) [may fail]"));
+                  aButtons.addChild (" ")
+                          .addChild (_createOpenInBrowser ("https://" + sURL3,
+                                                           "Open reverse lookup in browser (https) [may fail]"));
+                }
                 aItem.addChild (aButtons);
               }
 
@@ -794,7 +812,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                      aSGHrefs.size () +
                      " entries");
 
-        final HCH3 aH3 = h3 ("ServiceGroup contents");
+        final HCH3 aH3 = h3 ("ServiceGroup contents (" + aSGHrefs.size () + " entries)");
         if (bShowTime)
           aH3.addChild (" ").addChild (_createTimingNode (aSWGetDocTypes.getMillis ()));
         aNodeList.addChild (aH3);
@@ -868,7 +886,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
         final ICommonsOrderedMap <X509Certificate, String> aAllUsedEndpointCertifiactes = new CommonsLinkedHashMap <> ();
         long nTotalDurationMillis = 0;
 
-        aNodeList.addChild (h3 ("Document type details"));
+        aNodeList.addChild (h3 ("Document type details (" + aDocTypeIDs.size () + " entries)"));
         final HCUL aULDocTypeIDs = new HCUL ();
         for (final IDocumentTypeIdentifier aDocTypeID : aDocTypeIDs.getSortedInline (IDocumentTypeIdentifier.comparator ()))
         {
