@@ -27,6 +27,7 @@ import com.helger.html.hc.IHCNode;
 import com.helger.html.hc.html.forms.EHCFormMethod;
 import com.helger.html.hc.html.forms.HCEdit;
 import com.helger.html.hc.impl.HCNodeList;
+import com.helger.peppol.servicedomain.EPeppolNetwork;
 import com.helger.peppol.sharedui.page.AbstractAppWebPage;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppol.ui.types.mgr.PhotonPeppolMetaManager;
@@ -49,8 +50,6 @@ import com.helger.photon.uictrls.famfam.EFamFamIcon;
 import com.helger.url.ISimpleURL;
 import com.helger.url.SimpleURL;
 
-
-
 public class PagePublicToolsParticipantCheckBelgium extends AbstractAppWebPage
 {
   public static final String FIELD_ID_VALUE = "value";
@@ -71,7 +70,8 @@ public class PagePublicToolsParticipantCheckBelgium extends AbstractAppWebPage
   @NonNull
   static IHCNode createPeppolDirectoryButton (@NonNull final IParticipantIdentifier aPID)
   {
-    final ISimpleURL aDirectoryURL = new SimpleURL ("https://directory.peppol.eu/participant/" +
+    final ISimpleURL aDirectoryURL = new SimpleURL (EPeppolNetwork.PRODUCTION.getDirectoryURL () +
+                                                    "/participant/" +
                                                     aPID.getURIPercentEncoded ());
     return new BootstrapLinkButton ().addChild ("Peppol Directory Lookup").setHref (aDirectoryURL).setTargetBlank ();
   }
@@ -174,6 +174,8 @@ public class PagePublicToolsParticipantCheckBelgium extends AbstractAppWebPage
       sParticipantIDValue = StringHelper.trim (aWPEC.params ().getAsString (FIELD_ID_VALUE));
       // CBE values may contain "." chars
       sParticipantIDValue = StringRemove.removeAll (sParticipantIDValue, '.');
+      // Remove all blanks
+      sParticipantIDValue = sParticipantIDValue.replaceAll ("\\s+", "");
 
       if (StringHelper.isEmpty (sParticipantIDValue))
         aFormErrors.addFieldError (FIELD_ID_VALUE, "Please provide an value to check");
