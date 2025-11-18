@@ -96,6 +96,11 @@
     </dependency>
     <dependency>
       <groupId>com.helger.phive.rules</groupId>
+      <artifactId>phive-rules-eracun</artifactId>
+      <version>${phive-rules.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.helger.phive.rules</groupId>
       <artifactId>phive-rules-facturae</artifactId>
       <version>${phive-rules.version}</version>
     </dependency>
