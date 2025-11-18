@@ -109,31 +109,11 @@ public final class SMPQueryParams
     return m_bTrustAllCerts;
   }
 
-  @Nullable
-  public static URI getSMURIViaNaptr (@NonNull final ISMPURLProvider aSMPURLProvider,
-                                      @NonNull final IParticipantIdentifier aParticipantID,
-                                      @NonNull final String sSMLZoneName)
-  {
-    try
-    {
-      return aSMPURLProvider.getSMPURIOfParticipant (aParticipantID, sSMLZoneName);
-    }
-    catch (final SMPDNSResolutionException ex)
-    {
-      return null;
-    }
-  }
-
-  public static boolean isSMPRegisteredInDNSViaNaptr (@NonNull final ISMPURLProvider aSMPURLProvider,
-                                                      @NonNull final IParticipantIdentifier aParticipantID,
-                                                      @NonNull final String sSMLZoneName)
-  {
-    return getSMURIViaNaptr (aSMPURLProvider, aParticipantID, sSMLZoneName) != null;
-  }
-
   public boolean isSMPRegisteredInDNS ()
   {
-    return isSMPRegisteredInDNSViaNaptr (m_aSMPURLProvider, m_aParticipantID, m_aSMLInfo.getDNSZone ());
+    return PeppolExistenceCheck.isSMPRegisteredInDNSViaNaptr (m_aSMPURLProvider,
+                                                              m_aParticipantID,
+                                                              m_aSMLInfo.getDNSZone ());
   }
 
   @Nullable

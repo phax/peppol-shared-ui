@@ -33,7 +33,7 @@ import com.helger.json.JsonObject;
 import com.helger.peppol.ui.types.mgr.PhotonPeppolMetaManager;
 import com.helger.peppol.ui.types.smlconfig.ISMLConfiguration;
 import com.helger.peppol.ui.types.smlconfig.ISMLConfigurationManager;
-import com.helger.peppol.ui.types.smp.SMPQueryParams;
+import com.helger.peppol.ui.types.smp.PeppolExistenceCheck;
 import com.helger.peppolid.CIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
@@ -78,17 +78,21 @@ public final class APIGetCheckPeppolParticipantRegistered extends AbstractAPIExe
     {
       // Add prefix on demand
       if (!sParticipantID.startsWith (PeppolIdentifierHelper.PARTICIPANT_SCHEME_ISO6523_ACTORID_UPIS))
+      {
         sParticipantID = CIdentifier.getURIEncoded (PeppolIdentifierHelper.PARTICIPANT_SCHEME_ISO6523_ACTORID_UPIS,
                                                     sParticipantID);
+      }
     }
 
     final IParticipantIdentifier aParticipantID = PeppolIdentifierFactory.INSTANCE.parseParticipantIdentifier (sParticipantID);
     if (aParticipantID == null)
     {
-      LOGGER.error (sLogPrefix + "The provided Peppol Participant ID '" + sParticipantID + "' is invalid");
-      aUnifiedResponse.createBadRequest ();
+      final String sMsg = "The provided Peppol Participant ID '" + sParticipantID + "' is invalid";
+      LOGGER.error (sLogPrefix + sMsg);
+      aUnifiedResponse.createBadRequest ().text (sMsg);
       return;
     }
+
     final ZonedDateTime aQueryDT = PDTFactory.getCurrentZonedDateTimeUTC ();
     final StopWatch aSW = StopWatch.createdStarted ();
 
@@ -99,9 +103,9 @@ public final class APIGetCheckPeppolParticipantRegistered extends AbstractAPIExe
       bRegistered = false;
       for (final ISMLConfiguration aCurSMLConf : aSMLConfigurationMgr.getAllSorted ())
       {
-        bRegistered = SMPQueryParams.isSMPRegisteredInDNSViaNaptr (PeppolNaptrURLProvider.INSTANCE,
-                                                                   aParticipantID,
-                                                                   aCurSMLConf.getSMLInfo ().getDNSZone ());
+        bRegistered = PeppolExistenceCheck.isSMPRegisteredInDNSViaNaptr (PeppolNaptrURLProvider.INSTANCE,
+                                                                         aParticipantID,
+                                                                         aCurSMLConf.getSMLInfo ().getDNSZone ());
         if (bRegistered)
         {
           aEffectiveSMLConf = aCurSMLConf;
@@ -111,9 +115,9 @@ public final class APIGetCheckPeppolParticipantRegistered extends AbstractAPIExe
     }
     else
     {
-      bRegistered = SMPQueryParams.isSMPRegisteredInDNSViaNaptr (PeppolNaptrURLProvider.INSTANCE,
-                                                                 aParticipantID,
-                                                                 aSMLConf.getSMLInfo ().getDNSZone ());
+      bRegistered = PeppolExistenceCheck.isSMPRegisteredInDNSViaNaptr (PeppolNaptrURLProvider.INSTANCE,
+                                                                       aParticipantID,
+                                                                       aSMLConf.getSMLInfo ().getDNSZone ());
       if (bRegistered)
         aEffectiveSMLConf = aSMLConf;
     }
@@ -124,9 +128,9 @@ public final class APIGetCheckPeppolParticipantRegistered extends AbstractAPIExe
     if (aEffectiveSMLConf != null)
     {
       aJson.add ("smpHostURI",
-                 SMPQueryParams.getSMURIViaNaptr (PeppolNaptrURLProvider.INSTANCE,
-                                                  aParticipantID,
-                                                  aEffectiveSMLConf.getSMLInfo ().getDNSZone ()));
+                 PeppolExistenceCheck.getSMURIViaNaptr (PeppolNaptrURLProvider.INSTANCE,
+                                                        aParticipantID,
+                                                        aEffectiveSMLConf.getSMLInfo ().getDNSZone ()));
     }
     // This is the main check result
     aJson.add ("exists", bRegistered);
