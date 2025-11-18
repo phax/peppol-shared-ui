@@ -104,6 +104,7 @@ import com.helger.peppol.sharedui.page.AbstractAppWebPage;
 import com.helger.peppol.sml.ESMPAPIType;
 import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppol.smp.ESMPTransportProfileState;
+import com.helger.peppol.ui.CertificateUI;
 import com.helger.peppol.ui.PeppolUI;
 import com.helger.peppol.ui.minicallback.MiniCallbackAddToNode;
 import com.helger.peppol.ui.nicename.NiceNameUI;
@@ -346,24 +347,6 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
     }
     if (aDiv.getChildCount () > 1)
       aLIEndpoint.addChild (aDiv);
-  }
-
-  @NonNull
-  private static String _inGroupsOf (@NonNull final String s, final int nChars)
-  {
-    if (nChars < 1)
-      return s;
-    final int nMax = s.length ();
-    final StringBuilder aSB = new StringBuilder (nMax * 2);
-    int nIndex = 0;
-    while (nIndex < nMax - 1)
-    {
-      if (aSB.length () > 0)
-        aSB.append (' ');
-      aSB.append (s, nIndex, Integer.min (nIndex + nChars, nMax));
-      nIndex += nChars;
-    }
-    return aSB.toString ();
   }
 
   private void _queryParticipant (@NonNull final WebPageExecutionContext aWPEC,
@@ -1185,19 +1168,14 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
             if (aEndpointCert != null)
             {
               aLICert.addChild (div ("Subject: " + aEndpointCert.getSubjectX500Principal ().getName ()));
-              aLICert.addChild (div ("Issuer: " + aEndpointCert.getIssuerX500Principal ().getName ()));
-              final OffsetDateTime aNotBefore = PDTFactory.createOffsetDateTime (aEndpointCert.getNotBefore ());
-              aLICert.addChild (div ("Not before: " + PDTToString.getAsString (aNotBefore, aDisplayLocale)));
-              if (aNotBefore.isAfter (aNowDateTime))
-                aLICert.addChild (error ("This Endpoint Certificate is not yet valid!"));
-              final OffsetDateTime aNotAfter = PDTFactory.createOffsetDateTime (aEndpointCert.getNotAfter ());
-              aLICert.addChild (div ("Not after: " + PDTToString.getAsString (aNotAfter, aDisplayLocale)));
-              if (aNotAfter.isBefore (aNowDateTime))
-                aLICert.addChild (error ("This Endpoint Certificate is no longer valid!"));
-              aLICert.addChild (div ("Serial number: " +
-                                     aEndpointCert.getSerialNumber ().toString () +
-                                     " / 0x" +
-                                     _inGroupsOf (aEndpointCert.getSerialNumber ().toString (16), 4)));
+              aLICert.addChild (div ("Issuer: " + CertificateUI.getCertIssuer (aEndpointCert)));
+              aLICert.addChild (div ("Not before: ").addChild (CertificateUI.getNodeCertNotBefore (PDTFactory.createOffsetDateTime (aEndpointCert.getNotBefore ()),
+                                                                                                   aNowDateTime,
+                                                                                                   aDisplayLocale)));
+              aLICert.addChild (div ("Not after: ").addChild (CertificateUI.getNodeCertNotAfter (PDTFactory.createOffsetDateTime (aEndpointCert.getNotAfter ()),
+                                                                                                 aNowDateTime,
+                                                                                                 aDisplayLocale)));
+              aLICert.addChild (div ("Serial number: " + CertificateUI.getCertSerialNumber (aEndpointCert)));
 
               if (aSMPQueryParams.getSMPAPIType () == ESMPAPIType.PEPPOL)
               {
