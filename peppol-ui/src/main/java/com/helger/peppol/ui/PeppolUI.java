@@ -19,7 +19,6 @@ package com.helger.peppol.ui;
 import java.util.List;
 
 import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,8 +31,6 @@ import com.helger.base.string.StringHelper;
 import com.helger.base.type.ITypedObject;
 import com.helger.collection.commons.CommonsArrayList;
 import com.helger.collection.commons.ICommonsMap;
-import com.helger.html.hc.html.grouping.HCDiv;
-import com.helger.html.hc.impl.HCNodeList;
 import com.helger.photon.uicore.css.CPageParam;
 import com.helger.photon.uicore.page.IWebPageExecutionContext;
 import com.helger.url.ISimpleURL;
@@ -59,50 +56,6 @@ public final class PeppolUI
   private static String _getString (@NonNull final Throwable t)
   {
     return StringHelper.getConcatenatedOnDemand (ClassHelper.getClassLocalName (t.getClass ()), " - ", t.getMessage ());
-  }
-
-  @Nullable
-  public static HCNodeList getTechnicalDetailsUI (@Nullable final Throwable t, final boolean bLogException)
-  {
-    if (t == null)
-      return null;
-
-    if (bLogException)
-      LOGGER.warn ("Technical details", t);
-
-    final HCNodeList ret = new HCNodeList ();
-    Throwable aCur = t;
-    while (aCur != null)
-    {
-      if (ret.hasNoChildren ())
-        ret.addChild (new HCDiv ().addChild ("Technical details: " + _getString (aCur)));
-      else
-        ret.addChild (new HCDiv ().addChild ("Caused by: " + _getString (aCur)));
-      aCur = aCur.getCause ();
-    }
-    return ret;
-  }
-
-  @Nullable
-  public static String getTechnicalDetailsString (@Nullable final Throwable t, final boolean bLogException)
-  {
-    if (t == null)
-      return null;
-
-    if (bLogException)
-      LOGGER.warn ("Technical details", t);
-
-    final StringBuilder ret = new StringBuilder ();
-    Throwable aCur = t;
-    while (aCur != null)
-    {
-      if (ret.length () == 0)
-        ret.append ("Technical details: ").append (_getString (aCur));
-      else
-        ret.append ("\nCaused by: ").append (_getString (aCur));
-      aCur = aCur.getCause ();
-    }
-    return ret.toString ();
   }
 
   @NonNull

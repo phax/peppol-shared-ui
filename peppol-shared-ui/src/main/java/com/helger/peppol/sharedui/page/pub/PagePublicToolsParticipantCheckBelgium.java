@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import com.helger.annotation.Nonempty;
 import com.helger.base.string.StringHelper;
 import com.helger.base.string.StringRemove;
+import com.helger.cache.regex.RegExHelper;
 import com.helger.html.hc.IHCNode;
 import com.helger.html.hc.html.forms.EHCFormMethod;
 import com.helger.html.hc.html.forms.HCEdit;
@@ -175,7 +176,7 @@ public class PagePublicToolsParticipantCheckBelgium extends AbstractAppWebPage
       // CBE values may contain "." chars
       sParticipantIDValue = StringRemove.removeAll (sParticipantIDValue, '.');
       // Remove all blanks
-      sParticipantIDValue = sParticipantIDValue.replaceAll ("\\s+", "");
+      sParticipantIDValue = RegExHelper.stringReplacePattern ("\\s+", sParticipantIDValue, "");
 
       if (StringHelper.isEmpty (sParticipantIDValue))
         aFormErrors.addFieldError (FIELD_ID_VALUE, "Please provide an value to check");

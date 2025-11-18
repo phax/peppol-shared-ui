@@ -19,6 +19,7 @@ package com.helger.peppol.as4.page;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore.PrivateKeyEntry;
 import java.security.cert.X509Certificate;
+import java.util.Locale;
 import java.util.function.Supplier;
 
 import org.jspecify.annotations.NonNull;
@@ -39,7 +40,6 @@ import com.helger.html.hc.html.forms.HCTextArea;
 import com.helger.html.hc.html.grouping.HCDiv;
 import com.helger.html.hc.impl.HCNodeList;
 import com.helger.peppol.sml.ESML;
-import com.helger.peppol.ui.PeppolUI;
 import com.helger.peppol.ui.types.PeppolUITypes;
 import com.helger.peppol.ui.types.config.PeppolSharedConfig;
 import com.helger.peppolid.IDocumentTypeIdentifier;
@@ -65,6 +65,7 @@ import com.helger.photon.bootstrap4.button.BootstrapSubmitButton;
 import com.helger.photon.bootstrap4.form.BootstrapForm;
 import com.helger.photon.bootstrap4.form.BootstrapFormGroup;
 import com.helger.photon.bootstrap4.pages.AbstractBootstrapWebPage;
+import com.helger.photon.bootstrap4.uictrls.ext.BootstrapTechnicalUI;
 import com.helger.photon.bootstrap4.uictrls.prism.BootstrapPrismJS;
 import com.helger.photon.core.form.FormErrorList;
 import com.helger.photon.core.form.RequestField;
@@ -180,6 +181,7 @@ public class PageSecurePeppolSendAS4 extends AbstractBootstrapWebPage <WebPageEx
   protected void fillContent (@NonNull final WebPageExecutionContext aWPEC)
   {
     final HCNodeList aNodeList = aWPEC.getNodeList ();
+    Locale aDisplayLocale = aWPEC.getDisplayLocale ();
     final IIdentifierFactory aIF = Phase4PeppolSender.IF;
 
     final FormErrorList aFormErrors = new FormErrorList ();
@@ -320,10 +322,14 @@ public class PageSecurePeppolSendAS4 extends AbstractBootstrapWebPage <WebPageEx
           if (eResult.isSuccess ())
             aNL.addChild (success ("Successfully send AS4 message to Peppol receiver ").addChild (code (aReceiverID.getURIEncoded ())));
           else
+          {
+            LOGGER.warn ("Technical details", aSendEx.get ());
             aNL.addChild (error ().addChild (div ("Failed to send AS4 message to Peppol receiver ").addChild (code (aReceiverID.getURIEncoded ()))
                                                                                                    .addChild (" with result ")
                                                                                                    .addChild (code (eResult.name ())))
-                                  .addChild (PeppolUI.getTechnicalDetailsUI (aSendEx.get (), true)));
+                                  .addChild (BootstrapTechnicalUI.getTechnicalDetailsNode (aSendEx.get (),
+                                                                                           aDisplayLocale)));
+          }
 
           boolean bShowRaw = true;
           if (aResponseMsg.isSet ())
@@ -360,8 +366,8 @@ public class PageSecurePeppolSendAS4 extends AbstractBootstrapWebPage <WebPageEx
         }
         catch (final SMPDNSResolutionException ex)
         {
-          aNL.addChild (error (div ("Error creating the SMP client.")).addChild (PeppolUI.getTechnicalDetailsUI (ex,
-                                                                                                                 false)));
+          aNL.addChild (error (div ("Error creating the SMP client.")).addChild (BootstrapTechnicalUI.getTechnicalDetailsNode (ex,
+                                                                                                                               aDisplayLocale)));
         }
 
         if (true)

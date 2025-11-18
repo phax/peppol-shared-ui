@@ -16,23 +16,27 @@
  */
 package com.helger.peppol.ui.minicallback;
 
+import java.util.Locale;
+
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import com.helger.html.hc.IHCNodeWithChildren;
 import com.helger.html.hc.html.grouping.HCDiv;
-import com.helger.peppol.ui.PeppolUI;
 import com.helger.peppol.ui.types.minicallback.IMiniCallback;
 import com.helger.photon.bootstrap4.alert.BootstrapErrorBox;
 import com.helger.photon.bootstrap4.alert.BootstrapWarnBox;
+import com.helger.photon.bootstrap4.uictrls.ext.BootstrapTechnicalUI;
 
 public class MiniCallbackAddToNode implements IMiniCallback
 {
   private @NonNull final IHCNodeWithChildren <?> m_aDestNode;
+  private @NonNull final Locale m_aDisplayLocale;
 
-  public MiniCallbackAddToNode (@NonNull final IHCNodeWithChildren <?> aDestNode)
+  public MiniCallbackAddToNode (@NonNull final IHCNodeWithChildren <?> aDestNode, @NonNull final Locale aDisplayLocale)
   {
     m_aDestNode = aDestNode;
+    m_aDisplayLocale = aDisplayLocale;
   }
 
   public void info (@NonNull final String s)
@@ -44,7 +48,7 @@ public class MiniCallbackAddToNode implements IMiniCallback
   {
     final BootstrapWarnBox aWarnBox = new BootstrapWarnBox ().addChild (s);
     if (ex != null)
-      aWarnBox.addChild (PeppolUI.getTechnicalDetailsUI (ex, false));
+      aWarnBox.addChild (BootstrapTechnicalUI.getTechnicalDetailsNode (ex, m_aDisplayLocale));
     m_aDestNode.addChild (aWarnBox);
   }
 
@@ -52,7 +56,7 @@ public class MiniCallbackAddToNode implements IMiniCallback
   {
     final BootstrapErrorBox aErrorBox = new BootstrapErrorBox ().addChild (s);
     if (ex != null)
-      aErrorBox.addChild (PeppolUI.getTechnicalDetailsUI (ex, false));
+      aErrorBox.addChild (BootstrapTechnicalUI.getTechnicalDetailsNode (ex, m_aDisplayLocale));
     m_aDestNode.addChild (aErrorBox);
   }
 }

@@ -1,19 +1,27 @@
 package com.helger.peppol.ui;
 
+import java.security.PublicKey;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.RSAPublicKey;
 import java.time.OffsetDateTime;
 import java.util.Locale;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import com.helger.annotation.concurrent.Immutable;
+import com.helger.base.string.StringHelper;
+import com.helger.css.property.CCSSProperties;
 import com.helger.datetime.format.PDTToString;
+import com.helger.datetime.helper.PDTFactory;
 import com.helger.datetime.util.PDTDisplayHelper;
 import com.helger.html.hc.IHCNode;
 import com.helger.html.hc.html.grouping.HCDiv;
+import com.helger.html.hc.html.tabular.HCCol;
 import com.helger.html.hc.impl.HCNodeList;
 import com.helger.photon.bootstrap4.badge.BootstrapBadge;
 import com.helger.photon.bootstrap4.badge.EBootstrapBadgeType;
+import com.helger.photon.bootstrap4.table.BootstrapTable;
 
 @Immutable
 public final class CertificateUI
@@ -88,5 +96,52 @@ public final class CertificateUI
                                                                                PDTDisplayHelper.getPeriodTextEN (aNowDT.toLocalDateTime (),
                                                                                                                  aNotAfter.toLocalDateTime ())));
     return ret;
+  }
+
+  @NonNull
+  public static BootstrapTable createCertificateDetailsTable (@Nullable final String sAlias,
+                                                              @NonNull final X509Certificate aX509Cert,
+                                                              @NonNull final OffsetDateTime aNowLDT,
+                                                              @NonNull final Locale aDisplayLocale)
+  {
+    final OffsetDateTime aNotBefore = PDTFactory.createOffsetDateTime (aX509Cert.getNotBefore ());
+    final OffsetDateTime aNotAfter = PDTFactory.createOffsetDateTime (aX509Cert.getNotAfter ());
+    final PublicKey aPublicKey = aX509Cert.getPublicKey ();
+
+    final BootstrapTable aCertDetails = new BootstrapTable (new HCCol ().addStyle (CCSSProperties.WIDTH.newValue ("12rem")),
+                                                            HCCol.star ());
+    aCertDetails.setResponsive (true);
+    if (StringHelper.isNotEmpty (sAlias))
+      aCertDetails.addBodyRow ().addCell ("Alias:").addCell (sAlias);
+    aCertDetails.addBodyRow ().addCell ("Version:").addCell (Integer.toString (aX509Cert.getVersion ()));
+    aCertDetails.addBodyRow ().addCell ("Issuer:").addCell (CertificateUI.getCertIssuer (aX509Cert));
+    aCertDetails.addBodyRow ().addCell ("Subject:").addCell (CertificateUI.getCertSubject (aX509Cert));
+    aCertDetails.addBodyRow ().addCell ("Serial number:").addCell (CertificateUI.getCertSerialNumber (aX509Cert));
+    aCertDetails.addBodyRow ()
+                .addCell ("Not before:")
+                .addCell (CertificateUI.getNodeCertNotBefore (aNotBefore, aNowLDT, aDisplayLocale));
+    aCertDetails.addBodyRow ()
+                .addCell ("Not after:")
+                .addCell (CertificateUI.getNodeCertNotAfter (aNotAfter, aNowLDT, aDisplayLocale));
+
+    if (aPublicKey instanceof final RSAPublicKey aRSAPubKey)
+    {
+      // Special handling for RSA
+      aCertDetails.addBodyRow ()
+                  .addCell ("Public key:")
+                  .addCell (aX509Cert.getPublicKey ().getAlgorithm () +
+                            " (" +
+                            aRSAPubKey.getModulus ().bitLength () +
+                            " bits)");
+    }
+    else
+    {
+      // Usually EC or DSA key
+      aCertDetails.addBodyRow ().addCell ("Public key:").addCell (aX509Cert.getPublicKey ().getAlgorithm ());
+    }
+    aCertDetails.addBodyRow ()
+                .addCell ("Signature algorithm:")
+                .addCell (aX509Cert.getSigAlgName () + " (" + aX509Cert.getSigAlgOID () + ")");
+    return aCertDetails;
   }
 }

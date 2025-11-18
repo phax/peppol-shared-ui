@@ -105,7 +105,6 @@ import com.helger.peppol.sml.ESMPAPIType;
 import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppol.smp.ESMPTransportProfileState;
 import com.helger.peppol.ui.CertificateUI;
-import com.helger.peppol.ui.PeppolUI;
 import com.helger.peppol.ui.minicallback.MiniCallbackAddToNode;
 import com.helger.peppol.ui.nicename.NiceNameUI;
 import com.helger.peppol.ui.smlconfig.ui.SMLConfigurationSelect;
@@ -136,6 +135,7 @@ import com.helger.photon.bootstrap4.form.BootstrapForm;
 import com.helger.photon.bootstrap4.form.BootstrapFormGroup;
 import com.helger.photon.bootstrap4.form.BootstrapFormHelper;
 import com.helger.photon.bootstrap4.table.BootstrapTable;
+import com.helger.photon.bootstrap4.uictrls.ext.BootstrapTechnicalUI;
 import com.helger.photon.core.form.FormErrorList;
 import com.helger.photon.core.form.RequestField;
 import com.helger.photon.core.form.RequestFieldBoolean;
@@ -647,8 +647,8 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
 
             aNodeList.addChild (error (div ("Seems like the participant ID " +
                                             sParticipantIDUriEncoded +
-                                            " is not registered to the selected network.")).addChild (PeppolUI.getTechnicalDetailsUI (ex,
-                                                                                                                                      false))
+                                            " is not registered to the selected network.")).addChild (BootstrapTechnicalUI.getTechnicalDetailsNode (ex,
+                                                                                                                                                    aDisplayLocale))
                                                                                            .addChild (bSMLAutoDetect ? null
                                                                                                                      : div ("Try selecting a different SML - maybe this helps")));
 
@@ -891,10 +891,10 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
         else
           LOGGER.warn ("Participant DocTypes Error: " + ex.getClass ().getName () + " - " + ex.getMessage ());
 
-        final BootstrapErrorBox aErrorBox = error (div ("Error querying SMP.")).addChild (PeppolUI.getTechnicalDetailsUI (ex,
-                                                                                                                          false));
+        final BootstrapErrorBox aErrorBox = error (div ("Error querying SMP.")).addChild (BootstrapTechnicalUI.getTechnicalDetailsNode (ex,
+                                                                                                                                        aDisplayLocale));
         for (final JAXBException aItem : aSMPExceptions)
-          aErrorBox.addChild (PeppolUI.getTechnicalDetailsUI (aItem, false));
+          aErrorBox.addChild (BootstrapTechnicalUI.getTechnicalDetailsNode (aItem, aDisplayLocale));
         aNodeList.addChild (aErrorBox);
 
         // Audit failure
@@ -1107,10 +1107,10 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
             else
               LOGGER.warn ("Participant Information Error: " + ex.getClass ().getName () + " - " + ex.getMessage ());
 
-            final BootstrapErrorBox aErrorBox = error (div ("Error querying SMP. Try disabling 'XML Schema validation'.")).addChild (PeppolUI.getTechnicalDetailsUI (ex,
-                                                                                                                                                                     false));
+            final BootstrapErrorBox aErrorBox = error (div ("Error querying SMP. Try disabling 'XML Schema validation'.")).addChild (BootstrapTechnicalUI.getTechnicalDetailsNode (ex,
+                                                                                                                                                                                   aDisplayLocale));
             for (final JAXBException aItem : aSMPExceptions)
-              aErrorBox.addChild (PeppolUI.getTechnicalDetailsUI (aItem, false));
+              aErrorBox.addChild (BootstrapTechnicalUI.getTechnicalDetailsNode (aItem, aDisplayLocale));
             aLIDocTypeID.addChild (aErrorBox);
 
             // Audit failure
@@ -1127,10 +1127,10 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
               LOGGER.warn ("Participant Information Error: " + ex.getClass ().getName () + " - " + ex.getMessage (),
                            ex);
 
-            final BootstrapErrorBox aErrorBox = error (div ("Error querying SMP.")).addChild (PeppolUI.getTechnicalDetailsUI (ex,
-                                                                                                                              false));
+            final BootstrapErrorBox aErrorBox = error (div ("Error querying SMP.")).addChild (BootstrapTechnicalUI.getTechnicalDetailsNode (ex,
+                                                                                                                                            aDisplayLocale));
             for (final JAXBException aItem : aSMPExceptions)
-              aErrorBox.addChild (PeppolUI.getTechnicalDetailsUI (aItem, false));
+              aErrorBox.addChild (BootstrapTechnicalUI.getTechnicalDetailsNode (aItem, aDisplayLocale));
             aLIDocTypeID.addChild (aErrorBox);
 
             // Audit failure
@@ -1167,15 +1167,10 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
             aLICert.addChild (div ("Certificate #" + sCertIndex));
             if (aEndpointCert != null)
             {
-              aLICert.addChild (div ("Subject: " + aEndpointCert.getSubjectX500Principal ().getName ()));
-              aLICert.addChild (div ("Issuer: " + CertificateUI.getCertIssuer (aEndpointCert)));
-              aLICert.addChild (div ("Not before: ").addChild (CertificateUI.getNodeCertNotBefore (PDTFactory.createOffsetDateTime (aEndpointCert.getNotBefore ()),
-                                                                                                   aNowDateTime,
-                                                                                                   aDisplayLocale)));
-              aLICert.addChild (div ("Not after: ").addChild (CertificateUI.getNodeCertNotAfter (PDTFactory.createOffsetDateTime (aEndpointCert.getNotAfter ()),
-                                                                                                 aNowDateTime,
-                                                                                                 aDisplayLocale)));
-              aLICert.addChild (div ("Serial number: " + CertificateUI.getCertSerialNumber (aEndpointCert)));
+              aLICert.addChild (CertificateUI.createCertificateDetailsTable (null,
+                                                                             aEndpointCert,
+                                                                             aNowDateTime,
+                                                                             aDisplayLocale));
 
               if (aSMPQueryParams.getSMPAPIType () == ESMPAPIType.PEPPOL)
               {
@@ -1223,7 +1218,8 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
         byte [] aBCBytes = APISMPQueryGetBusinessCard.retrieveBusinessCard ("",
                                                                             aSMPQueryParams,
                                                                             aHCSModifier,
-                                                                            new MiniCallbackAddToNode (aNodeList));
+                                                                            new MiniCallbackAddToNode (aNodeList,
+                                                                                                       aDisplayLocale));
         aSWGetBC.stop ();
 
         if (aBCBytes == null)
@@ -1244,7 +1240,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
           {
             final BootstrapErrorBox aError = error ("Failed to parse the response data as a Business Card.");
             for (final JAXBException aItem : aPDExceptions)
-              aError.addChild (PeppolUI.getTechnicalDetailsUI (aItem, false));
+              aError.addChild (BootstrapTechnicalUI.getTechnicalDetailsNode (aItem, aDisplayLocale));
             aNodeList.addChild (aError);
 
             if (bShowTime)
@@ -1386,17 +1382,14 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
     }
     catch (final RuntimeException ex)
     {
-      if (LOGGER.isDebugEnabled ())
-        LOGGER.debug ("Participant Information Error", ex);
-      else
-        LOGGER.warn ("Participant Information Error: " + ex.getClass ().getName () + " - " + ex.getMessage ());
+      LOGGER.debug ("Participant Information Error", ex);
 
       new InternalErrorBuilder ().setRequestScope (aRequestScope)
                                  .setDisplayLocale (aDisplayLocale)
                                  .setThrowable (ex)
                                  .handle ();
-      aNodeList.addChild (error (div ("Error querying participant information.")).addChild (PeppolUI.getTechnicalDetailsUI (ex,
-                                                                                                                            true)));
+      aNodeList.addChild (error (div ("Error querying participant information.")).addChild (BootstrapTechnicalUI.getTechnicalDetailsNode (ex,
+                                                                                                                                          aDisplayLocale)));
 
       // Audit failure
       AuditHelper.onAuditExecuteFailure ("participant-information",
