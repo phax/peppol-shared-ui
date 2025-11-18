@@ -13,6 +13,11 @@ This project consists of the following modules, in dependency order:
 
 # News and Noteworthy
 
+v0.9.8 - work in progress
+* Added HR eRacun validation
+* Improved error handling in SMP query APIs
+* Small improvements in participant information UI
+
 v0.9.7 - 2025-11-16
 * Updated to ph-commons 12.1.0
 * Using JSpecify annotations
