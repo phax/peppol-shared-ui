@@ -98,6 +98,9 @@ public final class SMPQueryParams
     return m_aParticipantID;
   }
 
+  /**
+   * @return The SMP host URI. Should never end with a slash.
+   */
   @NonNull
   public URI getSMPHostURI ()
   {

@@ -21,11 +21,11 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
-import java.security.GeneralSecurityException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -51,6 +51,7 @@ import com.helger.base.string.StringHelper;
 import com.helger.base.string.StringImplode;
 import com.helger.base.timing.StopWatch;
 import com.helger.base.url.URLHelper;
+import com.helger.base.wrapper.Wrapper;
 import com.helger.collection.commons.CommonsArrayList;
 import com.helger.collection.commons.CommonsLinkedHashMap;
 import com.helger.collection.commons.CommonsTreeMap;
@@ -112,6 +113,8 @@ import com.helger.peppol.ui.types.PeppolUITypes;
 import com.helger.peppol.ui.types.mgr.PhotonPeppolMetaManager;
 import com.helger.peppol.ui.types.smlconfig.ISMLConfiguration;
 import com.helger.peppol.ui.types.smlconfig.ISMLConfigurationManager;
+import com.helger.peppol.ui.types.smp.ISMPClientCreationCallback;
+import com.helger.peppol.ui.types.smp.ISMPExtensionsCallback;
 import com.helger.peppol.ui.types.smp.SMPQueryParams;
 import com.helger.peppolid.CIdentifier;
 import com.helger.peppolid.IDocumentTypeIdentifier;
@@ -163,7 +166,6 @@ import com.helger.text.locale.language.LanguageCache;
 import com.helger.url.SimpleURL;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 import com.helger.xml.serialize.write.XMLWriter;
-import com.helger.xsds.bdxr.smp2.bc.IDType;
 
 import jakarta.xml.bind.JAXBException;
 
@@ -673,162 +675,92 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
 
       // Determine all document types
       final ICommonsList <IDocumentTypeIdentifier> aDocTypeIDs = new CommonsArrayList <> ();
-      SMPClientReadOnly aSMPClient = null;
-      BDXRClientReadOnly aBDXR1Client = null;
-      BDXR2ClientReadOnly aBDXR2Client = null;
-
+      final Wrapper <SMPClientReadOnly> aSMPClient = new Wrapper <> ();
+      final Wrapper <BDXRClientReadOnly> aBDXR1Client = new Wrapper <> ();
+      final Wrapper <BDXR2ClientReadOnly> aBDXR2Client = new Wrapper <> ();
       final Consumer <GenericJAXBMarshaller <?>> aSMPMarshallerCustomizer = m -> {
         aSMPExceptions.clear ();
         // Remember exceptions
         m.readExceptionCallbacks ().add (aSMPExceptions::add);
       };
-
       final Consumer <? super SMPHttpClientSettings> aHCSModifier = hcs -> hcs.setUserAgent (m_sUserAgent);
+      final HCUL aSGUL = new HCUL ();
+      final Wrapper <IHCNode> aSGExtension = new Wrapper <> ();
 
       try
       {
         final StopWatch aSWGetDocTypes = StopWatch.createdStarted ();
-        final HCUL aSGUL = new HCUL ();
-        final ICommonsSortedMap <String, String> aSGHrefs = new CommonsTreeMap <> ();
-        IHCNode aSGExtension = null;
-        // Defaulting to true per 10.8.2025
-        boolean bUseSMPSecureValidation = PeppolUITypes.DEFAULT_SMP_USE_SECURE_VALIDATION;
 
-        switch (aSMPQueryParams.getSMPAPIType ())
-        {
-          case PEPPOL:
-          {
-            aSMPClient = new SMPClientReadOnly (aSMPQueryParams.getSMPHostURI ());
-            aSMPClient.withHttpClientSettings (aHCSModifier);
-            aSMPClient.setSecureValidation (bUseSMPSecureValidation);
-            aSMPClient.setXMLSchemaValidation (bXSDValidation);
-            aSMPClient.setVerifySignature (bVerifySignatures);
-            aSMPClient.setMarshallerCustomizer (aSMPMarshallerCustomizer);
-            if (aSMPQueryParams.isTrustAllCertificates ())
-              try
-              {
-                aSMPClient.httpClientSettings ().setSSLContextTrustAll ();
-              }
-              catch (final GeneralSecurityException ex)
-              {
-                // Ignore
-              }
+        // Get in original order
+        final var aOrigHrefs = PeppolAPIHelper.retrieveAllDocumentTypes ("",
+                                                                         aSMPQueryParams,
+                                                                         aHCSModifier,
+                                                                         bXSDValidation,
+                                                                         bVerifySignatures,
+                                                                         new ISMPClientCreationCallback ()
+                                                                         {
+                                                                           public void onPeppolSMPClient (@NonNull SMPClientReadOnly a)
+                                                                           {
+                                                                             aSMPClient.set (a);
+                                                                           }
 
-            // Get all HRefs and sort them by decoded URL
-            final var aSG = aSMPClient.getServiceGroupOrNull (aParticipantID);
-            if (aSG != null)
-            {
-              // Map from cleaned URL to original URL
-              if (aSG.getServiceMetadataReferenceCollection () != null)
-                for (final var aSMR : aSG.getServiceMetadataReferenceCollection ().getServiceMetadataReference ())
-                {
-                  // Decoded href is important for unification
-                  final String sHref = CIdentifier.createPercentDecoded (aSMR.getHref ());
-                  if (aSGHrefs.put (sHref, aSMR.getHref ()) != null)
-                    aSGUL.addItem (warn ("The ServiceGroup list contains the duplicate URL ").addChild (code (sHref)));
-                }
+                                                                           public void onBDXR1Client (@NonNull BDXRClientReadOnly a)
+                                                                           {
+                                                                             aBDXR1Client.set (a);
+                                                                           }
 
-              if (aSG.getExtension () != null && aSG.getExtension ().getAny () != null)
-              {
-                aSGExtension = new HCPrismJS (EPrismLanguage.MARKUP).addChild (XMLWriter.getNodeAsString (aSG.getExtension ()
-                                                                                                             .getAny ()));
-              }
-            }
-            break;
-          }
-          case OASIS_BDXR_V1:
-          {
-            aBDXR1Client = new BDXRClientReadOnly (aSMPQueryParams.getSMPHostURI ());
-            aBDXR1Client.withHttpClientSettings (aHCSModifier);
-            aBDXR1Client.setSecureValidation (bUseSMPSecureValidation);
-            aBDXR1Client.setXMLSchemaValidation (bXSDValidation);
-            aBDXR1Client.setVerifySignature (bVerifySignatures);
-            aBDXR1Client.setMarshallerCustomizer (aSMPMarshallerCustomizer);
-            if (aSMPQueryParams.isTrustAllCertificates ())
-              try
-              {
-                aBDXR1Client.httpClientSettings ().setSSLContextTrustAll ();
-              }
-              catch (final GeneralSecurityException ex)
-              {
-                // Ignore
-              }
+                                                                           public void onBDXR2Client (@NonNull BDXR2ClientReadOnly a)
+                                                                           {
+                                                                             aBDXR2Client.set (a);
+                                                                           }
+                                                                         },
+                                                                         sHref -> aSGUL.addItem (warn ("The ServiceGroup list contains the duplicate URL ").addChild (code (sHref))),
+                                                                         aSMPMarshallerCustomizer,
+                                                                         new ISMPExtensionsCallback ()
+                                                                         {
+                                                                           public void onPeppolSMPExtension (final com.helger.xsds.peppol.smp1.@NonNull ExtensionType aExtension)
+                                                                           {
+                                                                             aSGExtension.set (new HCPrismJS (EPrismLanguage.MARKUP).addChild (XMLWriter.getNodeAsString (aExtension.getAny ())));
+                                                                           }
 
-            // Get all HRefs and sort them by decoded URL
-            final var aSG = aBDXR1Client.getServiceGroupOrNull (aParticipantID);
-            // Map from cleaned URL to original URL
-            if (aSG != null)
-            {
-              if (aSG.getServiceMetadataReferenceCollection () != null)
-                for (final var aSMR : aSG.getServiceMetadataReferenceCollection ().getServiceMetadataReference ())
-                {
-                  // Decoded href is important for unification
-                  final String sHref = CIdentifier.createPercentDecoded (aSMR.getHref ());
-                  if (aSGHrefs.put (sHref, aSMR.getHref ()) != null)
-                    aSGUL.addItem (warn ("The ServiceGroup list contains the duplicate URL ").addChild (code (sHref)));
-                }
-              if (aSG.getExtensionCount () > 0)
-              {
-                final HCUL aNL2 = new HCUL ();
-                for (final var aExt : aSG.getExtension ())
-                  if (aExt.getAny () != null)
-                  {
-                    if (aExt.getAny () instanceof Element)
-                      aNL2.addItem (new HCPrismJS (EPrismLanguage.MARKUP).addChild (XMLWriter.getNodeAsString ((Element) aExt.getAny ())));
-                    else
-                      aNL2.addItem (code (aExt.getAny ().toString ()));
-                  }
-                if (aNL2.hasChildren ())
-                  aSGExtension = aNL2;
-              }
-            }
-            break;
-          }
-          case OASIS_BDXR_V2:
-          {
-            aBDXR2Client = new BDXR2ClientReadOnly (aSMPQueryParams.getSMPHostURI ());
-            aBDXR2Client.withHttpClientSettings (aHCSModifier);
-            aBDXR2Client.setSecureValidation (bUseSMPSecureValidation);
-            aBDXR2Client.setXMLSchemaValidation (bXSDValidation);
-            aBDXR2Client.setVerifySignature (bVerifySignatures);
-            aBDXR2Client.setMarshallerCustomizer (aSMPMarshallerCustomizer);
-            if (aSMPQueryParams.isTrustAllCertificates ())
-              try
-              {
-                aBDXR2Client.httpClientSettings ().setSSLContextTrustAll ();
-                LOGGER.warn ("Disabled certificate verification on TLS when querying the SMP.");
-              }
-              catch (final GeneralSecurityException ex)
-              {
-                // Ignore
-              }
+                                                                           public void onBDXR1Extension (@NonNull final List <com.helger.xsds.bdxr.smp1.@NonNull ExtensionType> aExtensionList)
+                                                                           {
+                                                                             final HCUL aNL2 = new HCUL ();
+                                                                             for (final var aExt : aExtensionList)
+                                                                               if (aExt.getAny () != null)
+                                                                               {
+                                                                                 if (aExt.getAny () instanceof Element aElement)
+                                                                                   aNL2.addItem (new HCPrismJS (EPrismLanguage.MARKUP).addChild (XMLWriter.getNodeAsString (aElement)));
+                                                                                 else
+                                                                                   aNL2.addItem (code (aExt.getAny ()
+                                                                                                           .toString ()));
+                                                                               }
+                                                                             if (aNL2.hasChildren ())
+                                                                               aSGExtension.set (aNL2);
+                                                                           }
 
-            // Get all HRefs and sort them by decoded URL
-            final var aSG = aBDXR2Client.getServiceGroupOrNull (aParticipantID);
-            // Map from cleaned URL to original URL
-            if (aSG != null)
-            {
-              for (final var aSR : aSG.getServiceReference ())
-              {
-                final IDType aDocTypeID = aSR.getID ();
-
-                final String sHref = aSMPQueryParams.getSMPHostURI () +
-                                     BDXR2ClientReadOnly.PATH_OASIS_BDXR_SMP_2 +
-                                     aParticipantID.getURIPercentEncoded () +
-                                     "/" +
-                                     BDXR2ClientReadOnly.URL_PART_SERVICES +
-                                     "/" +
-                                     CIdentifier.getURIPercentEncoded (aDocTypeID);
-
-                // Decoded href is important for unification
-                if (aSGHrefs.put (sHref, sHref) != null)
-                  aSGUL.addItem (warn ("The ServiceGroup list contains the duplicate URL ").addChild (code (sHref)));
-              }
-              // TODO show extensions
-            }
-            break;
-          }
-        }
+                                                                           public void onBDXR2Extension (@NonNull final List <com.helger.xsds.bdxr.smp2.ec.@NonNull SMPExtensionType> aExtensionList)
+                                                                           {
+                                                                             final HCUL aNL2 = new HCUL ();
+                                                                             for (final var aExt : aExtensionList)
+                                                                               if (aExt.getExtensionContent () != null)
+                                                                               {
+                                                                                 final Object aAny = aExt.getExtensionContent ()
+                                                                                                         .getAny ();
+                                                                                 if (aAny != null)
+                                                                                 {
+                                                                                   if (aAny instanceof Element aElement)
+                                                                                     aNL2.addItem (new HCPrismJS (EPrismLanguage.MARKUP).addChild (XMLWriter.getNodeAsString (aElement)));
+                                                                                   else
+                                                                                     aNL2.addItem (code (aAny.toString ()));
+                                                                                 }
+                                                                               }
+                                                                             if (aNL2.hasChildren ())
+                                                                               aSGExtension.set (aNL2);
+                                                                           }
+                                                                         });
+        // Sort for consistency
+        final ICommonsSortedMap <String, String> aSGHrefs = new CommonsTreeMap <> (aOrigHrefs);
 
         aSWGetDocTypes.stop ();
 
@@ -879,12 +811,12 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
         if (!aSGUL.hasChildren ())
           aSGUL.addItem (warn ("No service group entries were found for " + aParticipantID.getURIEncoded ()));
 
-        if (aSGExtension != null)
-          aSGUL.addAndReturnItem (div ("Extension:")).addChild (aSGExtension);
+        if (aSGExtension.isSet ())
+          aSGUL.addAndReturnItem (div ("Extension:")).addChild (aSGExtension.get ());
 
         aNodeList.addChild (aSGUL);
       }
-      catch (final SMPClientException ex)
+      catch (final RuntimeException ex)
       {
         if (LOGGER.isDebugEnabled () || true)
           LOGGER.info ("Participant DocTypes Error", ex);
@@ -943,7 +875,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                 };
 
                 // Get all endpoints - no wildcard interpretation needed
-                final var aSSM = aSMPClient.getServiceMetadataOrNull (aParticipantID, aDocTypeID, aRedirectCB);
+                final var aSSM = aSMPClient.get ().getServiceMetadataOrNull (aParticipantID, aDocTypeID, aRedirectCB);
                 aSWGetDetails.stop ();
                 if (aSSM != null)
                 {
@@ -1025,7 +957,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
               }
               case OASIS_BDXR_V1:
               {
-                final var aSSM = aBDXR1Client.getServiceMetadataOrNull (aParticipantID, aDocTypeID);
+                final var aSSM = aBDXR1Client.get ().getServiceMetadataOrNull (aParticipantID, aDocTypeID);
                 aSWGetDetails.stop ();
                 if (aSSM != null)
                 {

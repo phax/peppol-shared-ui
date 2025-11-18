@@ -112,6 +112,7 @@ public final class APISMPQueryGetBusinessCard extends AbstractAPIExecutor
       return;
     }
 
+    // Main SMP query inside
     final PDBusinessCard aBC = PeppolAPIHelper.retrieveBusinessCardParsed (sLogPrefix,
                                                                            aSMPQueryParams,
                                                                            m_aHCSModifier,
