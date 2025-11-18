@@ -22,8 +22,6 @@ import com.helger.annotation.Nonempty;
 import com.helger.photon.bootstrap4.pages.AbstractBootstrapWebPage;
 import com.helger.photon.uicore.page.WebPageExecutionContext;
 
-
-
 public abstract class AbstractAppWebPage extends AbstractBootstrapWebPage <WebPageExecutionContext>
 {
   public AbstractAppWebPage (@NonNull @Nonempty final String sID, @NonNull final String sName)

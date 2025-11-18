@@ -48,8 +48,6 @@ import com.helger.photon.uicore.page.WebPageExecutionContext;
 import com.helger.url.SimpleURL;
 import com.helger.xml.serialize.read.DOMReader;
 
-
-
 public final class PagePublicToolsDDD extends AbstractBootstrapWebPage <WebPageExecutionContext>
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (PagePublicToolsDDD.class);

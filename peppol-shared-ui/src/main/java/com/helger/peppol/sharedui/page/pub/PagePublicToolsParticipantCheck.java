@@ -53,8 +53,6 @@ import com.helger.photon.uictrls.famfam.EFamFamIcon;
 import com.helger.url.ISimpleURL;
 import com.helger.url.SimpleURL;
 
-
-
 public class PagePublicToolsParticipantCheck extends AbstractAppWebPage
 {
   public static final String SML_PROD = "smlprod";
