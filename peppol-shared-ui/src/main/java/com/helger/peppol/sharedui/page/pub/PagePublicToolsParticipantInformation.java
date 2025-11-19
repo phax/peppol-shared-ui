@@ -381,75 +381,81 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
       // Determine the SML if it auto detect is enabled
       // Determine the SMP query parameters
       SMPQueryParams aSMPQueryParams = null;
-      ISMLConfiguration aRealSMLConfiguration = aSelectedSMLConfiguration;
-      if (bSMLAutoDetect)
       {
-        final ICommonsList <ISMLConfiguration> aSortedList = aSMLConfigurationMgr.getAllSorted ();
-        if (LOGGER.isDebugEnabled ())
-          LOGGER.debug ("Sorted SML Configs: " +
-                        StringImplode.getImplodedMapped (", ", aSortedList, ISMLConfiguration::getID));
-
-        for (final ISMLConfiguration aCurSML : aSortedList)
+        ISMLConfiguration aRealSMLConfiguration = aSelectedSMLConfiguration;
+        if (bSMLAutoDetect)
         {
-          aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aCurSML,
+          final ICommonsList <ISMLConfiguration> aSortedList = aSMLConfigurationMgr.getAllSorted ();
+          if (LOGGER.isDebugEnabled ())
+            LOGGER.debug ("Sorted SML Configs: " +
+                          StringImplode.imploder ()
+                                       .source (aSortedList, ISMLConfiguration::getID)
+                                       .separator (", ")
+                                       .build ());
+
+          for (final ISMLConfiguration aCurSML : aSortedList)
+          {
+            aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aCurSML,
+                                                                 sParticipantIDScheme,
+                                                                 sParticipantIDValue,
+                                                                 false);
+            if (aSMPQueryParams != null && aSMPQueryParams.isSMPRegisteredInDNS ())
+            {
+              // Found it
+              aRealSMLConfiguration = aCurSML;
+              break;
+            }
+          }
+
+          // Ensure to go into the exception handler
+          if (aRealSMLConfiguration == null)
+          {
+            LOGGER.error ("Failed to autodetect a matching SML for '" + sParticipantIDUriEncoded + "'");
+
+            aNodeList.addChild (error (div ("Seems like the participant ID " +
+                                            sParticipantIDUriEncoded +
+                                            " is not known in any of the configured networks.")));
+
+            // Audit failure
+            AuditHelper.onAuditExecuteFailure ("participant-information", sParticipantIDUriEncoded, "no-sml-found");
+            return;
+          }
+
+          LOGGER.info ("Participant ID '" +
+                       sParticipantIDUriEncoded +
+                       "': auto detected SML '" +
+                       aRealSMLConfiguration.getID () +
+                       "'");
+        }
+        else
+        {
+          // SML configuration is not null
+          aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aRealSMLConfiguration,
                                                                sParticipantIDScheme,
                                                                sParticipantIDValue,
-                                                               false);
-          if (aSMPQueryParams != null && aSMPQueryParams.isSMPRegisteredInDNS ())
-          {
-            // Found it
-            aRealSMLConfiguration = aCurSML;
-            break;
-          }
+                                                               true);
         }
 
-        // Ensure to go into the exception handler
-        if (aRealSMLConfiguration == null)
+        if (aSMPQueryParams == null)
         {
-          LOGGER.error ("Failed to autodetect a matching SML for '" + sParticipantIDUriEncoded + "'");
+          // Failed to determine SMP query params
+          LOGGER.error ("Participant ID '" +
+                        sParticipantIDUriEncoded +
+                        "': failed to resolve SMP query parameters for SML '" +
+                        aRealSMLConfiguration.getID () +
+                        "'");
 
-          aNodeList.addChild (error (div ("Seems like the participant ID " +
+          aNodeList.addChild (error (div ("Failed to resolve participant ID " +
                                           sParticipantIDUriEncoded +
-                                          " is not known in any of the configured networks.")));
+                                          " for the provided network.")).addChild (bSMLAutoDetect ? null : div (
+                                                                                                                "Try selecting a different SML - maybe this helps")));
 
           // Audit failure
-          AuditHelper.onAuditExecuteFailure ("participant-information", sParticipantIDUriEncoded, "no-sml-found");
+          AuditHelper.onAuditExecuteFailure ("participant-information",
+                                             sParticipantIDUriEncoded,
+                                             "smp-query-params-null");
           return;
         }
-
-        LOGGER.info ("Participant ID '" +
-                     sParticipantIDUriEncoded +
-                     "': auto detected SML " +
-                     aRealSMLConfiguration.getID ());
-      }
-      else
-      {
-        // SML configuration is not null
-        aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aRealSMLConfiguration,
-                                                             sParticipantIDScheme,
-                                                             sParticipantIDValue,
-                                                             true);
-      }
-
-      if (aSMPQueryParams == null)
-      {
-        // Failed to determine SMP query params
-        LOGGER.error ("Participant ID '" +
-                      sParticipantIDUriEncoded +
-                      "': failed to resolve SMP query parameters for SML '" +
-                      aRealSMLConfiguration.getID () +
-                      "'");
-
-        aNodeList.addChild (error (div ("Failed to resolve participant ID " +
-                                        sParticipantIDUriEncoded +
-                                        " for the provided network.")).addChild (bSMLAutoDetect ? null : div (
-                                                                                                              "Try selecting a different SML - maybe this helps")));
-
-        // Audit failure
-        AuditHelper.onAuditExecuteFailure ("participant-information",
-                                           sParticipantIDUriEncoded,
-                                           "smp-query-params-null");
-        return;
       }
 
       LOGGER.info ("Participant information of '" +
@@ -459,7 +465,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                    "' from '" +
                    aSMPQueryParams.getSMPHostURI () +
                    "' using SML '" +
-                   aRealSMLConfiguration +
+                   aSMPQueryParams.getSMLInfo ().getID () +
                    "'; XSD validation=" +
                    bXSDValidation +
                    "; verify signatures=" +
@@ -476,14 +482,14 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
         aNodeList.addChild (aUL);
 
         // Information only
-        aUL.addItem (div ("SML used: ").addChild (code (aRealSMLConfiguration.getDisplayName () +
+        aUL.addItem (div ("SML used: ").addChild (code (aSMPQueryParams.getSMLInfo ().getDisplayName () +
                                                         " / " +
-                                                        aRealSMLConfiguration.getSMLInfo ().getDNSZone ()))
+                                                        aSMPQueryParams.getSMLInfo ().getDNSZone ()))
                                        .addChild (" ")
-                                       .addChild (aRealSMLConfiguration.isProduction () ? badgeSuccess ("production SML")
-                                                                                        : badgeWarn ("test SML")));
-
-        aUL.addItem (div ("Query API: ").addChild (code (aRealSMLConfiguration.getSMPAPIType ().getDisplayName ())));
+                                       .addChild (aSMPQueryParams.getSMLConfig ().isProduction () ? badgeSuccess (
+                                                                                                                  "production SML")
+                                                                                                  : badgeWarn ("test SML")));
+        aUL.addItem (div ("Query API: ").addChild (code (aSMPQueryParams.getSMPAPIType ().getDisplayName ())));
 
         if (aSMPQueryParams.getSMPAPIType () == ESMPAPIType.PEPPOL)
         {

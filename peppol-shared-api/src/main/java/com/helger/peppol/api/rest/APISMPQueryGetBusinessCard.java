@@ -126,7 +126,7 @@ public final class APISMPQueryGetBusinessCard extends AbstractAPIExecutor
       final String sMsg = "Failed to resolve BusinessCard for participant ID '" +
                           sParticipantID +
                           "' for the provided SML '" +
-                          aSMLConfig.getID () +
+                          aSMPQueryParams.getSMLInfo ().getID () +
                           "'";
       LOGGER.warn (sLogPrefix + sMsg);
       aUnifiedResponse.createNotFound ().text (sMsg);
