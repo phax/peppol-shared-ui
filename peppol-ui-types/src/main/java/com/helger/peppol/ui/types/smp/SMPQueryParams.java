@@ -45,34 +45,42 @@ public final class SMPQueryParams
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (SMPQueryParams.class);
 
-  private final ISMLConfiguration m_aSMLConfig;
+  private @NonNull final ISMLInfo m_aSMLInfo;
+  private final boolean m_bIsProductionSML;
+  private @NonNull final ESMPAPIType m_eSMPAPIType;
+  private @NonNull final IIdentifierFactory m_aIF;
   private ISMPURLProvider m_aSMPURLProvider;
   private EPeppolNetwork m_ePeppolNetwork;
   private IParticipantIdentifier m_aParticipantID;
   private URI m_aSMPHostURI;
   private boolean m_bTrustAllCerts = false;
 
-  private SMPQueryParams (@NonNull final ISMLConfiguration aSMLConfig)
+  private SMPQueryParams (@NonNull final ISMLInfo aSMLInfo,
+                          final boolean bIsProductionSML,
+                          @NonNull final ESMPAPIType eSMPAPIType,
+                          @NonNull final IIdentifierFactory aIF)
   {
-    m_aSMLConfig = aSMLConfig;
-  }
-
-  @NonNull
-  public ISMLConfiguration getSMLConfig ()
-  {
-    return m_aSMLConfig;
+    m_aSMLInfo = aSMLInfo;
+    m_bIsProductionSML = bIsProductionSML;
+    m_eSMPAPIType = eSMPAPIType;
+    m_aIF = aIF;
   }
 
   @NonNull
   public ISMLInfo getSMLInfo ()
   {
-    return m_aSMLConfig.getSMLInfo ();
+    return m_aSMLInfo;
+  }
+
+  public boolean isProductionSML ()
+  {
+    return m_bIsProductionSML;
   }
 
   @NonNull
   public ESMPAPIType getSMPAPIType ()
   {
-    return m_aSMLConfig.getSMPAPIType ();
+    return m_eSMPAPIType;
   }
 
   @NonNull
@@ -95,7 +103,7 @@ public final class SMPQueryParams
   @NonNull
   public IIdentifierFactory getIF ()
   {
-    return m_aSMLConfig.getSMPIdentifierType ().getIdentifierFactory ();
+    return m_aIF;
   }
 
   @NonNull
@@ -131,32 +139,54 @@ public final class SMPQueryParams
                                                    @Nullable final String sParticipantIDValue,
                                                    final boolean bLogOnError)
   {
-    ValueEnforcer.notNull (aSMLConfig, "CurSML");
+    ValueEnforcer.notNull (aSMLConfig, "SMLConfig");
+    return createForSMLOrNull (aSMLConfig.getSMLInfo (),
+                               aSMLConfig.isProduction (),
+                               aSMLConfig.getSMPAPIType (),
+                               aSMLConfig.getSMPIdentifierType ().getIdentifierFactory (),
+                               sParticipantIDScheme,
+                               sParticipantIDValue,
+                               bLogOnError);
+  }
 
-    final SMPQueryParams ret = new SMPQueryParams (aSMLConfig);
-    if (ret.getSMPAPIType () == ESMPAPIType.PEPPOL)
+  @Nullable
+  public static SMPQueryParams createForSMLOrNull (@NonNull final ISMLInfo aSMLInfo,
+                                                   final boolean bIsProductionSML,
+                                                   @NonNull final ESMPAPIType eSMPAPIType,
+                                                   @NonNull final IIdentifierFactory aIF,
+                                                   @Nullable final String sParticipantIDScheme,
+                                                   @Nullable final String sParticipantIDValue,
+                                                   final boolean bLogOnError)
+  {
+    ValueEnforcer.notNull (aSMLInfo, "SMLInfo");
+    final SMPQueryParams ret = new SMPQueryParams (aSMLInfo, bIsProductionSML, eSMPAPIType, aIF);
+    if (eSMPAPIType == ESMPAPIType.PEPPOL)
     {
       ret.m_aSMPURLProvider = PeppolNaptrURLProvider.INSTANCE;
-      ret.m_ePeppolNetwork = ESML.DIGIT_PRODUCTION.getID ().equals (aSMLConfig.getID ()) ? EPeppolNetwork.PRODUCTION
-                                                                                         : EPeppolNetwork.TEST;
+      ret.m_ePeppolNetwork = ESML.DIGIT_PRODUCTION.getID ().equals (aSMLInfo.getID ()) ? EPeppolNetwork.PRODUCTION
+                                                                                       : EPeppolNetwork.TEST;
     }
     else
     {
       ret.m_aSMPURLProvider = BDXLURLProvider.INSTANCE;
+      ret.m_ePeppolNetwork = null;
     }
-    ret.m_aParticipantID = ret.getIF ().createParticipantIdentifier (sParticipantIDScheme, sParticipantIDValue);
+    ret.m_aParticipantID = aIF.createParticipantIdentifier (sParticipantIDScheme, sParticipantIDValue);
     if (ret.m_aParticipantID == null)
     {
       // Participant ID is invalid for this scheme
       if (bLogOnError)
-        LOGGER.warn ("Failed to parse participant ID '" + sParticipantIDScheme + "' and '" + sParticipantIDValue + "'");
+        LOGGER.error ("Failed to parse participant ID '" +
+                      sParticipantIDScheme +
+                      "' and '" +
+                      sParticipantIDValue +
+                      "'");
       return null;
     }
 
     try
     {
-      ret.m_aSMPHostURI = ret.m_aSMPURLProvider.getSMPURIOfParticipant (ret.m_aParticipantID,
-                                                                        aSMLConfig.getSMLInfo ().getDNSZone ());
+      ret.m_aSMPHostURI = ret.m_aSMPURLProvider.getSMPURIOfParticipant (ret.m_aParticipantID, aSMLInfo.getDNSZone ());
       if ("https".equals (ret.m_aSMPHostURI.getScheme ()))
         ret.m_bTrustAllCerts = true;
       return ret;
@@ -165,7 +195,7 @@ public final class SMPQueryParams
     {
       // For NAPTR lookup -> no such participant
       if (bLogOnError)
-        LOGGER.warn ("Failed to resolve participant " + ret.m_aParticipantID + " in DNS");
+        LOGGER.error ("Failed to resolve participant " + ret.m_aParticipantID + " in DNS: " + ex.getMessage ());
       return null;
     }
   }

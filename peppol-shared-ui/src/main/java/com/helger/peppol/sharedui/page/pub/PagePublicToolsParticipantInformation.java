@@ -486,9 +486,8 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                         " / " +
                                                         aSMPQueryParams.getSMLInfo ().getDNSZone ()))
                                        .addChild (" ")
-                                       .addChild (aSMPQueryParams.getSMLConfig ().isProduction () ? badgeSuccess (
-                                                                                                                  "production SML")
-                                                                                                  : badgeWarn ("test SML")));
+                                       .addChild (aSMPQueryParams.isProductionSML () ? badgeSuccess ("production SML")
+                                                                                     : badgeWarn ("test SML")));
         aUL.addItem (div ("Query API: ").addChild (code (aSMPQueryParams.getSMPAPIType ().getDisplayName ())));
 
         if (aSMPQueryParams.getSMPAPIType () == ESMPAPIType.PEPPOL)
