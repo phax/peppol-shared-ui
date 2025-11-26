@@ -13,9 +13,10 @@ This project consists of the following modules, in dependency order:
 
 # News and Noteworthy
 
-v0.9.8 - work in progress
+v0.9.8 - 2025-11-26
 * Added HR eRacun validation
 * Improved error handling in SMP query APIs
+* Unified API handling for shared usage
 * Small improvements in participant information UI
 
 v0.9.7 - 2025-11-16
