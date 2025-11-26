@@ -138,10 +138,10 @@ public class SMPQueryParams
   }
 
   @NonNull
-  public static ESuccess fillSMPQueryParams (@NonNull final SMPQueryParams aSMPQueryParams,
-                                             @Nullable final String sParticipantIDScheme,
-                                             @Nullable final String sParticipantIDValue,
-                                             final boolean bLogOnError)
+  protected static ESuccess fillSMPQueryParams (@NonNull final SMPQueryParams aSMPQueryParams,
+                                                @Nullable final String sParticipantIDScheme,
+                                                @Nullable final String sParticipantIDValue,
+                                                final boolean bLogOnError)
   {
     ValueEnforcer.notNull (aSMPQueryParams, "SMPQueryParams");
     aSMPQueryParams.m_aParticipantID = aSMPQueryParams.getIF ()
