@@ -115,7 +115,7 @@ import com.helger.peppol.ui.types.smlconfig.ISMLConfiguration;
 import com.helger.peppol.ui.types.smlconfig.ISMLConfigurationManager;
 import com.helger.peppol.ui.types.smp.ISMPClientCreationCallback;
 import com.helger.peppol.ui.types.smp.ISMPExtensionsCallback;
-import com.helger.peppol.ui.types.smp.SMPQueryParams;
+import com.helger.peppol.ui.types.smp.SMPQueryParamsUI;
 import com.helger.peppolid.CIdentifier;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
@@ -380,7 +380,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
     {
       // Determine the SML if it auto detect is enabled
       // Determine the SMP query parameters
-      SMPQueryParams aSMPQueryParams = null;
+      SMPQueryParamsUI aSMPQueryParams = null;
       {
         ISMLConfiguration aRealSMLConfiguration = aSelectedSMLConfiguration;
         if (bSMLAutoDetect)
@@ -395,10 +395,10 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
 
           for (final ISMLConfiguration aCurSML : aSortedList)
           {
-            aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aCurSML,
-                                                                 sParticipantIDScheme,
-                                                                 sParticipantIDValue,
-                                                                 false);
+            aSMPQueryParams = SMPQueryParamsUI.createForSMLOrNull (aCurSML,
+                                                                   sParticipantIDScheme,
+                                                                   sParticipantIDValue,
+                                                                   false);
             if (aSMPQueryParams != null && aSMPQueryParams.isSMPRegisteredInDNS ())
             {
               // Found it
@@ -430,10 +430,10 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
         else
         {
           // SML configuration is not null
-          aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aRealSMLConfiguration,
-                                                               sParticipantIDScheme,
-                                                               sParticipantIDValue,
-                                                               true);
+          aSMPQueryParams = SMPQueryParamsUI.createForSMLOrNull (aRealSMLConfiguration,
+                                                                 sParticipantIDScheme,
+                                                                 sParticipantIDValue,
+                                                                 true);
         }
 
         if (aSMPQueryParams == null)
