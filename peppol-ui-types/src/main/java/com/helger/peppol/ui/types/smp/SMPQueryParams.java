@@ -138,16 +138,16 @@ public class SMPQueryParams
   }
 
   @NonNull
-  public static ESuccess fillSMPQueryParams (@NonNull final SMPQueryParams aQueryParams,
+  public static ESuccess fillSMPQueryParams (@NonNull final SMPQueryParams aSMPQueryParams,
                                              @Nullable final String sParticipantIDScheme,
                                              @Nullable final String sParticipantIDValue,
                                              final boolean bLogOnError)
   {
-    ValueEnforcer.notNull (aQueryParams, "SMPQueryParams");
-    aQueryParams.m_aParticipantID = aQueryParams.getIF ()
-                                                .createParticipantIdentifier (sParticipantIDScheme,
-                                                                              sParticipantIDValue);
-    if (aQueryParams.m_aParticipantID == null)
+    ValueEnforcer.notNull (aSMPQueryParams, "SMPQueryParams");
+    aSMPQueryParams.m_aParticipantID = aSMPQueryParams.getIF ()
+                                                      .createParticipantIdentifier (sParticipantIDScheme,
+                                                                                    sParticipantIDValue);
+    if (aSMPQueryParams.m_aParticipantID == null)
     {
       // Participant ID is invalid for this scheme
       if (bLogOnError)
@@ -162,11 +162,11 @@ public class SMPQueryParams
     // Do this as the last action - it's the DNS lookup
     try
     {
-      aQueryParams.m_aSMPHostURI = aQueryParams.m_aSMPURLProvider.getSMPURIOfParticipant (aQueryParams.m_aParticipantID,
-                                                                                          aQueryParams.getSMLInfo ()
-                                                                                                      .getDNSZone ());
-      if ("https".equals (aQueryParams.m_aSMPHostURI.getScheme ()))
-        aQueryParams.m_bTrustAllCerts = true;
+      aSMPQueryParams.m_aSMPHostURI = aSMPQueryParams.m_aSMPURLProvider.getSMPURIOfParticipant (aSMPQueryParams.m_aParticipantID,
+                                                                                                aSMPQueryParams.getSMLInfo ()
+                                                                                                               .getDNSZone ());
+      if ("https".equals (aSMPQueryParams.m_aSMPHostURI.getScheme ()))
+        aSMPQueryParams.m_bTrustAllCerts = true;
       return ESuccess.SUCCESS;
     }
     catch (final SMPDNSResolutionException ex)
@@ -174,7 +174,7 @@ public class SMPQueryParams
       // For NAPTR lookup -> no such participant
       if (bLogOnError)
         LOGGER.error ("Failed to resolve participant " +
-                      aQueryParams.m_aParticipantID +
+                      aSMPQueryParams.m_aParticipantID +
                       " in DNS: " +
                       ex.getMessage ());
       return ESuccess.FAILURE;
