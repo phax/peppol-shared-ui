@@ -55,10 +55,10 @@ public final class PeppolAPIHelper
   }
 
   @Nullable
-  public static byte [] retrieveBusinessCard (@NonNull final String sLogPrefix,
-                                              @NonNull final SMPQueryParams aSMPQueryParams,
-                                              @Nullable final Consumer <? super SMPHttpClientSettings> aHCSModifier,
-                                              @NonNull final IMiniCallback aMiniCallback)
+  public static byte [] retrieveBusinessCardBytes (@NonNull final String sLogPrefix,
+                                                   @NonNull final SMPQueryParams aSMPQueryParams,
+                                                   @Nullable final Consumer <? super SMPHttpClientSettings> aHCSModifier,
+                                                   @NonNull final IMiniCallback aMiniCallback)
   {
     LOGGER.info (sLogPrefix +
                  "BusinessCard of '" +
@@ -101,7 +101,7 @@ public final class PeppolAPIHelper
                                                            @Nullable final Consumer <? super HttpClientSettings> aHCSModifier,
                                                            @NonNull final IMiniCallback aMiniCallback)
   {
-    final byte [] aBCBytes = retrieveBusinessCard (sLogPrefix, aSMPQueryParams, aHCSModifier, aMiniCallback);
+    final byte [] aBCBytes = retrieveBusinessCardBytes (sLogPrefix, aSMPQueryParams, aHCSModifier, aMiniCallback);
     if (aBCBytes != null)
     {
       final PDBusinessCard aBC = PDBusinessCardHelper.parseBusinessCard (aBCBytes, StandardCharsets.UTF_8);

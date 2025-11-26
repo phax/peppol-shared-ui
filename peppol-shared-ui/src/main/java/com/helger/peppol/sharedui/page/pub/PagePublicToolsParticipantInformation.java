@@ -765,7 +765,8 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                            }
                                                                          });
         // Sort for consistency
-        final ICommonsSortedMap <String, String> aSGHrefs = new CommonsTreeMap <> (aOrigHrefs);
+        final ICommonsSortedMap <String, String> aSGHrefs = aOrigHrefs == null ? new CommonsTreeMap <> ()
+                                                                               : new CommonsTreeMap <> (aOrigHrefs);
 
         aSWGetDocTypes.stop ();
 
@@ -1152,10 +1153,11 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
         final StopWatch aSWGetBC = StopWatch.createdStarted ();
         aNodeList.addChild (h3 ("Business Card details"));
 
-        byte [] aBCBytes = PeppolAPIHelper.retrieveBusinessCard ("",
-                                                                 aSMPQueryParams,
-                                                                 aHCSModifier,
-                                                                 new MiniCallbackAddToNode (aNodeList, aDisplayLocale));
+        byte [] aBCBytes = PeppolAPIHelper.retrieveBusinessCardBytes ("",
+                                                                      aSMPQueryParams,
+                                                                      aHCSModifier,
+                                                                      new MiniCallbackAddToNode (aNodeList,
+                                                                                                 aDisplayLocale));
         aSWGetBC.stop ();
 
         if (aBCBytes == null)
