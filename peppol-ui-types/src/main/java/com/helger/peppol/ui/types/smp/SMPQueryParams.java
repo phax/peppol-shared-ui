@@ -23,6 +23,7 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.helger.annotation.concurrent.NotThreadSafe;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.state.ESuccess;
 import com.helger.peppol.servicedomain.EPeppolNetwork;
@@ -42,6 +43,7 @@ import com.helger.smpclient.url.SMPDNSResolutionException;
  *
  * @author Philip Helger
  */
+@NotThreadSafe
 public class SMPQueryParams
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (SMPQueryParams.class);
@@ -49,7 +51,7 @@ public class SMPQueryParams
   private @NonNull final ISMLInfo m_aSMLInfo;
   private @NonNull final ESMPAPIType m_eSMPAPIType;
   private @NonNull final IIdentifierFactory m_aIF;
-  private ISMPURLProvider m_aSMPURLProvider;
+  private @NonNull ISMPURLProvider m_aSMPURLProvider;
   private @Nullable final EPeppolNetwork m_ePeppolNetwork;
   private IParticipantIdentifier m_aParticipantID;
   private URI m_aSMPHostURI;
@@ -91,6 +93,18 @@ public class SMPQueryParams
   public final ISMPURLProvider getSMPURLProvider ()
   {
     return m_aSMPURLProvider;
+  }
+
+  /**
+   * Set a custom URL provider. This is e.g. needed for HR eDelivery to pick the right resolver.
+   *
+   * @param aURLProvider
+   *        The URL provider to use. May not be <code>null</code>.
+   */
+  public void setSMPURLProvider (@NonNull final ISMPURLProvider aURLProvider)
+  {
+    ValueEnforcer.notNull (aURLProvider, "URLProvider");
+    m_aSMPURLProvider = aURLProvider;
   }
 
   @Nullable
