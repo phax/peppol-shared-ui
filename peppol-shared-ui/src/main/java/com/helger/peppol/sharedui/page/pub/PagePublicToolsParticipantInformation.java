@@ -351,6 +351,13 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
       aLIEndpoint.addChild (aDiv);
   }
 
+  @NonNull
+  @Nonempty
+  private static String _getEntries (int n)
+  {
+    return n == 1 ? "1 entry" : n + " entries";
+  }
+
   private void _queryParticipant (@NonNull final WebPageExecutionContext aWPEC,
                                   final String sParticipantIDScheme,
                                   final String sParticipantIDValue,
@@ -773,10 +780,9 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
         LOGGER.info ("Participant information of '" +
                      aParticipantID.getURIEncoded () +
                      "' returned " +
-                     aSGHrefs.size () +
-                     " entries");
+                     _getEntries (aSGHrefs.size ()));
 
-        final HCH3 aH3 = h3 ("ServiceGroup contents (" + aSGHrefs.size () + " entries)");
+        final HCH3 aH3 = h3 ("ServiceGroup contents (" + _getEntries (aSGHrefs.size ()) + ")");
         if (bShowTime)
           aH3.addChild (" ").addChild (_createTimingNode (aSWGetDocTypes.getMillis ()));
         aNodeList.addChild (aH3);
@@ -850,7 +856,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
         final ICommonsOrderedMap <X509Certificate, String> aAllUsedEndpointCertifiactes = new CommonsLinkedHashMap <> ();
         long nTotalDurationMillis = 0;
 
-        aNodeList.addChild (h3 ("Document type details (" + aDocTypeIDs.size () + " entries)"));
+        aNodeList.addChild (h3 ("Document type details (" + _getEntries (aDocTypeIDs.size ()) + ")"));
         final HCUL aULDocTypeIDs = new HCUL ();
         for (final IDocumentTypeIdentifier aDocTypeID : aDocTypeIDs.getSortedInline (IDocumentTypeIdentifier.comparator ()))
         {
@@ -1088,10 +1094,10 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
           aNodeList.addChild (div ("Overall time: ").addChild (_createTimingNode (nTotalDurationMillis)));
 
         // Show certificate details
-        aNodeList.addChild (h3 ("Endpoint Certificate details"));
+        aNodeList.addChild (h3 ("Endpoint AP Certificate details"));
         if (aAllUsedEndpointCertifiactes.isEmpty ())
         {
-          aNodeList.addChild (warn ("No Endpoint Certificate information was found."));
+          aNodeList.addChild (warn ("No Endpoint AP Certificate information was found."));
         }
         else
         {
