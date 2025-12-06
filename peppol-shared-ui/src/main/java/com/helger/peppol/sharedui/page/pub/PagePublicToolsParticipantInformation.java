@@ -70,11 +70,13 @@ import com.helger.html.hc.html.forms.HCEdit;
 import com.helger.html.hc.html.grouping.HCDiv;
 import com.helger.html.hc.html.grouping.HCHR;
 import com.helger.html.hc.html.grouping.HCLI;
+import com.helger.html.hc.html.grouping.HCOL;
 import com.helger.html.hc.html.grouping.HCUL;
 import com.helger.html.hc.html.grouping.IHCLI;
 import com.helger.html.hc.html.sections.HCH3;
 import com.helger.html.hc.html.sections.HCH4;
 import com.helger.html.hc.html.textlevel.HCA;
+import com.helger.html.hc.html.textlevel.HCCode;
 import com.helger.html.hc.impl.HCNodeList;
 import com.helger.html.hc.impl.HCTextNode;
 import com.helger.html.jquery.JQuery;
@@ -132,6 +134,7 @@ import com.helger.photon.bootstrap4.button.BootstrapLinkButton;
 import com.helger.photon.bootstrap4.button.EBootstrapButtonSize;
 import com.helger.photon.bootstrap4.button.EBootstrapButtonType;
 import com.helger.photon.bootstrap4.buttongroup.BootstrapButtonToolbar;
+import com.helger.photon.bootstrap4.card.BootstrapCard;
 import com.helger.photon.bootstrap4.form.BootstrapForm;
 import com.helger.photon.bootstrap4.form.BootstrapFormGroup;
 import com.helger.photon.bootstrap4.table.BootstrapTable;
@@ -359,6 +362,12 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
   private static String _getEntries (int n)
   {
     return n == 1 ? "1 entry" : n + " entries";
+  }
+
+  @NonNull
+  private HCCode codeNotBreak (@Nullable final String s)
+  {
+    return code (s).addClass (CBootstrapCSS.TEXT_NOWRAP);
   }
 
   private void _queryParticipant (@NonNull final WebPageExecutionContext aWPEC,
@@ -693,163 +702,189 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
       final Wrapper <SMPClientReadOnly> aSMPClient = new Wrapper <> ();
       final Wrapper <BDXRClientReadOnly> aBDXR1Client = new Wrapper <> ();
       final Wrapper <BDXR2ClientReadOnly> aBDXR2Client = new Wrapper <> ();
-      final Consumer <GenericJAXBMarshaller <?>> aSMPMarshallerCustomizer = m -> {
-        aSMPExceptions.clear ();
-        // Remember exceptions
-        m.readExceptionCallbacks ().add (aSMPExceptions::add);
-      };
       final Consumer <? super SMPHttpClientSettings> aHCSModifier = hcs -> hcs.setUserAgent (m_sUserAgent);
-      final HCUL aSGUL = new HCUL ();
-      final Wrapper <IHCNode> aSGExtension = new Wrapper <> ();
 
-      try
       {
-        final StopWatch aSWGetDocTypes = StopWatch.createdStarted ();
+        final Consumer <GenericJAXBMarshaller <?>> aSMPMarshallerCustomizer = m -> {
+          aSMPExceptions.clear ();
+          // Remember exceptions
+          m.readExceptionCallbacks ().add (aSMPExceptions::add);
+        };
+        final HCOL aSGOL = new HCOL ();
+        final Wrapper <IHCNode> aSGExtensionNode = new Wrapper <> ();
 
-        // Get in original order
-        final var aOrigHrefs = PeppolAPIHelper.retrieveAllDocumentTypes ("",
-                                                                         aSMPQueryParams,
-                                                                         aHCSModifier,
-                                                                         bXSDValidation,
-                                                                         bVerifySignatures,
-                                                                         new ISMPClientCreationCallback ()
-                                                                         {
-                                                                           public void onPeppolSMPClient (@NonNull SMPClientReadOnly a)
-                                                                           {
-                                                                             aSMPClient.set (a);
-                                                                           }
+        try
+        {
+          final StopWatch aSWGetDocTypes = StopWatch.createdStarted ();
 
-                                                                           public void onBDXR1Client (@NonNull BDXRClientReadOnly a)
+          // Get in original order
+          final var aOrigHrefs = PeppolAPIHelper.retrieveAllDocumentTypes ("",
+                                                                           aSMPQueryParams,
+                                                                           aHCSModifier,
+                                                                           bXSDValidation,
+                                                                           bVerifySignatures,
+                                                                           new ISMPClientCreationCallback ()
                                                                            {
-                                                                             aBDXR1Client.set (a);
-                                                                           }
+                                                                             public void onPeppolSMPClient (@NonNull SMPClientReadOnly a)
+                                                                             {
+                                                                               aSMPClient.set (a);
+                                                                             }
 
-                                                                           public void onBDXR2Client (@NonNull BDXR2ClientReadOnly a)
-                                                                           {
-                                                                             aBDXR2Client.set (a);
-                                                                           }
-                                                                         },
-                                                                         sHref -> aSGUL.addItem (warn ("The ServiceGroup list contains the duplicate URL ").addChild (code (sHref))),
-                                                                         aSMPMarshallerCustomizer,
-                                                                         new ISMPExtensionsCallback ()
-                                                                         {
-                                                                           public void onPeppolSMPExtension (final com.helger.xsds.peppol.smp1.@NonNull ExtensionType aExtension)
-                                                                           {
-                                                                             aSGExtension.set (new HCPrismJS (EPrismLanguage.MARKUP).addChild (XMLWriter.getNodeAsString (aExtension.getAny ())));
-                                                                           }
+                                                                             public void onBDXR1Client (@NonNull BDXRClientReadOnly a)
+                                                                             {
+                                                                               aBDXR1Client.set (a);
+                                                                             }
 
-                                                                           public void onBDXR1Extension (@NonNull final List <com.helger.xsds.bdxr.smp1.@NonNull ExtensionType> aExtensionList)
+                                                                             public void onBDXR2Client (@NonNull BDXR2ClientReadOnly a)
+                                                                             {
+                                                                               aBDXR2Client.set (a);
+                                                                             }
+                                                                           },
+                                                                           sHref -> aSGOL.addItem (warn ("The ServiceGroup list contains the duplicate URL ").addChild (code (sHref))),
+                                                                           aSMPMarshallerCustomizer,
+                                                                           new ISMPExtensionsCallback ()
                                                                            {
-                                                                             final HCUL aNL2 = new HCUL ();
-                                                                             for (final var aExt : aExtensionList)
-                                                                               if (aExt.getAny () != null)
-                                                                               {
-                                                                                 if (aExt.getAny () instanceof Element aElement)
-                                                                                   aNL2.addItem (new HCPrismJS (EPrismLanguage.MARKUP).addChild (XMLWriter.getNodeAsString (aElement)));
-                                                                                 else
-                                                                                   aNL2.addItem (code (aExt.getAny ()
-                                                                                                           .toString ()));
-                                                                               }
-                                                                             if (aNL2.hasChildren ())
-                                                                               aSGExtension.set (aNL2);
-                                                                           }
+                                                                             public void onPeppolSMPExtension (final com.helger.xsds.peppol.smp1.@NonNull ExtensionType aExtension)
+                                                                             {
+                                                                               aSGExtensionNode.set (new HCPrismJS (EPrismLanguage.MARKUP).addChild (XMLWriter.getNodeAsString (aExtension.getAny ())));
+                                                                             }
 
-                                                                           public void onBDXR2Extension (@NonNull final List <com.helger.xsds.bdxr.smp2.ec.@NonNull SMPExtensionType> aExtensionList)
-                                                                           {
-                                                                             final HCUL aNL2 = new HCUL ();
-                                                                             for (final var aExt : aExtensionList)
-                                                                               if (aExt.getExtensionContent () != null)
-                                                                               {
-                                                                                 final Object aAny = aExt.getExtensionContent ()
-                                                                                                         .getAny ();
-                                                                                 if (aAny != null)
+                                                                             public void onBDXR1Extension (@NonNull final List <com.helger.xsds.bdxr.smp1.@NonNull ExtensionType> aExtensionList)
+                                                                             {
+                                                                               final HCUL aNL2 = new HCUL ();
+                                                                               for (final var aExt : aExtensionList)
+                                                                                 if (aExt.getAny () != null)
                                                                                  {
-                                                                                   if (aAny instanceof Element aElement)
+                                                                                   if (aExt.getAny () instanceof Element aElement)
                                                                                      aNL2.addItem (new HCPrismJS (EPrismLanguage.MARKUP).addChild (XMLWriter.getNodeAsString (aElement)));
                                                                                    else
-                                                                                     aNL2.addItem (code (aAny.toString ()));
+                                                                                     aNL2.addItem (code (aExt.getAny ()
+                                                                                                             .toString ()));
                                                                                  }
-                                                                               }
-                                                                             if (aNL2.hasChildren ())
-                                                                               aSGExtension.set (aNL2);
-                                                                           }
-                                                                         });
-        // Sort for consistency
-        final ICommonsSortedMap <String, String> aSGHrefs = aOrigHrefs == null ? new CommonsTreeMap <> ()
-                                                                               : new CommonsTreeMap <> (aOrigHrefs);
+                                                                               if (aNL2.hasChildren ())
+                                                                                 aSGExtensionNode.set (aNL2);
+                                                                             }
 
-        aSWGetDocTypes.stop ();
+                                                                             public void onBDXR2Extension (@NonNull final List <com.helger.xsds.bdxr.smp2.ec.@NonNull SMPExtensionType> aExtensionList)
+                                                                             {
+                                                                               final HCUL aNL2 = new HCUL ();
+                                                                               for (final var aExt : aExtensionList)
+                                                                                 if (aExt.getExtensionContent () !=
+                                                                                     null)
+                                                                                 {
+                                                                                   final Object aAny = aExt.getExtensionContent ()
+                                                                                                           .getAny ();
+                                                                                   if (aAny != null)
+                                                                                   {
+                                                                                     if (aAny instanceof Element aElement)
+                                                                                       aNL2.addItem (new HCPrismJS (EPrismLanguage.MARKUP).addChild (XMLWriter.getNodeAsString (aElement)));
+                                                                                     else
+                                                                                       aNL2.addItem (code (aAny.toString ()));
+                                                                                   }
+                                                                                 }
+                                                                               if (aNL2.hasChildren ())
+                                                                                 aSGExtensionNode.set (aNL2);
+                                                                             }
+                                                                           });
+          // Sort for consistency
+          final ICommonsSortedMap <String, String> aSortedHrefs = aOrigHrefs == null ? new CommonsTreeMap <> ()
+                                                                                     : new CommonsTreeMap <> (aOrigHrefs);
 
-        LOGGER.info ("Participant information of '" +
-                     aParticipantID.getURIEncoded () +
-                     "' returned " +
-                     _getEntries (aSGHrefs.size ()));
+          aSWGetDocTypes.stop ();
 
-        final HCH3 aH3 = h3 ("ServiceGroup contents (" + _getEntries (aSGHrefs.size ()) + ")");
-        if (bShowTime)
-          aH3.addChild (" ").addChild (_createTimingNode (aSWGetDocTypes.getMillis ()));
-        aNodeList.addChild (aH3);
-        final String sPathStart = "/" + aParticipantID.getURIEncoded () + "/services/";
+          LOGGER.info ("Participant information of '" +
+                       aParticipantID.getURIEncoded () +
+                       "' returned " +
+                       aSortedHrefs.size () +
+                       " entries");
 
-        // Show all ServiceGroup hrefs
-        for (final var aEntry : aSGHrefs.entrySet ())
-        {
-          final String sHref = aEntry.getKey ();
-          final String sOriginalHref = aEntry.getValue ();
+          final HCH3 aH3 = h3 ("Document Type list (" + _getEntries (aSortedHrefs.size ()) + ")");
+          if (bShowTime)
+            aH3.addChild (" ").addChild (_createTimingNode (aSWGetDocTypes.getMillis ()));
+          aNodeList.addChild (aH3);
+          final String sPathStart1 = "/" + aParticipantID.getURIEncoded () + "/services/";
+          final String sPathStart2 = "/" + aParticipantID.getURIPercentEncoded () + "/services/";
 
-          final IHCLI <?> aLI = aSGUL.addAndReturnItem (div (code (sHref)));
-          // Should be case insensitive "indexOf" here
-          final int nPathStart = sHref.toLowerCase (Locale.US).indexOf (sPathStart.toLowerCase (Locale.US));
-          if (nPathStart >= 0)
+          // Show all ServiceGroup hrefs
+          for (final var aEntry : aSortedHrefs.entrySet ())
           {
-            final String sDocType = sHref.substring (nPathStart + sPathStart.length ());
-            final IDocumentTypeIdentifier aDocType = aSMPQueryParams.getIF ().parseDocumentTypeIdentifier (sDocType);
-            if (aDocType != null)
+            final String sHref = aEntry.getKey ();
+            final String sOriginalHref = aEntry.getValue ();
+
+            final HCLI aLI = aSGOL.addItem ();
+            // Should be case insensitive "indexOf" here
+            int nPathStartLength = sPathStart1.length ();
+            int nPathStart = sHref.toLowerCase (Locale.US).indexOf (sPathStart1.toLowerCase (Locale.US));
+            if (nPathStart < 0)
             {
-              aDocTypeIDs.add (aDocType);
-              aLI.addChild (div (NiceNameUI.createDocTypeID (aDocType, false)));
-              aLI.addChild (div (_createOpenInBrowser (sOriginalHref)));
+              // Try the version with URL encoded participants
+              nPathStartLength = sPathStart2.length ();
+              nPathStart = sHref.toLowerCase (Locale.US).indexOf (sPathStart2.toLowerCase (Locale.US));
+            }
+
+            if (nPathStart >= 0)
+            {
+              final String sDocType = sHref.substring (nPathStart + nPathStartLength);
+              final IDocumentTypeIdentifier aDocType = aSMPQueryParams.getIF ().parseDocumentTypeIdentifier (sDocType);
+              if (aDocType != null)
+              {
+                aDocTypeIDs.add (aDocType);
+
+                final HCDiv aHeadlineDiv = aLI.addAndReturnChild (div (NiceNameUI.createDocTypeID (aDocType, false)));
+                final BootstrapButton aToggle = aHeadlineDiv.addAndReturnChild (new BootstrapButton (EBootstrapButtonType.DEFAULT,
+                                                                                                     EBootstrapButtonSize.SMALL).addChild ("Toggle Details")
+                                                                                                                                .addClass (CBootstrapCSS.ML_3)
+                                                                                                                                .addClass (CBootstrapCSS.MY_1));
+                final HCDiv aDetailsDiv = aLI.addAndReturnChild (div ());
+                aDetailsDiv.addChild (div ("URL: ").addChild (code (sHref)));
+                aDetailsDiv.addChild (div ("Document Type ID: ").addChild (code (aDocType.getURIEncoded ())));
+                aDetailsDiv.addChild (div (_createOpenInBrowser (sOriginalHref)));
+                BootstrapCollapseHelper.makeCollapsible (aToggle, aDetailsDiv);
+              }
+              else
+              {
+                aLI.addChild (div (code (sHref)));
+                aLI.addChild (error ("The document type ").addChild (code (sDocType))
+                                                          .addChild (" could not be interpreted as a structured document type!"));
+              }
             }
             else
             {
-              aLI.addChild (error ("The document type ").addChild (code (sDocType))
-                                                        .addChild (" could not be interpreted as a structured document type!"));
+              aLI.addChild (error ().addChildren (div ("Contained href does not match the rules!"),
+                                                  div ("Found href: ").addChild (code (sHref)),
+                                                  div ("Expected path part: ").addChild (code (sPathStart1))
+                                                                              .addChild (" or ")
+                                                                              .addChild (code (sPathStart2))));
             }
           }
-          else
+          if (!aSGOL.hasChildren ())
           {
-            aLI.addChild (error ().addChildren (div ("Contained href does not match the rules!"),
-                                                div ("Found href: ").addChild (code (sHref)),
-                                                div ("Expected path part: ").addChild (code (sPathStart))));
+            aSGOL.addItem (warn ().addChildren (div ().addChild ("No service group entries were found for ")
+                                                      .addChild (code (aParticipantID.getURIEncoded ()))
+                                                      .addChild ("."),
+                                                div ("This means the participant is registered but has no receiving capabilities.")));
           }
+          if (aSGExtensionNode.isSet ())
+            aSGOL.addAndReturnItem (div ("Extension: ")).addChild (aSGExtensionNode.get ());
+
+          aNodeList.addChild (aSGOL);
         }
-        if (!aSGUL.hasChildren ())
-          aSGUL.addItem (warn (div ("No service group entries were found for ").addChild (code (aParticipantID.getURIEncoded ()))
-                                                                               .addChild (".")).addChild (div ("This means the participant is registered but has no receiving capabilities.")));
-
-        if (aSGExtension.isSet ())
-          aSGUL.addAndReturnItem (div ("Extension:")).addChild (aSGExtension.get ());
-
-        aNodeList.addChild (aSGUL);
-      }
-      catch (final RuntimeException ex)
-      {
-        if (LOGGER.isDebugEnabled () || true)
+        catch (final RuntimeException ex)
+        {
           LOGGER.info ("Participant DocTypes Error", ex);
-        else
-          LOGGER.warn ("Participant DocTypes Error: " + ex.getClass ().getName () + " - " + ex.getMessage ());
 
-        final BootstrapErrorBox aErrorBox = error (div ("Error querying SMP.")).addChild (BootstrapTechnicalUI.getTechnicalDetailsNode (ex,
-                                                                                                                                        aDisplayLocale));
-        for (final JAXBException aItem : aSMPExceptions)
-          aErrorBox.addChild (BootstrapTechnicalUI.getTechnicalDetailsNode (aItem, aDisplayLocale));
-        aNodeList.addChild (aErrorBox);
+          final BootstrapErrorBox aErrorBox = error (div ("Error querying SMP.")).addChild (BootstrapTechnicalUI.getTechnicalDetailsNode (ex,
+                                                                                                                                          aDisplayLocale));
+          for (final JAXBException aItem : aSMPExceptions)
+            aErrorBox.addChild (BootstrapTechnicalUI.getTechnicalDetailsNode (aItem, aDisplayLocale));
+          aNodeList.addChild (aErrorBox);
 
-        // Audit failure
-        AuditHelper.onAuditExecuteFailure ("participant-doctypes",
-                                           sParticipantIDUriEncoded,
-                                           ex.getClass (),
-                                           ex.getMessage ());
+          // Audit failure
+          AuditHelper.onAuditExecuteFailure ("participant-doctypes",
+                                             sParticipantIDUriEncoded,
+                                             ex.getClass (),
+                                             ex.getMessage ());
+        }
       }
 
       // List document type details
@@ -862,8 +897,8 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
         final ICommonsOrderedMap <X509Certificate, String> aAllUsedSMPCertifiactes = new CommonsLinkedHashMap <> ();
         long nTotalDurationMillis = 0;
 
-        aNodeList.addChild (h3 ("Document type details (" + _getEntries (aDocTypeIDs.size ()) + ")"));
-        final HCUL aULDocTypeIDs = new HCUL ();
+        aNodeList.addChild (h3 ("Document Type details (" + _getEntries (aDocTypeIDs.size ()) + ")"));
+        final HCOL aULDocTypeIDs = new HCOL ();
         for (final IDocumentTypeIdentifier aDocTypeID : aDocTypeIDs.getSortedInline (IDocumentTypeIdentifier.comparator ()))
         {
           final HCDiv aDocTypeDiv = div (NiceNameUI.createDocTypeID (aDocTypeID, true));
@@ -1134,125 +1169,141 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
           aNodeList.addChild (div ("Overall time: ").addChild (_createTimingNode (nTotalDurationMillis)));
 
         // Show AP certificate details
-        aNodeList.addChild (h3 ("Endpoint AP Certificate details"));
-        if (aAllUsedAPCertifiactes.isEmpty ())
         {
-          aNodeList.addChild (warn ("No Endpoint AP Certificate information was found."));
-        }
-        else
-        {
-          final HCUL aULCerts = new HCUL ();
-          for (final var aEntry : aAllUsedAPCertifiactes.entrySet ())
+          aNodeList.addChild (h3 ("Endpoint AP Certificate details"));
+          if (aAllUsedAPCertifiactes.isEmpty ())
           {
-            final X509Certificate aEndpointCert = aEntry.getKey ();
-            final String sCertIndex = aEntry.getValue ();
-
-            final IHCLI <?> aLICert = aULCerts.addItem ();
-            final HCDiv aHeadlineDiv = aLICert.addAndReturnChild (div ("AP Certificate #" + sCertIndex));
-            aHeadlineDiv.addChild (new HCA ().setName ("apcert" + sCertIndex));
-            if (aEndpointCert != null)
-            {
-              final HCDiv aCertDetailsDiv = aLICert.addAndReturnChild (div ());
-
-              final BootstrapButton aToggle = aHeadlineDiv.addAndReturnChild (new BootstrapButton (EBootstrapButtonType.PRIMARY,
-                                                                                                   EBootstrapButtonSize.SMALL).addChild ("Toggle Details")
-                                                                                                                              .addClass (CBootstrapCSS.ML_3));
-              BootstrapCollapseHelper.makeCollapsible (aToggle, aCertDetailsDiv);
-
-              aCertDetailsDiv.addChild (CertificateUI.createCertificateDetailsTable (null,
-                                                                                     aEndpointCert,
-                                                                                     aNowDateTime,
-                                                                                     aDisplayLocale));
-
-              if (aSMPQueryParams.getSMPAPIType () == ESMPAPIType.PEPPOL)
-              {
-                // Check Peppol certificate status
-                // * Do not cache
-                // * Use global certificate check mode
-                final ECertificateCheckResult eCertStatus = PEPPOL_CA_AP_FULL.checkCertificate (aEndpointCert,
-                                                                                                aNowDateTime,
-                                                                                                ETriState.FALSE,
-                                                                                                null);
-                if (eCertStatus.isValid ())
-                  aCertDetailsDiv.addChild (success ("The Endpoint Certificate appears to be a valid Peppol AP certificate."));
-                else
-                {
-                  // TODO add Nemhandel check here
-                  aCertDetailsDiv.addChild (error ().addChild (div ("The Endpoint Certificate appears to be an invalid Peppol AP certificate. Reason: " +
-                                                                    eCertStatus.getReason ())));
-                }
-              }
-
-              // add PEM representation as well
-              aCertDetailsDiv.addChild (CertificateUI.createCertificatePEMControl (aEndpointCert));
-            }
-            else
-            {
-              aLICert.addChild (error ("Failed to interpret the data as a X509 certificate"));
-            }
+            aNodeList.addChild (warn ("No Endpoint AP Certificate information was found."));
           }
-          aNodeList.addChild (aULCerts);
+          else
+          {
+            final HCUL aULCerts = new HCUL ();
+            for (final var aEntry : aAllUsedAPCertifiactes.entrySet ())
+            {
+              final X509Certificate aEndpointCert = aEntry.getKey ();
+              final String sCertIndex = aEntry.getValue ();
+
+              final IHCLI <?> aLICert = aULCerts.addItem ();
+              final HCDiv aHeadlineDiv = aLICert.addAndReturnChild (div ("AP Certificate #" + sCertIndex));
+              aHeadlineDiv.addChild (new HCA ().setName ("apcert" + sCertIndex));
+              if (aEndpointCert != null)
+              {
+                final HCDiv aCertDetailsDiv = aLICert.addAndReturnChild (div ());
+
+                final BootstrapButton aToggle = aHeadlineDiv.addAndReturnChild (new BootstrapButton (EBootstrapButtonType.DEFAULT,
+                                                                                                     EBootstrapButtonSize.SMALL).addChild ("Toggle Details")
+                                                                                                                                .addClass (CBootstrapCSS.ML_3));
+                BootstrapCollapseHelper.makeCollapsible (aToggle, aCertDetailsDiv);
+
+                final BootstrapCard aOwner = new BootstrapCard ();
+                aOwner.createAndAddHeader ()
+                      .addChild ("Certificate owner: ")
+                      .addChild (CertificateUI.getCertOwnerDetails (aEndpointCert, aDisplayLocale));
+                aCertDetailsDiv.addChild (aOwner);
+
+                aCertDetailsDiv.addChild (CertificateUI.createCertificateDetailsTable (null,
+                                                                                       aEndpointCert,
+                                                                                       aNowDateTime,
+                                                                                       aDisplayLocale));
+
+                if (aSMPQueryParams.getSMPAPIType () == ESMPAPIType.PEPPOL)
+                {
+                  // Check Peppol certificate status
+                  // * Do not cache
+                  // * Use global certificate check mode
+                  final ECertificateCheckResult eCertStatus = PEPPOL_CA_AP_FULL.checkCertificate (aEndpointCert,
+                                                                                                  aNowDateTime,
+                                                                                                  ETriState.FALSE,
+                                                                                                  null);
+                  if (eCertStatus.isValid ())
+                    aCertDetailsDiv.addChild (success ("The Endpoint Certificate appears to be a valid Peppol AP certificate."));
+                  else
+                  {
+                    // TODO add Nemhandel check here
+                    aCertDetailsDiv.addChild (error ().addChild (div ("The Endpoint Certificate appears to be an invalid Peppol AP certificate. Reason: " +
+                                                                      eCertStatus.getReason ())));
+                  }
+                }
+
+                // add PEM representation as well
+                aCertDetailsDiv.addChild (CertificateUI.createCertificatePEMControl (aEndpointCert));
+              }
+              else
+              {
+                aLICert.addChild (error ("Failed to interpret the data as a X509 certificate"));
+              }
+            }
+            aNodeList.addChild (aULCerts);
+          }
         }
 
         // Show SMP Certificate details
-        aNodeList.addChild (h3 ("SMP Signing Certificate details"));
-        if (aAllUsedSMPCertifiactes.isEmpty ())
         {
-          aNodeList.addChild (warn ("No SMP Signing Certificate information was found."));
-        }
-        else
-        {
-          final HCUL aULCerts = new HCUL ();
-          for (final var aEntry : aAllUsedSMPCertifiactes.entrySet ())
+          aNodeList.addChild (h3 ("SMP Signing Certificate details"));
+          if (aAllUsedSMPCertifiactes.isEmpty ())
           {
-            final X509Certificate aSMPCert = aEntry.getKey ();
-            final String sCertIndex = aEntry.getValue ();
-
-            final IHCLI <?> aLICert = aULCerts.addItem ();
-            final HCDiv aHeadlineDiv = aLICert.addAndReturnChild (div ("SMP Signing Certificate #" + sCertIndex));
-            aHeadlineDiv.addChild (new HCA ().setName ("smpcert" + sCertIndex));
-            if (aSMPCert != null)
-            {
-              final HCDiv aCertDetailsDiv = aLICert.addAndReturnChild (div ());
-
-              final BootstrapButton aToggle = aHeadlineDiv.addAndReturnChild (new BootstrapButton (EBootstrapButtonType.PRIMARY,
-                                                                                                   EBootstrapButtonSize.SMALL).addChild ("Toggle Details")
-                                                                                                                              .addClass (CBootstrapCSS.ML_3));
-              BootstrapCollapseHelper.makeCollapsible (aToggle, aCertDetailsDiv);
-
-              aCertDetailsDiv.addChild (CertificateUI.createCertificateDetailsTable (null,
-                                                                                     aSMPCert,
-                                                                                     aNowDateTime,
-                                                                                     aDisplayLocale));
-
-              if (aSMPQueryParams.getSMPAPIType () == ESMPAPIType.PEPPOL)
-              {
-                // Check Peppol certificate status
-                // * Do not cache
-                // * Use global certificate check mode
-                final ECertificateCheckResult eCertStatus = PEPPOL_CA_SMP_FULL.checkCertificate (aSMPCert,
-                                                                                                 aNowDateTime,
-                                                                                                 ETriState.FALSE,
-                                                                                                 null);
-                if (eCertStatus.isValid ())
-                  aCertDetailsDiv.addChild (success ("The SMP Signing Certificate appears to be a valid Peppol SMP certificate."));
-                else
-                {
-                  // TODO add Nemhandel check here
-                  aCertDetailsDiv.addChild (error ().addChild (div ("The SMP Signing Certificate appears to be an invalid Peppol SMP certificate. Reason: " +
-                                                                    eCertStatus.getReason ())));
-                }
-              }
-
-              // add PEM representation as well
-              aCertDetailsDiv.addChild (CertificateUI.createCertificatePEMControl (aSMPCert));
-            }
-            else
-            {
-              aLICert.addChild (error ("Failed to interpret the data as a X509 certificate"));
-            }
+            aNodeList.addChild (warn ("No SMP Signing Certificate information was found."));
           }
-          aNodeList.addChild (aULCerts);
+          else
+          {
+            final HCUL aULCerts = new HCUL ();
+            for (final var aEntry : aAllUsedSMPCertifiactes.entrySet ())
+            {
+              final X509Certificate aSMPCert = aEntry.getKey ();
+              final String sCertIndex = aEntry.getValue ();
+
+              final IHCLI <?> aLICert = aULCerts.addItem ();
+              final HCDiv aHeadlineDiv = aLICert.addAndReturnChild (div ("SMP Signing Certificate #" + sCertIndex));
+              aHeadlineDiv.addChild (new HCA ().setName ("smpcert" + sCertIndex));
+              if (aSMPCert != null)
+              {
+                final HCDiv aCertDetailsDiv = aLICert.addAndReturnChild (div ());
+
+                final BootstrapButton aToggle = aHeadlineDiv.addAndReturnChild (new BootstrapButton (EBootstrapButtonType.DEFAULT,
+                                                                                                     EBootstrapButtonSize.SMALL).addChild ("Toggle Details")
+                                                                                                                                .addClass (CBootstrapCSS.ML_3));
+                BootstrapCollapseHelper.makeCollapsible (aToggle, aCertDetailsDiv);
+
+                final BootstrapCard aOwner = new BootstrapCard ();
+                aOwner.createAndAddHeader ()
+                      .addChild ("Certificate owner: ")
+                      .addChild (CertificateUI.getCertOwnerDetails (aSMPCert, aDisplayLocale));
+                aCertDetailsDiv.addChild (aOwner);
+
+                aCertDetailsDiv.addChild (CertificateUI.createCertificateDetailsTable (null,
+                                                                                       aSMPCert,
+                                                                                       aNowDateTime,
+                                                                                       aDisplayLocale));
+
+                if (aSMPQueryParams.getSMPAPIType () == ESMPAPIType.PEPPOL)
+                {
+                  // Check Peppol certificate status
+                  // * Do not cache
+                  // * Use global certificate check mode
+                  final ECertificateCheckResult eCertStatus = PEPPOL_CA_SMP_FULL.checkCertificate (aSMPCert,
+                                                                                                   aNowDateTime,
+                                                                                                   ETriState.FALSE,
+                                                                                                   null);
+                  if (eCertStatus.isValid ())
+                    aCertDetailsDiv.addChild (success ("The SMP Signing Certificate appears to be a valid Peppol SMP certificate."));
+                  else
+                  {
+                    // TODO add Nemhandel check here
+                    aCertDetailsDiv.addChild (error ().addChild (div ("The SMP Signing Certificate appears to be an invalid Peppol SMP certificate. Reason: " +
+                                                                      eCertStatus.getReason ())));
+                  }
+                }
+
+                // add PEM representation as well
+                aCertDetailsDiv.addChild (CertificateUI.createCertificatePEMControl (aSMPCert));
+              }
+              else
+              {
+                aLICert.addChild (error ("Failed to interpret the data as a X509 certificate"));
+              }
+            }
+            aNodeList.addChild (aULCerts);
+          }
         }
       }
 

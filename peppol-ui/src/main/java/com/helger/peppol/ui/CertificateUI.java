@@ -6,6 +6,8 @@ import java.security.interfaces.RSAPublicKey;
 import java.time.OffsetDateTime;
 import java.util.Locale;
 
+import javax.naming.InvalidNameException;
+
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -22,12 +24,17 @@ import com.helger.html.hc.html.IHCElement;
 import com.helger.html.hc.html.forms.HCTextArea;
 import com.helger.html.hc.html.grouping.HCDiv;
 import com.helger.html.hc.html.tabular.HCCol;
+import com.helger.html.hc.html.textlevel.HCCode;
+import com.helger.html.hc.html.textlevel.HCSpan;
+import com.helger.html.hc.html.textlevel.HCStrong;
 import com.helger.html.hc.impl.HCNodeList;
 import com.helger.photon.bootstrap4.badge.BootstrapBadge;
 import com.helger.photon.bootstrap4.badge.EBootstrapBadgeType;
 import com.helger.photon.bootstrap4.form.BootstrapFormHelper;
 import com.helger.photon.bootstrap4.table.BootstrapTable;
+import com.helger.photon.uictrls.famfam.FamFamFlags;
 import com.helger.security.certificate.CertificateHelper;
+import com.helger.text.locale.country.CountryCache;
 
 @Immutable
 public final class CertificateUI
@@ -65,6 +72,32 @@ public final class CertificateUI
   public static String getCertSubject (@NonNull final X509Certificate aX509Cert)
   {
     return aX509Cert.getSubjectX500Principal ().getName ();
+  }
+
+  @NonNull
+  public static IHCNode getCertOwnerDetails (@NonNull final X509Certificate aX509Cert,
+                                             @NonNull final Locale aDisplayLocale)
+  {
+    final String sOwner = CertificateHelper.getSubjectO (aX509Cert);
+    final String sSeatID = CertificateHelper.getSubjectCN (aX509Cert);
+    String sCountryCode;
+    try
+    {
+      sCountryCode = CertificateHelper.getPrincipalTypeValue (aX509Cert.getSubjectX500Principal ().getName (), "C");
+    }
+    catch (final InvalidNameException ex)
+    {
+      sCountryCode = null;
+    }
+    // Don't
+    final Locale aCountryLocale = CountryCache.getInstance ().getCountryExt (sCountryCode, (a, b, c, d) -> null);
+    final HCSpan ret = new HCSpan ().addChild (new HCStrong ().addChild (sOwner));
+    if (aCountryLocale != null)
+      ret.addChild (" from ")
+         .addChild (FamFamFlags.getFlagNodeFromLocale (aCountryLocale))
+         .addChild (" " + aCountryLocale.getDisplayCountry (aDisplayLocale));
+    ret.addChild (" (Seat ID: ").addChild (new HCCode ().addChild (sSeatID)).addChild (")");
+    return ret;
   }
 
   @NonNull
@@ -120,8 +153,8 @@ public final class CertificateUI
     if (StringHelper.isNotEmpty (sAlias))
       aCertDetails.addBodyRow ().addCell ("Alias:").addCell (sAlias);
     aCertDetails.addBodyRow ().addCell ("Version:").addCell (Integer.toString (aX509Cert.getVersion ()));
-    aCertDetails.addBodyRow ().addCell ("Issuer:").addCell (CertificateUI.getCertIssuer (aX509Cert));
     aCertDetails.addBodyRow ().addCell ("Subject:").addCell (CertificateUI.getCertSubject (aX509Cert));
+    aCertDetails.addBodyRow ().addCell ("Issuer:").addCell (CertificateUI.getCertIssuer (aX509Cert));
     aCertDetails.addBodyRow ().addCell ("Serial number:").addCell (CertificateUI.getCertSerialNumber (aX509Cert));
     aCertDetails.addBodyRow ()
                 .addCell ("Not before:")

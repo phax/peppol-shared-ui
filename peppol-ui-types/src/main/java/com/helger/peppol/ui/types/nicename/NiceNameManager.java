@@ -195,6 +195,7 @@ public final class NiceNameManager
 
   public static boolean isPintDocType (@NonNull final IDocumentTypeIdentifier aDocTypeID)
   {
+    // case sensitive
     return PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_PEPPOL_DOCTYPE_WILDCARD.equals (aDocTypeID.getScheme ());
   }
 

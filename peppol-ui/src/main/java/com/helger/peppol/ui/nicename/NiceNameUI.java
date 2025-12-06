@@ -33,6 +33,12 @@ import com.helger.peppolid.peppol.EPeppolCodeListItemState;
 import com.helger.photon.bootstrap4.badge.BootstrapBadge;
 import com.helger.photon.bootstrap4.badge.EBootstrapBadgeType;
 
+/**
+ * Helper class for display Participant IDs, Document Type IDs and Process IDs in combination with
+ * {@link NiceNameEntry} objects.
+ *
+ * @author Philip Helger
+ */
 @Immutable
 public final class NiceNameUI
 {
@@ -40,35 +46,38 @@ public final class NiceNameUI
   {}
 
   @NonNull
-  public static IHCNode createFormattedID (@NonNull final String sID,
-                                           @Nullable final String sName,
-                                           @Nullable final EBootstrapBadgeType eType,
-                                           @Nullable final IHCNode aWarningsNode,
-                                           final boolean bInDetails)
+  public static HCNodeList createFormattedID (@NonNull final String sID,
+                                              @Nullable final String sDisplayName,
+                                              @Nullable final EBootstrapBadgeType eType,
+                                              @Nullable final IHCNode aSpecialNode,
+                                              final boolean bInDetails)
   {
-    if (sName == null)
+    final HCNodeList ret = new HCNodeList ();
+    if (sDisplayName == null)
     {
       // No nice name present
       if (bInDetails)
-        return new HCCode ().addChild (sID);
-      return new HCTextNode (sID);
-    }
-
-    final HCNodeList ret = new HCNodeList ();
-    final BootstrapBadge aNameBadge = ret.addAndReturnChild (new BootstrapBadge (eType).addChild (sName));
-    if (aWarningsNode != null)
-    {
-      ret.addChild (" ").addChild (aWarningsNode);
-    }
-
-    if (bInDetails)
-    {
-      ret.addChild (new HCSmall ().addChild (" (").addChild (new HCCode ().addChild (sID)).addChild (")"));
+        ret.addChild (new HCCode ().addChild (sID));
+      else
+        ret.addChild (new HCTextNode (sID));
     }
     else
     {
-      // Add ID as mouse over
-      aNameBadge.setTitle (sID);
+      final BootstrapBadge aNameBadge = ret.addAndReturnChild (new BootstrapBadge (eType).addChild (sDisplayName));
+      if (aSpecialNode != null)
+      {
+        ret.addChild (" ").addChild (aSpecialNode);
+      }
+
+      if (bInDetails)
+      {
+        ret.addChild (new HCSmall ().addChild (" (").addChild (new HCCode ().addChild (sID)).addChild (")"));
+      }
+      else
+      {
+        // Add ID as mouse over
+        aNameBadge.setTitle (sID);
+      }
     }
     return ret;
   }
@@ -84,40 +93,41 @@ public final class NiceNameUI
   }
 
   @NonNull
-  private static IHCNode _createID (@NonNull final String sID,
-                                    @Nullable final NiceNameEntry aNiceName,
-                                    final boolean bInDetails)
+  private static HCNodeList _createID (@NonNull final String sID,
+                                       @Nullable final NiceNameEntry aNiceName,
+                                       final boolean bInDetails)
   {
     if (aNiceName == null)
       return createFormattedID (sID, null, null, null, bInDetails);
 
-    final HCNodeList aWarnings = new HCNodeList ();
-    aWarnings.addChild (createStateBadge (aNiceName.getState ()));
+    final HCNodeList aSpecialNode = new HCNodeList ();
+    // Add deprecated/removed stuff
+    aSpecialNode.addChild (createStateBadge (aNiceName.getState ()));
     if (aNiceName.hasSpecialLabel ())
     {
-      if (aWarnings.hasChildren ())
-        aWarnings.addChild (" ");
-      aWarnings.addChild (new BootstrapBadge (EBootstrapBadgeType.WARNING).addChild (aNiceName.getSpecialLabel ()));
+      if (aSpecialNode.hasChildren ())
+        aSpecialNode.addChild (" ");
+      aSpecialNode.addChild (new BootstrapBadge (EBootstrapBadgeType.WARNING).addChild (aNiceName.getSpecialLabel ()));
     }
 
     return createFormattedID (sID,
                               aNiceName.getName (),
                               EBootstrapBadgeType.SUCCESS,
-                              aWarnings.hasChildren () ? aWarnings : null,
+                              aSpecialNode.hasChildren () ? aSpecialNode : null,
                               bInDetails);
   }
 
   @NonNull
-  public static IHCNode createDocTypeID (@NonNull final IDocumentTypeIdentifier aDocTypeID, final boolean bInDetails)
+  public static HCNodeList createDocTypeID (@NonNull final IDocumentTypeIdentifier aDocTypeID, final boolean bInDetails)
   {
     final NiceNameEntry aNN = NiceNameManager.getPintEnabledNiceNameEntry (aDocTypeID);
     return _createID (aDocTypeID.getURIEncoded (), aNN, bInDetails);
   }
 
   @NonNull
-  public static IHCNode createProcessID (@NonNull final IDocumentTypeIdentifier aDocTypeID,
-                                         @NonNull final IProcessIdentifier aProcessID,
-                                         final boolean bInDetails)
+  public static HCNodeList createProcessID (@NonNull final IDocumentTypeIdentifier aDocTypeID,
+                                            @NonNull final IProcessIdentifier aProcessID,
+                                            final boolean bInDetails)
   {
     final String sURI = aProcessID.getURIEncoded ();
 
