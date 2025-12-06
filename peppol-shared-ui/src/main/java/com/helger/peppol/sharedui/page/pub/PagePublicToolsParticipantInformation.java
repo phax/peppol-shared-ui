@@ -27,7 +27,6 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.function.Consumer;
 
 import org.jspecify.annotations.NonNull;
@@ -110,6 +109,7 @@ import com.helger.peppol.ui.minicallback.MiniCallbackAddToNode;
 import com.helger.peppol.ui.nicename.NiceNameUI;
 import com.helger.peppol.ui.smlconfig.ui.SMLConfigurationSelect;
 import com.helger.peppol.ui.types.PeppolUITypes;
+import com.helger.peppol.ui.types.XMLDSig10Helper;
 import com.helger.peppol.ui.types.mgr.PhotonPeppolMetaManager;
 import com.helger.peppol.ui.types.smlconfig.ISMLConfiguration;
 import com.helger.peppol.ui.types.smlconfig.ISMLConfigurationManager;
@@ -187,6 +187,10 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                                   PeppolTrustStores.Config2018.CERTIFICATE_PRODUCTION_AP,
                                                                                   PeppolTrustStores.Config2025.CERTIFICATE_TEST_AP,
                                                                                   PeppolTrustStores.Config2025.CERTIFICATE_PRODUCTION_AP);
+  private static final TrustedCAChecker PEPPOL_CA_SMP_FULL = new TrustedCAChecker (PeppolTrustStores.Config2018.CERTIFICATE_PILOT_SMP,
+                                                                                   PeppolTrustStores.Config2018.CERTIFICATE_PRODUCTION_SMP,
+                                                                                   PeppolTrustStores.Config2025.CERTIFICATE_TEST_SMP,
+                                                                                   PeppolTrustStores.Config2025.CERTIFICATE_PRODUCTION_SMP);
 
   private final String m_sUserAgent;
 
@@ -821,7 +825,8 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
           }
         }
         if (!aSGUL.hasChildren ())
-          aSGUL.addItem (warn ("No service group entries were found for " + aParticipantID.getURIEncoded ()));
+          aSGUL.addItem (warn (div ("No service group entries were found for ").addChild (code (aParticipantID.getURIEncoded ()))
+                                                                               .addChild (".")).addChild (div ("This means the participant is registered but has no receiving capabilities.")));
 
         if (aSGExtension.isSet ())
           aSGUL.addAndReturnItem (div ("Extension:")).addChild (aSGExtension.get ());
@@ -852,8 +857,10 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
       if (aDocTypeIDs.isNotEmpty ())
       {
         final OffsetDateTime aNowDateTime = PDTFactory.getCurrentOffsetDateTime ();
-        final MutableInt aEndpointCertificateIndex = new MutableInt (0);
-        final ICommonsOrderedMap <X509Certificate, String> aAllUsedEndpointCertifiactes = new CommonsLinkedHashMap <> ();
+        final MutableInt aAPCertificateIndex = new MutableInt (0);
+        final ICommonsOrderedMap <X509Certificate, String> aAllUsedAPCertifiactes = new CommonsLinkedHashMap <> ();
+        final MutableInt aSMPCertificateIndex = new MutableInt (0);
+        final ICommonsOrderedMap <X509Certificate, String> aAllUsedSMPCertifiactes = new CommonsLinkedHashMap <> ();
         long nTotalDurationMillis = 0;
 
         aNodeList.addChild (h3 ("Document type details (" + _getEntries (aDocTypeIDs.size ()) + ")"));
@@ -892,22 +899,20 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                 if (aSSM != null)
                 {
                   // Determine the signature algorithm used
+                  final String sSignatureHashAlgo = XMLDSig10Helper.getSigningAlgorithmString (aSSM.getSignature ());
+                  // Must be SHA-256
+                  if (!"http://www.w3.org/2001/04/xmldsig-more#rsa-sha256".equals (sSignatureHashAlgo))
                   {
-                    final var aSignedInfo = aSSM.getSignature ().getSignedInfo ();
-                    if (aSignedInfo != null)
-                    {
-                      final var aSM = aSignedInfo.getSignatureMethod ();
-                      if (aSM != null)
-                      {
-                        final String sSignatureHashAlgo = aSM.getAlgorithm ();
-                        // Must be SHA-256
-                        if (!"http://www.w3.org/2001/04/xmldsig-more#rsa-sha256".equals (sSignatureHashAlgo))
-                        {
-                          LOGGER.warn ("Found usage of the wrong signature algorithm '" + sSignatureHashAlgo + "'");
-                          aLIDocTypeID.addChild (error (div ("Using the wrong signature algorithm: ").addChild (code (sSignatureHashAlgo))));
-                        }
-                      }
-                    }
+                    LOGGER.warn ("Found usage of the wrong signature algorithm '" + sSignatureHashAlgo + "'");
+                    aLIDocTypeID.addChild (error (div ("Using the wrong signature algorithm: ").addChild (code (sSignatureHashAlgo))));
+                  }
+
+                  final X509Certificate aSMPCert = XMLDSig10Helper.getSigningCertificate (aSSM.getSignature ());
+                  final String sSMPCertIndex = aAllUsedSMPCertifiactes.computeIfAbsent (aSMPCert,
+                                                                                        k -> Integer.toString (aSMPCertificateIndex.incAndGet ()));
+                  if (aSMPCert != null)
+                  {
+                    aLIDocTypeID.addChild ("SMP Signing Certificate: #" + sSMPCertIndex);
                   }
 
                   final var aSM = aSSM.getServiceMetadata ();
@@ -950,11 +955,13 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                          aEndpoint.getTechnicalContactUrl ());
 
                           // Certificate (also add null values)
-                          final X509Certificate aCert = CertificateHelper.convertStringToCertficateOrNull (aEndpoint.getCertificate ());
-                          final String sCertIndex = aAllUsedEndpointCertifiactes.computeIfAbsent (aCert,
-                                                                                                  k -> Integer.toString (aEndpointCertificateIndex.incAndGet ()));
-                          if (aCert != null)
-                            aLIEndpoint.addChild ("Certificate: #" + sCertIndex);
+                          final X509Certificate aAPCert = CertificateHelper.convertStringToCertficateOrNull (aEndpoint.getCertificate ());
+                          final String sAPCertIndex = aAllUsedAPCertifiactes.computeIfAbsent (aAPCert,
+                                                                                              k -> Integer.toString (aAPCertificateIndex.incAndGet ()));
+                          if (aAPCert != null)
+                          {
+                            aLIEndpoint.addChild ("AP Certificate: #" + sAPCertIndex);
+                          }
                         }
                         aLIProcessID.addChild (aULEndpoint);
                       }
@@ -973,6 +980,14 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                 aSWGetDetails.stop ();
                 if (aSSM != null)
                 {
+                  final X509Certificate aSMPCert = XMLDSig10Helper.getSigningCertificate (aSSM.getSignature ());
+                  final String sSMPCertIndex = aAllUsedSMPCertifiactes.computeIfAbsent (aSMPCert,
+                                                                                        k -> Integer.toString (aSMPCertificateIndex.incAndGet ()));
+                  if (aSMPCert != null)
+                  {
+                    aLIDocTypeID.addChild ("SMP Signing Certificate: #" + sSMPCertIndex);
+                  }
+
                   final var aSM = aSSM.getServiceMetadata ();
                   if (aSM.getRedirect () != null)
                     aLIDocTypeID.addChild (div ("Redirect to ").addChild (code (aSM.getRedirect ().getHref ())));
@@ -989,8 +1004,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                                                           true)));
                         final HCUL aULEndpoint = new HCUL ();
                         // For all endpoints of the process
-                        for (final com.helger.xsds.bdxr.smp1.EndpointType aEndpoint : aProcess.getServiceEndpointList ()
-                                                                                              .getEndpoint ())
+                        for (final var aEndpoint : aProcess.getServiceEndpointList ().getEndpoint ())
                         {
                           final IHCLI <?> aLIEndpoint = aULEndpoint.addItem ();
 
@@ -1012,19 +1026,21 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                          aEndpoint.getTechnicalContactUrl ());
 
                           // Certificate (also add null values)
-                          X509Certificate aCert;
+                          X509Certificate aAPCert;
                           try
                           {
-                            aCert = CertificateHelper.convertByteArrayToCertficateDirect (aEndpoint.getCertificate ());
+                            aAPCert = CertificateHelper.convertByteArrayToCertficateDirect (aEndpoint.getCertificate ());
                           }
                           catch (final CertificateException ex)
                           {
-                            aCert = null;
+                            aAPCert = null;
                           }
-                          final String sCertIndex = aAllUsedEndpointCertifiactes.computeIfAbsent (aCert,
-                                                                                                  k -> Integer.toString (aEndpointCertificateIndex.incAndGet ()));
-                          if (aCert != null)
-                            aLIEndpoint.addChild ("Certificate: #" + sCertIndex);
+                          final String sAPCertIndex = aAllUsedAPCertifiactes.computeIfAbsent (aAPCert,
+                                                                                              k -> Integer.toString (aAPCertificateIndex.incAndGet ()));
+                          if (aAPCert != null)
+                          {
+                            aLIEndpoint.addChild ("AP Certificate: #" + sAPCertIndex);
+                          }
                         }
                         aLIProcessID.addChild (aULEndpoint);
                       }
@@ -1039,7 +1055,24 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
               }
               case OASIS_BDXR_V2:
               {
-                // TODO
+                final var aSSM = aBDXR2Client.get ().getServiceMetadataOrNull (aParticipantID, aDocTypeID);
+                aSWGetDetails.stop ();
+                if (aSSM != null)
+                {
+                  // Multiple signatures may be present
+                  for (final var aSignature : aSSM.getSignature ())
+                  {
+                    final X509Certificate aSMPCert = XMLDSig10Helper.getSigningCertificate (aSignature);
+                    final String sSMPCertIndex = aAllUsedSMPCertifiactes.computeIfAbsent (aSMPCert,
+                                                                                          k -> Integer.toString (aSMPCertificateIndex.incAndGet ()));
+                    if (aSMPCert != null)
+                    {
+                      aLIDocTypeID.addChild ("SMP Signing Certificate: #" + sSMPCertIndex);
+                    }
+                  }
+
+                  // TODO
+                }
                 break;
               }
             }
@@ -1093,22 +1126,22 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
         if (bShowTime)
           aNodeList.addChild (div ("Overall time: ").addChild (_createTimingNode (nTotalDurationMillis)));
 
-        // Show certificate details
+        // Show AP certificate details
         aNodeList.addChild (h3 ("Endpoint AP Certificate details"));
-        if (aAllUsedEndpointCertifiactes.isEmpty ())
+        if (aAllUsedAPCertifiactes.isEmpty ())
         {
           aNodeList.addChild (warn ("No Endpoint AP Certificate information was found."));
         }
         else
         {
           final HCUL aULCerts = new HCUL ();
-          for (final Map.Entry <X509Certificate, String> aEntry : aAllUsedEndpointCertifiactes.entrySet ())
+          for (final var aEntry : aAllUsedAPCertifiactes.entrySet ())
           {
             final X509Certificate aEndpointCert = aEntry.getKey ();
             final String sCertIndex = aEntry.getValue ();
 
             final IHCLI <?> aLICert = aULCerts.addItem ();
-            aLICert.addChild (div ("Certificate #" + sCertIndex));
+            aLICert.addChild (div ("AP Certificate #" + sCertIndex));
             if (aEndpointCert != null)
             {
               aLICert.addChild (CertificateUI.createCertificateDetailsTable (null,
@@ -1126,11 +1159,11 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                                                 ETriState.FALSE,
                                                                                                 null);
                 if (eCertStatus.isValid ())
-                  aLICert.addChild (success ("The Endpoint Certificate appears to be a valid Peppol certificate."));
+                  aLICert.addChild (success ("The Endpoint Certificate appears to be a valid Peppol AP certificate."));
                 else
                 {
                   // TODO add Nemhandel check here
-                  aLICert.addChild (error ().addChild (div ("The Endpoint Certificate appears to be an invalid Peppol certificate. Reason: " +
+                  aLICert.addChild (error ().addChild (div ("The Endpoint Certificate appears to be an invalid Peppol AP certificate. Reason: " +
                                                             eCertStatus.getReason ())));
                 }
               }
@@ -1138,6 +1171,63 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
               final HCTextArea aTextArea = new HCTextArea ().setReadOnly (true)
                                                             .setRows (4)
                                                             .setValue (CertificateHelper.getPEMEncodedCertificate (aEndpointCert))
+                                                            .addStyle (CCSSProperties.FONT_FAMILY.newValue (CCSSValue.FONT_MONOSPACE));
+              BootstrapFormHelper.markAsFormControl (aTextArea);
+              aLICert.addChild (div (aTextArea));
+            }
+            else
+            {
+              aLICert.addChild (error ("Failed to interpret the data as a X509 certificate"));
+            }
+          }
+          aNodeList.addChild (aULCerts);
+        }
+
+        // Show SMP Certificate details
+        aNodeList.addChild (h3 ("SMP Signing Certificate details"));
+        if (aAllUsedSMPCertifiactes.isEmpty ())
+        {
+          aNodeList.addChild (warn ("No SMP Signing Certificate information was found."));
+        }
+        else
+        {
+          final HCUL aULCerts = new HCUL ();
+          for (final var aEntry : aAllUsedSMPCertifiactes.entrySet ())
+          {
+            final X509Certificate aSMPCert = aEntry.getKey ();
+            final String sCertIndex = aEntry.getValue ();
+
+            final IHCLI <?> aLICert = aULCerts.addItem ();
+            aLICert.addChild (div ("SMP Signing Certificate #" + sCertIndex));
+            if (aSMPCert != null)
+            {
+              aLICert.addChild (CertificateUI.createCertificateDetailsTable (null,
+                                                                             aSMPCert,
+                                                                             aNowDateTime,
+                                                                             aDisplayLocale));
+
+              if (aSMPQueryParams.getSMPAPIType () == ESMPAPIType.PEPPOL)
+              {
+                // Check Peppol certificate status
+                // * Do not cache
+                // * Use global certificate check mode
+                final ECertificateCheckResult eCertStatus = PEPPOL_CA_SMP_FULL.checkCertificate (aSMPCert,
+                                                                                                 aNowDateTime,
+                                                                                                 ETriState.FALSE,
+                                                                                                 null);
+                if (eCertStatus.isValid ())
+                  aLICert.addChild (success ("The SMP Signing Certificate appears to be a valid Peppol SMP certificate."));
+                else
+                {
+                  // TODO add Nemhandel check here
+                  aLICert.addChild (error ().addChild (div ("The Endpoint Certificate appears to be an invalid Peppol SMP certificate. Reason: " +
+                                                            eCertStatus.getReason ())));
+                }
+              }
+
+              final HCTextArea aTextArea = new HCTextArea ().setReadOnly (true)
+                                                            .setRows (4)
+                                                            .setValue (CertificateHelper.getPEMEncodedCertificate (aSMPCert))
                                                             .addStyle (CCSSProperties.FONT_FAMILY.newValue (CCSSValue.FONT_MONOSPACE));
               BootstrapFormHelper.markAsFormControl (aTextArea);
               aLICert.addChild (div (aTextArea));
@@ -1159,16 +1249,14 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
         final StopWatch aSWGetBC = StopWatch.createdStarted ();
         aNodeList.addChild (h3 ("Business Card details"));
 
-        byte [] aBCBytes = PeppolAPIHelper.retrieveBusinessCardBytes ("",
-                                                                      aSMPQueryParams,
-                                                                      aHCSModifier,
-                                                                      new MiniCallbackAddToNode (aNodeList,
-                                                                                                 aDisplayLocale));
+        final byte [] aBCBytes = PeppolAPIHelper.retrieveBusinessCardBytes ("",
+                                                                            aSMPQueryParams,
+                                                                            aHCSModifier,
+                                                                            new MiniCallbackAddToNode (aNodeList,
+                                                                                                       aDisplayLocale));
         aSWGetBC.stop ();
 
-        if (aBCBytes == null)
-          aNodeList.addChild (warn ("No Business Card is available for that participant."));
-        else
+        if (aBCBytes != null)
         {
           final ICommonsList <JAXBException> aPDExceptions = new CommonsArrayList <> ();
           final IPDBusinessCardMarshallerCustomizer aPMarshallerCustomizer = (m, v) -> {
@@ -1322,7 +1410,9 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
       // Audit success
       AuditHelper.onAuditExecuteSuccess ("participant-information", aParticipantID.getURIEncoded ());
     }
-    catch (final RuntimeException ex)
+    catch (
+
+    final RuntimeException ex)
     {
       LOGGER.debug ("Participant Information Error", ex);
 
