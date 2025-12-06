@@ -509,23 +509,30 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                                      : badgeWarn ("test SML")));
         aUL.addItem (div ("Query API: ").addChild (code (aSMPQueryParams.getSMPAPIType ().getDisplayName ())));
 
-        if (aSMPQueryParams.getSMPAPIType () == ESMPAPIType.PEPPOL)
+        final String sURL1 = aSMPHost.toExternalForm ();
+        IHCNode aResolvedNameSuffix = null;
+        switch (aSMPQueryParams.getSMPAPIType ())
         {
-          // Only if NAPTR is used
-          try
-          {
-            aUL.addItem (div ("DNS NAPTR domain: ").addChild (code (PeppolNaptrURLProvider.INSTANCE.getDNSNameOfParticipant (aParticipantID,
-                                                                                                                             aSMPQueryParams.getPeppolNetwork ()
-                                                                                                                                            .getSMLInfo ()))));
-          }
-          catch (final SMPDNSResolutionException ex)
-          {
-            // Ignore
-          }
+          case PEPPOL:
+            // Only if NAPTR is used
+            try
+            {
+              aUL.addItem (div ("DNS NAPTR domain: ").addChild (code (PeppolNaptrURLProvider.INSTANCE.getDNSNameOfParticipant (aParticipantID,
+                                                                                                                               aSMPQueryParams.getPeppolNetwork ()
+                                                                                                                                              .getSMLInfo ()))));
+            }
+            catch (final SMPDNSResolutionException ex)
+            {
+              // Ignore
+            }
+
+            // Mandatory per 1.2.2026 to use https
+            if (!sURL1.startsWith ("https://"))
+              aResolvedNameSuffix = badgeWarn ("Not yet using https");
+            break;
         }
 
-        final String sURL1 = aSMPHost.toExternalForm ();
-        aUL.addItem (div ("Resolved name: ").addChild (code (sURL1)),
+        aUL.addItem (div ("Resolved name: ").addChild (code (sURL1)).addChild (aResolvedNameSuffix),
                      div (_createOpenInBrowser (sURL1, "Open in browser [may fail]")));
 
         // Explicit query with the dnsjava lookup
