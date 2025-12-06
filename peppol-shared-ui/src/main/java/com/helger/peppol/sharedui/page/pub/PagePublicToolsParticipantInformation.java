@@ -843,6 +843,11 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
               }
               else
               {
+                // Try with fallback parsing to show as many details as possible
+                final IDocumentTypeIdentifier aSimpleDocType = SimpleIdentifierFactory.INSTANCE.parseDocumentTypeIdentifier (sDocType);
+                if (aSimpleDocType != null)
+                  aDocTypeIDs.add (aSimpleDocType);
+
                 aLI.addChild (div (code (sHref)));
                 aLI.addChild (error ("The document type ").addChild (code (sDocType))
                                                           .addChild (" could not be interpreted as a structured document type!"));
