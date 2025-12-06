@@ -10,18 +10,24 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import com.helger.annotation.concurrent.Immutable;
+import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.string.StringHelper;
 import com.helger.css.property.CCSSProperties;
+import com.helger.css.propertyvalue.CCSSValue;
 import com.helger.datetime.format.PDTToString;
 import com.helger.datetime.helper.PDTFactory;
 import com.helger.datetime.util.PDTDisplayHelper;
 import com.helger.html.hc.IHCNode;
+import com.helger.html.hc.html.IHCElement;
+import com.helger.html.hc.html.forms.HCTextArea;
 import com.helger.html.hc.html.grouping.HCDiv;
 import com.helger.html.hc.html.tabular.HCCol;
 import com.helger.html.hc.impl.HCNodeList;
 import com.helger.photon.bootstrap4.badge.BootstrapBadge;
 import com.helger.photon.bootstrap4.badge.EBootstrapBadgeType;
+import com.helger.photon.bootstrap4.form.BootstrapFormHelper;
 import com.helger.photon.bootstrap4.table.BootstrapTable;
+import com.helger.security.certificate.CertificateHelper;
 
 @Immutable
 public final class CertificateUI
@@ -143,5 +149,17 @@ public final class CertificateUI
                 .addCell ("Signature algorithm:")
                 .addCell (aX509Cert.getSigAlgName () + " (" + aX509Cert.getSigAlgOID () + ")");
     return aCertDetails;
+  }
+
+  @NonNull
+  public static IHCElement <?> createCertificatePEMControl (@NonNull final X509Certificate aCert)
+  {
+    ValueEnforcer.notNull (aCert, "Certificate");
+    final HCTextArea aTextArea = new HCTextArea ().setReadOnly (true)
+                                                  .setRows (5)
+                                                  .setValue (CertificateHelper.getPEMEncodedCertificate (aCert))
+                                                  .addStyle (CCSSProperties.FONT_FAMILY.newValue (CCSSValue.FONT_MONOSPACE));
+    BootstrapFormHelper.markAsFormControl (aTextArea);
+    return new HCDiv ().addChild (aTextArea);
   }
 }

@@ -57,8 +57,6 @@ import com.helger.collection.commons.CommonsTreeMap;
 import com.helger.collection.commons.ICommonsList;
 import com.helger.collection.commons.ICommonsOrderedMap;
 import com.helger.collection.commons.ICommonsSortedMap;
-import com.helger.css.property.CCSSProperties;
-import com.helger.css.propertyvalue.CCSSValue;
 import com.helger.datetime.format.PDTToString;
 import com.helger.datetime.helper.PDTFactory;
 import com.helger.datetime.xml.XMLOffsetDateTime;
@@ -69,7 +67,6 @@ import com.helger.html.hc.ext.HCExtHelper;
 import com.helger.html.hc.html.forms.EHCFormMethod;
 import com.helger.html.hc.html.forms.HCCheckBox;
 import com.helger.html.hc.html.forms.HCEdit;
-import com.helger.html.hc.html.forms.HCTextArea;
 import com.helger.html.hc.html.grouping.HCDiv;
 import com.helger.html.hc.html.grouping.HCHR;
 import com.helger.html.hc.html.grouping.HCLI;
@@ -130,15 +127,16 @@ import com.helger.photon.audit.AuditHelper;
 import com.helger.photon.bootstrap4.CBootstrapCSS;
 import com.helger.photon.bootstrap4.alert.BootstrapErrorBox;
 import com.helger.photon.bootstrap4.alert.BootstrapWarnBox;
+import com.helger.photon.bootstrap4.button.BootstrapButton;
 import com.helger.photon.bootstrap4.button.BootstrapLinkButton;
 import com.helger.photon.bootstrap4.button.EBootstrapButtonSize;
 import com.helger.photon.bootstrap4.button.EBootstrapButtonType;
 import com.helger.photon.bootstrap4.buttongroup.BootstrapButtonToolbar;
 import com.helger.photon.bootstrap4.form.BootstrapForm;
 import com.helger.photon.bootstrap4.form.BootstrapFormGroup;
-import com.helger.photon.bootstrap4.form.BootstrapFormHelper;
 import com.helger.photon.bootstrap4.table.BootstrapTable;
 import com.helger.photon.bootstrap4.uictrls.ext.BootstrapTechnicalUI;
+import com.helger.photon.bootstrap4.utils.BootstrapCollapseHelper;
 import com.helger.photon.core.form.FormErrorList;
 import com.helger.photon.core.form.RequestField;
 import com.helger.photon.core.form.RequestFieldBoolean;
@@ -164,6 +162,7 @@ import com.helger.smpclient.url.SMPDNSResolutionException;
 import com.helger.text.locale.country.CountryCache;
 import com.helger.text.locale.language.LanguageCache;
 import com.helger.url.SimpleURL;
+import com.helger.url.URLBuilder;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 import com.helger.xml.serialize.write.XMLWriter;
 
@@ -912,7 +911,9 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                                         k -> Integer.toString (aSMPCertificateIndex.incAndGet ()));
                   if (aSMPCert != null)
                   {
-                    aLIDocTypeID.addChild ("SMP Signing Certificate: #" + sSMPCertIndex);
+                    aLIDocTypeID.addChild (new HCA ().setHref (new URLBuilder ().anchor ("smpcert" + sSMPCertIndex)
+                                                                                .build ())
+                                                     .addChild ("SMP Signing Certificate: #" + sSMPCertIndex));
                   }
 
                   final var aSM = aSSM.getServiceMetadata ();
@@ -960,7 +961,9 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                                               k -> Integer.toString (aAPCertificateIndex.incAndGet ()));
                           if (aAPCert != null)
                           {
-                            aLIEndpoint.addChild ("AP Certificate: #" + sAPCertIndex);
+                            aLIEndpoint.addChild (new HCA ().setHref (new URLBuilder ().anchor ("apcert" + sAPCertIndex)
+                                                                                       .build ())
+                                                            .addChild ("AP Certificate: #" + sAPCertIndex));
                           }
                         }
                         aLIProcessID.addChild (aULEndpoint);
@@ -985,7 +988,9 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                                         k -> Integer.toString (aSMPCertificateIndex.incAndGet ()));
                   if (aSMPCert != null)
                   {
-                    aLIDocTypeID.addChild ("SMP Signing Certificate: #" + sSMPCertIndex);
+                    aLIDocTypeID.addChild (new HCA ().setHref (new URLBuilder ().anchor ("smpcert" + sSMPCertIndex)
+                                                                                .build ())
+                                                     .addChild ("SMP Signing Certificate: #" + sSMPCertIndex));
                   }
 
                   final var aSM = aSSM.getServiceMetadata ();
@@ -1039,7 +1044,9 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                                               k -> Integer.toString (aAPCertificateIndex.incAndGet ()));
                           if (aAPCert != null)
                           {
-                            aLIEndpoint.addChild ("AP Certificate: #" + sAPCertIndex);
+                            aLIEndpoint.addChild (new HCA ().setHref (new URLBuilder ().anchor ("apcert" + sAPCertIndex)
+                                                                                       .build ())
+                                                            .addChild ("AP Certificate: #" + sAPCertIndex));
                           }
                         }
                         aLIProcessID.addChild (aULEndpoint);
@@ -1141,13 +1148,21 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
             final String sCertIndex = aEntry.getValue ();
 
             final IHCLI <?> aLICert = aULCerts.addItem ();
-            aLICert.addChild (div ("AP Certificate #" + sCertIndex));
+            final HCDiv aHeadlineDiv = aLICert.addAndReturnChild (div ("AP Certificate #" + sCertIndex));
+            aHeadlineDiv.addChild (new HCA ().setName ("apcert" + sCertIndex));
             if (aEndpointCert != null)
             {
-              aLICert.addChild (CertificateUI.createCertificateDetailsTable (null,
-                                                                             aEndpointCert,
-                                                                             aNowDateTime,
-                                                                             aDisplayLocale));
+              final HCDiv aCertDetailsDiv = aLICert.addAndReturnChild (div ());
+
+              final BootstrapButton aToggle = aHeadlineDiv.addAndReturnChild (new BootstrapButton (EBootstrapButtonType.PRIMARY,
+                                                                                                   EBootstrapButtonSize.SMALL).addChild ("Toggle Details")
+                                                                                                                              .addClass (CBootstrapCSS.ML_3));
+              BootstrapCollapseHelper.makeCollapsible (aToggle, aCertDetailsDiv);
+
+              aCertDetailsDiv.addChild (CertificateUI.createCertificateDetailsTable (null,
+                                                                                     aEndpointCert,
+                                                                                     aNowDateTime,
+                                                                                     aDisplayLocale));
 
               if (aSMPQueryParams.getSMPAPIType () == ESMPAPIType.PEPPOL)
               {
@@ -1159,21 +1174,17 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                                                 ETriState.FALSE,
                                                                                                 null);
                 if (eCertStatus.isValid ())
-                  aLICert.addChild (success ("The Endpoint Certificate appears to be a valid Peppol AP certificate."));
+                  aCertDetailsDiv.addChild (success ("The Endpoint Certificate appears to be a valid Peppol AP certificate."));
                 else
                 {
                   // TODO add Nemhandel check here
-                  aLICert.addChild (error ().addChild (div ("The Endpoint Certificate appears to be an invalid Peppol AP certificate. Reason: " +
-                                                            eCertStatus.getReason ())));
+                  aCertDetailsDiv.addChild (error ().addChild (div ("The Endpoint Certificate appears to be an invalid Peppol AP certificate. Reason: " +
+                                                                    eCertStatus.getReason ())));
                 }
               }
 
-              final HCTextArea aTextArea = new HCTextArea ().setReadOnly (true)
-                                                            .setRows (4)
-                                                            .setValue (CertificateHelper.getPEMEncodedCertificate (aEndpointCert))
-                                                            .addStyle (CCSSProperties.FONT_FAMILY.newValue (CCSSValue.FONT_MONOSPACE));
-              BootstrapFormHelper.markAsFormControl (aTextArea);
-              aLICert.addChild (div (aTextArea));
+              // add PEM representation as well
+              aCertDetailsDiv.addChild (CertificateUI.createCertificatePEMControl (aEndpointCert));
             }
             else
             {
@@ -1198,13 +1209,21 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
             final String sCertIndex = aEntry.getValue ();
 
             final IHCLI <?> aLICert = aULCerts.addItem ();
-            aLICert.addChild (div ("SMP Signing Certificate #" + sCertIndex));
+            final HCDiv aHeadlineDiv = aLICert.addAndReturnChild (div ("SMP Signing Certificate #" + sCertIndex));
+            aHeadlineDiv.addChild (new HCA ().setName ("smpcert" + sCertIndex));
             if (aSMPCert != null)
             {
-              aLICert.addChild (CertificateUI.createCertificateDetailsTable (null,
-                                                                             aSMPCert,
-                                                                             aNowDateTime,
-                                                                             aDisplayLocale));
+              final HCDiv aCertDetailsDiv = aLICert.addAndReturnChild (div ());
+
+              final BootstrapButton aToggle = aHeadlineDiv.addAndReturnChild (new BootstrapButton (EBootstrapButtonType.PRIMARY,
+                                                                                                   EBootstrapButtonSize.SMALL).addChild ("Toggle Details")
+                                                                                                                              .addClass (CBootstrapCSS.ML_3));
+              BootstrapCollapseHelper.makeCollapsible (aToggle, aCertDetailsDiv);
+
+              aCertDetailsDiv.addChild (CertificateUI.createCertificateDetailsTable (null,
+                                                                                     aSMPCert,
+                                                                                     aNowDateTime,
+                                                                                     aDisplayLocale));
 
               if (aSMPQueryParams.getSMPAPIType () == ESMPAPIType.PEPPOL)
               {
@@ -1216,21 +1235,17 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                                                  ETriState.FALSE,
                                                                                                  null);
                 if (eCertStatus.isValid ())
-                  aLICert.addChild (success ("The SMP Signing Certificate appears to be a valid Peppol SMP certificate."));
+                  aCertDetailsDiv.addChild (success ("The SMP Signing Certificate appears to be a valid Peppol SMP certificate."));
                 else
                 {
                   // TODO add Nemhandel check here
-                  aLICert.addChild (error ().addChild (div ("The Endpoint Certificate appears to be an invalid Peppol SMP certificate. Reason: " +
-                                                            eCertStatus.getReason ())));
+                  aCertDetailsDiv.addChild (error ().addChild (div ("The SMP Signing Certificate appears to be an invalid Peppol SMP certificate. Reason: " +
+                                                                    eCertStatus.getReason ())));
                 }
               }
 
-              final HCTextArea aTextArea = new HCTextArea ().setReadOnly (true)
-                                                            .setRows (4)
-                                                            .setValue (CertificateHelper.getPEMEncodedCertificate (aSMPCert))
-                                                            .addStyle (CCSSProperties.FONT_FAMILY.newValue (CCSSValue.FONT_MONOSPACE));
-              BootstrapFormHelper.markAsFormControl (aTextArea);
-              aLICert.addChild (div (aTextArea));
+              // add PEM representation as well
+              aCertDetailsDiv.addChild (CertificateUI.createCertificatePEMControl (aSMPCert));
             }
             else
             {
