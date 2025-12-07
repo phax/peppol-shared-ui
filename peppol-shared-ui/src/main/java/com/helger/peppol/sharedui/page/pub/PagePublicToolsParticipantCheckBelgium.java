@@ -16,6 +16,8 @@
  */
 package com.helger.peppol.sharedui.page.pub;
 
+import java.util.Locale;
+
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,17 +88,21 @@ public class PagePublicToolsParticipantCheckBelgium extends AbstractAppWebPage
     LOGGER.info ("Performing Belgium Participant Check for '" + sParticipantIDValue + "'");
 
     final ISMLConfiguration aSMLConfiguration = aSMLConfigurationMgr.getSMLInfoOfID (ESML.DIGIT_PRODUCTION.getID ());
+
+    // 0208 does not use prefix
     final SMPQueryParams aSMPQP_CBE = SMPQueryParams.createForSMLOrNull (aSMLConfiguration,
                                                                          PeppolIdentifierHelper.DEFAULT_PARTICIPANT_SCHEME,
                                                                          "0208:" + sParticipantIDValue,
                                                                          false);
     final boolean bIsCBE = aSMPQP_CBE == null ? false : aSMPQP_CBE.isSMPRegisteredInDNS ();
 
+    // 9925 uses prefix
     final SMPQueryParams aSMPQP_VAT = SMPQueryParams.createForSMLOrNull (aSMLConfiguration,
                                                                          PeppolIdentifierHelper.DEFAULT_PARTICIPANT_SCHEME,
-                                                                         "9925:" + sParticipantIDValue,
+                                                                         "9925:be" + sParticipantIDValue,
                                                                          false);
     final boolean bIsVAT = aSMPQP_VAT == null ? false : aSMPQP_VAT.isSMPRegisteredInDNS ();
+
     if (bIsCBE || bIsVAT)
     {
       if (bIsCBE)
@@ -149,7 +155,6 @@ public class PagePublicToolsParticipantCheckBelgium extends AbstractAppWebPage
       }
     }
     else
-
     {
       aNodeList.addChild (error ("The Belgium Enterprise was not found in the Peppol Production Network - neither with the CBE number nor with the VAT number"));
     }
@@ -173,10 +178,17 @@ public class PagePublicToolsParticipantCheckBelgium extends AbstractAppWebPage
     {
       // Validate fields
       sParticipantIDValue = StringHelper.trim (aWPEC.params ().getAsString (FIELD_ID_VALUE));
-      // CBE values may contain "." chars
-      sParticipantIDValue = StringRemove.removeAll (sParticipantIDValue, '.');
-      // Remove all blanks
-      sParticipantIDValue = RegExHelper.stringReplacePattern ("\\s+", sParticipantIDValue, "");
+      if (sParticipantIDValue != null)
+      {
+        // CBE values may contain "." chars
+        sParticipantIDValue = StringRemove.removeAll (sParticipantIDValue, '.');
+        // Remove all blanks
+        sParticipantIDValue = RegExHelper.stringReplacePattern ("\\s+", sParticipantIDValue, "");
+        // Lowercase
+        sParticipantIDValue = sParticipantIDValue.toLowerCase (Locale.US);
+        // Remove any "BE" prefix
+        sParticipantIDValue = StringHelper.trimStart (sParticipantIDValue, "be");
+      }
 
       if (StringHelper.isEmpty (sParticipantIDValue))
         aFormErrors.addFieldError (FIELD_ID_VALUE, "Please provide an value to check");
