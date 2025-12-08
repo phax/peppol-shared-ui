@@ -73,6 +73,7 @@ import com.helger.html.hc.html.grouping.HCLI;
 import com.helger.html.hc.html.grouping.HCOL;
 import com.helger.html.hc.html.grouping.HCUL;
 import com.helger.html.hc.html.grouping.IHCLI;
+import com.helger.html.hc.html.script.HCScriptInline;
 import com.helger.html.hc.html.sections.HCH3;
 import com.helger.html.hc.html.sections.HCH4;
 import com.helger.html.hc.html.textlevel.HCA;
@@ -85,7 +86,9 @@ import com.helger.html.jquery.JQueryInvocation;
 import com.helger.html.js.EJSEvent;
 import com.helger.html.jscode.JSAnonymousFunction;
 import com.helger.html.jscode.JSAssocArray;
+import com.helger.html.jscode.JSExpr;
 import com.helger.html.jscode.JSParam;
+import com.helger.html.jscode.html.JSHtml;
 import com.helger.http.EHttpMethod;
 import com.helger.jaxb.GenericJAXBMarshaller;
 import com.helger.jaxb.validation.DoNothingValidationEventHandler;
@@ -199,7 +202,9 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
   @NonNull
   public static String getSchemeHelpText (@Nullable String sPIValue)
   {
-    LOGGER.info ("Getting details from '" + sPIValue + "'");
+    if (StringHelper.isNotEmpty (sPIValue))
+      LOGGER.info ("Getting details from '" + sPIValue + "'");
+
     if (StringHelper.getLength (sPIValue) < 4)
       return "";
 
@@ -1609,10 +1614,20 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                                                          .val ()))
                                                                    .success (new JSAnonymousFunction (aSuccessParam,
                                                                                                       JQuery.idRef (sHelpFieldID)
+                                                                                                            .show ()
                                                                                                             .val (aSuccessParam)))
-                                                                   // Empty error handlers
-                                                                   .error (new JSAnonymousFunction ())
+                                                                   .error (true ? null : new JSAnonymousFunction (
+                                                                                                                  new CommonsArrayList <> (new JSParam ("jqXHR"),
+                                                                                                                                           new JSParam ("textStatus"),
+                                                                                                                                           new JSParam ("errorThrown")),
+                                                                                                                  JSHtml.consoleLog (JSExpr.lit ("AJAX error occurred: ")
+                                                                                                                                           .plus (JSExpr.ref ("textStatus"))
+                                                                                                                                           .plus (" - Error thrown: ")
+                                                                                                                                           .plus (JSExpr.ref ("errorThrown")))))
                                                                    .build ();
+        // Override global error handler - hack to avoid pop up if interrupted
+        aForm.addChild (new HCScriptInline (JQuery.jQueryDocument ().off ("ajaxError")));
+
         final RequestField aRF = new RequestField (FIELD_ID_VALUE, sParticipantIDValue);
         aForm.addFormGroup (new BootstrapFormGroup ().setLabelMandatory ("Identifier value")
                                                      .setCtrl (new HCEdit (aRF).setPlaceholder ("Identifier value")
@@ -1620,6 +1635,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                                                  aOnChange),
                                                                new HCEdit ().setValue (getSchemeHelpText (aRF.getRequestValue ()))
                                                                             .setReadOnly (true)
+                                                                            .setHidden (getSchemeHelpText (aRF.getRequestValue ()).isEmpty ())
                                                                             .setID (sHelpFieldID))
                                                      .setHelpText (div ("The identifier value must look like ").addChild (code ("9915:test")))
                                                      .setErrorList (aFormErrors.getListOfField (FIELD_ID_VALUE)));
