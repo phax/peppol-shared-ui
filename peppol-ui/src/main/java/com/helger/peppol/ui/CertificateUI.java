@@ -44,6 +44,7 @@ import com.helger.html.hc.html.textlevel.HCCode;
 import com.helger.html.hc.html.textlevel.HCSpan;
 import com.helger.html.hc.html.textlevel.HCStrong;
 import com.helger.html.hc.impl.HCNodeList;
+import com.helger.photon.bootstrap4.CBootstrapCSS;
 import com.helger.photon.bootstrap4.badge.BootstrapBadge;
 import com.helger.photon.bootstrap4.badge.EBootstrapBadgeType;
 import com.helger.photon.bootstrap4.form.BootstrapFormHelper;
@@ -165,7 +166,7 @@ public final class CertificateUI
 
     final BootstrapTable aCertDetails = new BootstrapTable (new HCCol ().addStyle (CCSSProperties.WIDTH.newValue ("12rem")),
                                                             HCCol.star ());
-    aCertDetails.setResponsive (true);
+    aCertDetails.addClass (CBootstrapCSS.W_AUTO);
     if (StringHelper.isNotEmpty (sAlias))
       aCertDetails.addBodyRow ().addCell ("Alias:").addCell (sAlias);
     aCertDetails.addBodyRow ().addCell ("Version:").addCell (Integer.toString (aX509Cert.getVersion ()));

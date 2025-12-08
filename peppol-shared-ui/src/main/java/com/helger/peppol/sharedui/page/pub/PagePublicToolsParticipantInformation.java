@@ -1433,7 +1433,9 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                 // Additional IDs
                 if (aEntity.identifiers ().isNotEmpty ())
                 {
-                  final BootstrapTable aIDTab = new BootstrapTable ().setCondensed (true);
+                  final BootstrapTable aIDTab = new BootstrapTable ().setCondensed (true)
+                                                                     .setBordered (true)
+                                                                     .addClass (CBootstrapCSS.W_AUTO);
                   aIDTab.addHeaderRow ().addCells ("Scheme", "Value");
                   for (final PDIdentifier aItem : aEntity.identifiers ())
                   {
