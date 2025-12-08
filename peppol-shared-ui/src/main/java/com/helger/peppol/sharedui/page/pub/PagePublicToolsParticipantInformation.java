@@ -1610,6 +1610,8 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                    .success (new JSAnonymousFunction (aSuccessParam,
                                                                                                       JQuery.idRef (sHelpFieldID)
                                                                                                             .val (aSuccessParam)))
+                                                                   // Empty error handlers
+                                                                   .error (new JSAnonymousFunction ())
                                                                    .build ();
         final RequestField aRF = new RequestField (FIELD_ID_VALUE, sParticipantIDValue);
         aForm.addFormGroup (new BootstrapFormGroup ().setLabelMandatory ("Identifier value")

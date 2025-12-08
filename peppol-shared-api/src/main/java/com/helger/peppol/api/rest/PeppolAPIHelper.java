@@ -90,6 +90,7 @@ public final class PeppolAPIHelper
     final String sBCURL = getBusinessCardURL (aSMPQueryParams);
     LOGGER.info (sLogPrefix + "  Querying BC from '" + sBCURL + "'");
 
+    // Use SMP settings - e.g. don't follow redirect
     final SMPHttpClientSettings aHCS = new SMPHttpClientSettings ();
     if (aHCSModifier != null)
       aHCSModifier.accept (aHCS);
