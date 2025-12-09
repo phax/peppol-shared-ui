@@ -69,26 +69,21 @@ public final class XMLDSig10Helper
     final KeyInfoType aKeyInfo = aSignature.getKeyInfo ();
     if (aKeyInfo != null)
     {
-      final X509DataType aX509Data = aKeyInfo.getContent ()
-                                             .stream ()
-                                             .filter (JAXBElement.class::isInstance)
-                                             .map (JAXBElement.class::cast)
-                                             .filter (x -> x.getValue () instanceof X509DataType)
-                                             .map (x -> (X509DataType) x.getValue ())
-                                             .findFirst ()
-                                             .orElse (null);
-      if (aX509Data != null)
-      {
-        return aX509Data.getX509IssuerSerialOrX509SKIOrX509SubjectName ()
-                        .stream ()
-                        .filter (JAXBElement.class::isInstance)
-                        .map (JAXBElement.class::cast)
-                        .filter (x -> x.getName ().getLocalPart ().equals ("X509Certificate"))
-                        .map (JAXBElement::getValue)
-                        .map (byte [].class::cast)
-                        .findFirst ()
-                        .orElse (null);
-      }
+      // E.g. 0007:5591793939 usses multiple X509Data elements
+      return aKeyInfo.getContent ()
+                     .stream ()
+                     .filter (JAXBElement.class::isInstance)
+                     .map (JAXBElement.class::cast)
+                     .filter (x -> x.getValue () instanceof X509DataType)
+                     .map (x -> (X509DataType) x.getValue ())
+                     .flatMap (x -> x.getX509IssuerSerialOrX509SKIOrX509SubjectName ().stream ())
+                     .filter (JAXBElement.class::isInstance)
+                     .map (JAXBElement.class::cast)
+                     .filter (x -> x.getName ().getLocalPart ().equals ("X509Certificate"))
+                     .map (JAXBElement::getValue)
+                     .map (byte [].class::cast)
+                     .findFirst ()
+                     .orElse (null);
     }
 
     return null;
