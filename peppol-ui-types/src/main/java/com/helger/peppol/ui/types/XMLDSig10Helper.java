@@ -69,7 +69,7 @@ public final class XMLDSig10Helper
     final KeyInfoType aKeyInfo = aSignature.getKeyInfo ();
     if (aKeyInfo != null)
     {
-      // E.g. 0007:5591793939 usses multiple X509Data elements
+      // E.g. 0007:5591793939 uses multiple X509Data elements
       return aKeyInfo.getContent ()
                      .stream ()
                      .filter (JAXBElement.class::isInstance)
