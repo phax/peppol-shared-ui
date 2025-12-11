@@ -1205,18 +1205,19 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
               aHeadlineDiv.addChild (new HCA ().setName ("apcert" + sCertIndex));
               if (aEndpointCert != null)
               {
+                // The owner should always be visible
+                final BootstrapCard aOwner = new BootstrapCard ();
+                aOwner.createAndAddHeader ()
+                      .addChild ("Certificate owner: ")
+                      .addChild (CertificateUI.getCertOwnerDetails (aEndpointCert, aDisplayLocale));
+                aLICert.addChild (aOwner);
+
                 final HCDiv aCertDetailsDiv = aLICert.addAndReturnChild (div ());
 
                 final BootstrapButton aToggle = aHeadlineDiv.addAndReturnChild (new BootstrapButton (EBootstrapButtonType.DEFAULT,
                                                                                                      EBootstrapButtonSize.SMALL).addChild ("Toggle Details")
                                                                                                                                 .addClass (CBootstrapCSS.ML_3));
                 BootstrapCollapseHelper.makeCollapsible (aToggle, aCertDetailsDiv);
-
-                final BootstrapCard aOwner = new BootstrapCard ();
-                aOwner.createAndAddHeader ()
-                      .addChild ("Certificate owner: ")
-                      .addChild (CertificateUI.getCertOwnerDetails (aEndpointCert, aDisplayLocale));
-                aCertDetailsDiv.addChild (aOwner);
 
                 aCertDetailsDiv.addChild (CertificateUI.createCertificateDetailsTable (null,
                                                                                        aEndpointCert,
@@ -1274,18 +1275,19 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
               aHeadlineDiv.addChild (new HCA ().setName ("smpcert" + sCertIndex));
               if (aSMPCert != null)
               {
+                // The owner should always be visible
+                final BootstrapCard aOwner = new BootstrapCard ();
+                aOwner.createAndAddHeader ()
+                      .addChild ("Certificate owner: ")
+                      .addChild (CertificateUI.getCertOwnerDetails (aSMPCert, aDisplayLocale));
+                aLICert.addChild (aOwner);
+
                 final HCDiv aCertDetailsDiv = aLICert.addAndReturnChild (div ());
 
                 final BootstrapButton aToggle = aHeadlineDiv.addAndReturnChild (new BootstrapButton (EBootstrapButtonType.DEFAULT,
                                                                                                      EBootstrapButtonSize.SMALL).addChild ("Toggle Details")
                                                                                                                                 .addClass (CBootstrapCSS.ML_3));
                 BootstrapCollapseHelper.makeCollapsible (aToggle, aCertDetailsDiv);
-
-                final BootstrapCard aOwner = new BootstrapCard ();
-                aOwner.createAndAddHeader ()
-                      .addChild ("Certificate owner: ")
-                      .addChild (CertificateUI.getCertOwnerDetails (aSMPCert, aDisplayLocale));
-                aCertDetailsDiv.addChild (aOwner);
 
                 aCertDetailsDiv.addChild (CertificateUI.createCertificateDetailsTable (null,
                                                                                        aSMPCert,
