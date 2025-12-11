@@ -22,6 +22,7 @@ import java.security.cert.X509Certificate;
 import java.util.Locale;
 import java.util.function.Supplier;
 
+import org.apache.hc.core5.http.message.StatusLine;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +62,7 @@ import com.helger.phase4.model.message.AbstractAS4Message;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.phase4.util.Phase4Exception;
+import com.helger.photon.bootstrap4.alert.BootstrapErrorBox;
 import com.helger.photon.bootstrap4.button.BootstrapSubmitButton;
 import com.helger.photon.bootstrap4.form.BootstrapForm;
 import com.helger.photon.bootstrap4.form.BootstrapFormGroup;
@@ -270,7 +272,8 @@ public class PageSecurePeppolSendAS4 extends AbstractBootstrapWebPage <WebPageEx
           final Wrapper <ECertificateCheckResult> aEndpointCertCheck = new Wrapper <> ();
           final Wrapper <Phase4Exception> aSendEx = new Wrapper <> ();
           final Wrapper <byte []> aResponseBytes = new Wrapper <> ();
-          final Wrapper <Ebms3SignalMessage> aResponseMsg = new Wrapper <> ();
+          final Wrapper <StatusLine> aResponseStatusLine = new Wrapper <> ();
+          final Wrapper <Ebms3SignalMessage> aReceivedSignalMsg = new Wrapper <> ();
 
           LOGGER.info ("Sending Peppol AS4 message from '" +
                        aSenderID.getURIEncoded () +
@@ -301,10 +304,13 @@ public class PageSecurePeppolSendAS4 extends AbstractBootstrapWebPage <WebPageEx
                                                                       .buildMessageCallback (aBuildMessageCallback)
                                                                       .outgoingDumper (new AS4OutgoingDumperFileBased ())
                                                                       .incomingDumper (new AS4IncomingDumperFileBased ())
-                                                                      .rawResponseConsumer (r -> aResponseBytes.set (r.getResponseContent ()))
+                                                                      .rawResponseConsumer (aResponseMsg -> {
+                                                                        aResponseBytes.set (aResponseMsg.getResponseContent ());
+                                                                        aResponseStatusLine.set (aResponseMsg.getResponseStatusLine ());
+                                                                      })
                                                                       .signalMsgConsumer ( (signalMsg,
                                                                                             mmd,
-                                                                                            state) -> aResponseMsg.set (signalMsg))
+                                                                                            state) -> aReceivedSignalMsg.set (signalMsg))
                                                                       .sendMessageAndCheckForReceipt (aSendEx::set);
 
           LOGGER.info ("Sending Peppol AS4 message resulted in " + eResult);
@@ -324,20 +330,24 @@ public class PageSecurePeppolSendAS4 extends AbstractBootstrapWebPage <WebPageEx
           else
           {
             LOGGER.warn ("Technical details", aSendEx.get ());
-            aNL.addChild (error ().addChild (div ("Failed to send AS4 message to Peppol receiver ").addChild (code (aReceiverID.getURIEncoded ()))
-                                                                                                   .addChild (" with result ")
-                                                                                                   .addChild (code (eResult.name ())))
-                                  .addChild (BootstrapTechnicalUI.getTechnicalDetailsNode (aSendEx.get (),
-                                                                                           aDisplayLocale)));
+            final BootstrapErrorBox aErrorBox = error ().addChild (div ("Failed to send AS4 message to Peppol receiver ").addChild (code (aReceiverID.getURIEncoded ()))
+                                                                                                                         .addChild (" with result ")
+                                                                                                                         .addChild (code (eResult.name ())))
+                                                        .addChild (BootstrapTechnicalUI.getTechnicalDetailsNode (aSendEx.get (),
+                                                                                                                 aDisplayLocale));
+            if (aResponseStatusLine.isSet ())
+              aErrorBox.addChild (div ("HTTP Response status line received: ").addChild (code (aResponseStatusLine.get ()
+                                                                                                                  .toString ())));
+            aNL.addChild (aErrorBox);
           }
 
           boolean bShowRaw = true;
-          if (aResponseMsg.isSet ())
+          if (aReceivedSignalMsg.isSet ())
           {
             // Don't do XSD validation here because there is no defined
             // "SignalMessage" element
             final String sSignalMessage = new Ebms3SignalMessageMarshaller ().setFormattedOutput (true)
-                                                                             .getAsString (aResponseMsg.get ());
+                                                                             .getAsString (aReceivedSignalMsg.get ());
             if (StringHelper.isNotEmpty (sSignalMessage))
             {
               // Show payload
