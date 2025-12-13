@@ -21,9 +21,11 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
-import java.security.cert.CertificateException;
+import java.security.cert.CertificateException; 
 import java.security.cert.X509Certificate;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Locale;
@@ -186,6 +188,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
   public static final String PARAM_VERIFY_SIGNATURES = "verifysignatures";
 
   private static final Logger LOGGER = LoggerFactory.getLogger (PagePublicToolsParticipantInformation.class);
+  private static final LocalDate PEPPOL_SMP_HTTP_MANDATORY_DATE = PDTFactory.createLocalDate (2026, Month.FEBRUARY, 1);
 
   // Contain AP G2 and AP G3
   private static final TrustedCAChecker PEPPOL_CA_AP_FULL = new TrustedCAChecker (PeppolTrustStores.Config2018.CERTIFICATE_PILOT_AP,
@@ -200,7 +203,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
   private final String m_sUserAgent;
 
   @NonNull
-  public static String getSchemeHelpText (@Nullable String sPIValue)
+  public static String getSchemeHelpText (@Nullable final String sPIValue)
   {
     if (StringHelper.isNotEmpty (sPIValue))
       LOGGER.info ("Getting details from '" + sPIValue + "'");
@@ -209,7 +212,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
       return "";
 
     final String sScheme = sPIValue.substring (0, 4);
-    IPeppolParticipantIdentifierScheme aScheme = PeppolParticipantIdentifierSchemeManager.getSchemeOfISO6523Code (sScheme);
+    final IPeppolParticipantIdentifierScheme aScheme = PeppolParticipantIdentifierSchemeManager.getSchemeOfISO6523Code (sScheme);
     if (aScheme == null)
       return "Unkwnown scheme (" + sScheme + ")";
 
@@ -364,7 +367,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
 
   @NonNull
   @Nonempty
-  private static String _getEntries (int n)
+  private static String _getEntries (final int n)
   {
     return n == 1 ? "1 entry" : n + " entries";
   }
@@ -389,6 +392,8 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
     final Locale aDisplayLocale = aWPEC.getDisplayLocale ();
     final IRequestWebScopeWithoutResponse aRequestScope = aWPEC.getRequestScope ();
     final ISMLConfigurationManager aSMLConfigurationMgr = PhotonPeppolMetaManager.getSMLConfigurationMgr ();
+    final OffsetDateTime aNowDateTime = PDTFactory.getCurrentOffsetDateTime ();
+    final LocalDateTime aNowLocalDateTime = aNowDateTime.toLocalDateTime ();
 
     final String sParticipantIDUriEncoded = CIdentifier.getURIEncoded (sParticipantIDScheme, sParticipantIDValue);
 
@@ -531,9 +536,15 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
               // Ignore
             }
 
-            // Mandatory per 1.2.2026 to use https
             if (!sURL1.startsWith ("https://"))
-              aResolvedNameSuffix = badgeWarn ("Not yet using https");
+            {
+              // Mandatory per 1.2.2026 to use https
+              if (aNowLocalDateTime.toLocalDate ().isBefore (PEPPOL_SMP_HTTP_MANDATORY_DATE))
+                aResolvedNameSuffix = badgeWarn ("Not yet using https").addClass (CBootstrapCSS.ML_2);
+              else
+                aResolvedNameSuffix = badgeDanger ("Not yet using https").addClass (CBootstrapCSS.ML_2);
+            }
+
             break;
         }
 
@@ -561,7 +572,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
           if (aRecords != null)
             for (final Record aRecord : aRecords)
             {
-              boolean bIPV4 = aRecord instanceof ARecord;
+              final boolean bIPV4 = aRecord instanceof ARecord;
               final String sURL2 = aRecord.rdataToString ();
               final String sURL3;
               if (bIPV4)
@@ -737,17 +748,17 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                            bVerifySignatures,
                                                                            new ISMPClientCreationCallback ()
                                                                            {
-                                                                             public void onPeppolSMPClient (@NonNull SMPClientReadOnly a)
+                                                                             public void onPeppolSMPClient (@NonNull final SMPClientReadOnly a)
                                                                              {
                                                                                aSMPClient.set (a);
                                                                              }
 
-                                                                             public void onBDXR1Client (@NonNull BDXRClientReadOnly a)
+                                                                             public void onBDXR1Client (@NonNull final BDXRClientReadOnly a)
                                                                              {
                                                                                aBDXR1Client.set (a);
                                                                              }
 
-                                                                             public void onBDXR2Client (@NonNull BDXR2ClientReadOnly a)
+                                                                             public void onBDXR2Client (@NonNull final BDXR2ClientReadOnly a)
                                                                              {
                                                                                aBDXR2Client.set (a);
                                                                              }
@@ -767,7 +778,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                                for (final var aExt : aExtensionList)
                                                                                  if (aExt.getAny () != null)
                                                                                  {
-                                                                                   if (aExt.getAny () instanceof Element aElement)
+                                                                                   if (aExt.getAny () instanceof final Element aElement)
                                                                                      aNL2.addItem (new HCPrismJS (EPrismLanguage.MARKUP).addChild (XMLWriter.getNodeAsString (aElement)));
                                                                                    else
                                                                                      aNL2.addItem (code (aExt.getAny ()
@@ -788,7 +799,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                                                            .getAny ();
                                                                                    if (aAny != null)
                                                                                    {
-                                                                                     if (aAny instanceof Element aElement)
+                                                                                     if (aAny instanceof final Element aElement)
                                                                                        aNL2.addItem (new HCPrismJS (EPrismLanguage.MARKUP).addChild (XMLWriter.getNodeAsString (aElement)));
                                                                                      else
                                                                                        aNL2.addItem (code (aAny.toString ()));
@@ -907,7 +918,6 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
       // List document type details
       if (aDocTypeIDs.isNotEmpty ())
       {
-        final OffsetDateTime aNowDateTime = PDTFactory.getCurrentOffsetDateTime ();
         final MutableInt aAPCertificateIndex = new MutableInt (0);
         final ICommonsOrderedMap <X509Certificate, String> aAllUsedAPCertifiactes = new CommonsLinkedHashMap <> ();
         final MutableInt aSMPCertificateIndex = new MutableInt (0);
@@ -1523,7 +1533,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
   @Override
   protected void fillContent (@NonNull final WebPageExecutionContext aWPEC)
   {
-    IRequestWebScopeWithoutResponse aRequestScope = aWPEC.getRequestScope ();
+    final IRequestWebScopeWithoutResponse aRequestScope = aWPEC.getRequestScope ();
     final HCNodeList aNodeList = aWPEC.getNodeList ();
     final ISMLConfigurationManager aSMLConfigurationMgr = PhotonPeppolMetaManager.getSMLConfigurationMgr ();
     final FormErrorList aFormErrors = new FormErrorList ();
