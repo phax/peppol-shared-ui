@@ -13,6 +13,9 @@ This project consists of the following modules, in dependency order:
 
 # News and Noteworthy
 
+v0.9.9 - 2025-12-14
+* Misc small improvements
+
 v0.9.8 - 2025-12-06
 * Added HR eRacun validation
 * Improved error handling in SMP query APIs
