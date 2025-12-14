@@ -66,6 +66,16 @@ public final class NiceNameDefaults
                           new NiceNameEntry ("e-FFF 3.0 CreditNote",
                                              EPeppolCodeListItemState.DEPRECATED,
                                              new CommonsArrayList <> (PIF.createProcessIdentifierWithDefaultScheme ("urn:www.cenbii.eu:profile:bii05:ver1.0"))));
+
+    // Add Croatian Document Types as well
+    DEFAULT_DOCTYPES.put ("busdox-docid-qns::urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:mfin.gov.hr:cius-2025:1.0#conformant#urn:mfin.gov.hr:ext-2025:1.0::2.1",
+                          new NiceNameEntry ("HR eRacun Invoice Extension 2025 1.0",
+                                             EPeppolCodeListItemState.ACTIVE,
+                                             new CommonsArrayList <> (PIF.createProcessIdentifierWithDefaultScheme ("urn:fdc:eracun.hr:poacc:en16931:any"))));
+    DEFAULT_DOCTYPES.put ("busdox-docid-qns::urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2::CreditNote##urn:cen.eu:en16931:2017#compliant#urn:mfin.gov.hr:cius-2025:1.0#conformant#urn:mfin.gov.hr:ext-2025:1.0::2.1",
+                          new NiceNameEntry ("HR eRacun CreditNote Extension 2025 1.0",
+                                             EPeppolCodeListItemState.ACTIVE,
+                                             new CommonsArrayList <> (PIF.createProcessIdentifierWithDefaultScheme ("urn:fdc:eracun.hr:poacc:en16931:any"))));
   }
 
   private NiceNameDefaults ()
