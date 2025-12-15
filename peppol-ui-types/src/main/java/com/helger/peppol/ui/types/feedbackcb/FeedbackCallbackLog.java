@@ -14,17 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.peppol.ui.types.minicallback;
+package com.helger.peppol.ui.types.feedbackcb;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
 
-public interface IMiniCallbackError
+public class FeedbackCallbackLog implements IFeedbackCallback
 {
-  default void error (@NonNull final String s)
+  private @NonNull final Logger m_aLogger;
+  private @NonNull final String m_sLogPrefix;
+
+  public FeedbackCallbackLog (@NonNull final Logger aLogger, @NonNull final String sLogPrefix)
   {
-    error (s, null);
+    m_aLogger = aLogger;
+    m_sLogPrefix = sLogPrefix;
   }
 
-  void error (@NonNull String s, @Nullable Exception ex);
+  public void info (@NonNull final String s)
+  {
+    m_aLogger.info (m_sLogPrefix + s);
+  }
+
+  public void warn (@NonNull final String s, @Nullable final Exception ex)
+  {
+    m_aLogger.warn (m_sLogPrefix + s, ex);
+  }
+
+  public void error (@NonNull final String s, @Nullable final Exception ex)
+  {
+    m_aLogger.error (m_sLogPrefix + s, ex);
+  }
 }

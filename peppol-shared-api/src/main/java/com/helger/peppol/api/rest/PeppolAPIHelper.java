@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.annotation.concurrent.Immutable;
+import com.helger.base.callback.exception.IExceptionCallback;
 import com.helger.base.string.StringHelper;
 import com.helger.collection.commons.CommonsLinkedHashMap;
 import com.helger.collection.commons.ICommonsOrderedMap;
@@ -39,7 +40,7 @@ import com.helger.peppol.businesscard.generic.PDBusinessCard;
 import com.helger.peppol.businesscard.helper.PDBusinessCardHelper;
 import com.helger.peppol.sml.ESMPAPIType;
 import com.helger.peppol.ui.types.PeppolUITypes;
-import com.helger.peppol.ui.types.minicallback.IMiniCallback;
+import com.helger.peppol.ui.types.feedbackcb.IFeedbackCallback;
 import com.helger.peppol.ui.types.smp.ISMPClientCreationCallback;
 import com.helger.peppol.ui.types.smp.ISMPExtensionsCallback;
 import com.helger.peppol.ui.types.smp.SMPQueryParams;
@@ -74,7 +75,8 @@ public final class PeppolAPIHelper
   public static byte [] retrieveBusinessCardBytes (@NonNull final String sLogPrefix,
                                                    @NonNull final SMPQueryParams aSMPQueryParams,
                                                    @Nullable final Consumer <? super SMPHttpClientSettings> aHCSModifier,
-                                                   @NonNull final IMiniCallback aMiniCallback)
+                                                   @NonNull final IFeedbackCallback aMiniCallback,
+                                                   @NonNull final IExceptionCallback <? super Exception> aExceptionCallback)
   {
     LOGGER.info (sLogPrefix +
                  "BusinessCard of '" +
@@ -103,6 +105,7 @@ public final class PeppolAPIHelper
     }
     catch (final Exception ex)
     {
+      aExceptionCallback.onException (ex);
       aBCBytes = null;
     }
 
@@ -116,9 +119,14 @@ public final class PeppolAPIHelper
   public static PDBusinessCard retrieveBusinessCardParsed (@NonNull final String sLogPrefix,
                                                            @NonNull final SMPQueryParams aSMPQueryParams,
                                                            @Nullable final Consumer <? super HttpClientSettings> aHCSModifier,
-                                                           @NonNull final IMiniCallback aMiniCallback)
+                                                           @NonNull final IFeedbackCallback aMiniCallback,
+                                                           @NonNull final IExceptionCallback <? super Exception> aExceptionCallback)
   {
-    final byte [] aBCBytes = retrieveBusinessCardBytes (sLogPrefix, aSMPQueryParams, aHCSModifier, aMiniCallback);
+    final byte [] aBCBytes = retrieveBusinessCardBytes (sLogPrefix,
+                                                        aSMPQueryParams,
+                                                        aHCSModifier,
+                                                        aMiniCallback,
+                                                        aExceptionCallback);
     if (aBCBytes != null)
     {
       final PDBusinessCard aBC = PDBusinessCardHelper.parseBusinessCard (aBCBytes, StandardCharsets.UTF_8);
@@ -139,9 +147,10 @@ public final class PeppolAPIHelper
                                                                               final boolean bXMLSchemaValidation,
                                                                               final boolean bVerifySignature,
                                                                               @NonNull final ISMPClientCreationCallback aSMPClientCallback,
-                                                                              @NonNull final Consumer <String> aDuplicateURLCallback,
-                                                                              @NonNull final Consumer <GenericJAXBMarshaller <?>> aSMPMarshallerCustomizer,
-                                                                              @NonNull final ISMPExtensionsCallback aExtensionCallback)
+                                                                              @NonNull final Consumer <? super String> aDuplicateURLCallback,
+                                                                              @NonNull final Consumer <? super GenericJAXBMarshaller <?>> aSMPMarshallerCustomizer,
+                                                                              @NonNull final ISMPExtensionsCallback aExtensionCallback,
+                                                                              @NonNull final IExceptionCallback <? super SMPClientException> aExceptionCallback)
   {
     final IParticipantIdentifier aParticipantID = aSMPQueryParams.getParticipantID ();
     final ESMPAPIType eAPIType = aSMPQueryParams.getSMPAPIType ();
@@ -192,6 +201,7 @@ public final class PeppolAPIHelper
         }
         catch (final SMPClientException ex)
         {
+          aExceptionCallback.onException (ex);
           aSG = null;
         }
 
@@ -245,6 +255,7 @@ public final class PeppolAPIHelper
         }
         catch (final SMPClientException ex)
         {
+          aExceptionCallback.onException (ex);
           aSG = null;
         }
 
@@ -298,6 +309,7 @@ public final class PeppolAPIHelper
         }
         catch (final SMPClientException ex)
         {
+          aExceptionCallback.onException (ex);
           aSG = null;
         }
 

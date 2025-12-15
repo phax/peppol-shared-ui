@@ -14,17 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.peppol.ui.types.minicallback;
+package com.helger.peppol.ui.types.feedbackcb;
 
 import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 
-public interface IMiniCallbackWarn
+public interface IFeedbackCallbackInfo
 {
-  default void warn (@NonNull final String s)
-  {
-    warn (s, null);
-  }
-
-  void warn (@NonNull String s, @Nullable Exception ex);
+  void info (@NonNull String s);
 }

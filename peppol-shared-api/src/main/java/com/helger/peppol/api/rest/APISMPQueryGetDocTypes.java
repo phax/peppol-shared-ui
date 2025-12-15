@@ -35,8 +35,8 @@ import com.helger.json.JsonObject;
 import com.helger.peppol.api.json.PeppolSharedSMPJsonHelper;
 import com.helger.peppol.businesscard.generic.PDBusinessCard;
 import com.helger.peppol.sml.ESMPAPIType;
+import com.helger.peppol.ui.types.feedbackcb.FeedbackCallbackLog;
 import com.helger.peppol.ui.types.mgr.PhotonPeppolMetaManager;
-import com.helger.peppol.ui.types.minicallback.MiniCallbackLog;
 import com.helger.peppol.ui.types.smlconfig.ISMLConfiguration;
 import com.helger.peppol.ui.types.smlconfig.ISMLConfigurationManager;
 import com.helger.peppol.ui.types.smp.ISMPClientCreationCallback;
@@ -140,7 +140,8 @@ public final class APISMPQueryGetDocTypes extends AbstractAPIExecutor
                                                                                                                          sHref +
                                                                                                                          "'"),
                                                                                                    m -> {},
-                                                                                                   ISMPExtensionsCallback.IGNORE);
+                                                                                                   ISMPExtensionsCallback.IGNORE,
+                                                                                                   ex -> {});
 
     IJsonObject aJson = null;
     if (aSGHrefs != null)
@@ -158,7 +159,9 @@ public final class APISMPQueryGetDocTypes extends AbstractAPIExecutor
       final PDBusinessCard aBC = PeppolAPIHelper.retrieveBusinessCardParsed (sLogPrefix,
                                                                              aSMPQueryParams,
                                                                              m_aHCSModifier,
-                                                                             new MiniCallbackLog (LOGGER, sLogPrefix));
+                                                                             new FeedbackCallbackLog (LOGGER,
+                                                                                                      sLogPrefix),
+                                                                             ex -> {});
       if (aBC != null)
       {
         // Business Card found

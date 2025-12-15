@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.peppol.ui.minicallback;
+package com.helger.peppol.ui.feedbackcb;
 
 import java.util.Locale;
 
@@ -23,17 +23,18 @@ import org.jspecify.annotations.Nullable;
 
 import com.helger.html.hc.IHCNodeWithChildren;
 import com.helger.html.hc.html.grouping.HCDiv;
-import com.helger.peppol.ui.types.minicallback.IMiniCallback;
+import com.helger.peppol.ui.types.feedbackcb.IFeedbackCallback;
 import com.helger.photon.bootstrap4.alert.BootstrapErrorBox;
 import com.helger.photon.bootstrap4.alert.BootstrapWarnBox;
 import com.helger.photon.bootstrap4.uictrls.ext.BootstrapTechnicalUI;
 
-public class MiniCallbackAddToNode implements IMiniCallback
+public class FeedbackCallbackAddToNode implements IFeedbackCallback
 {
   private @NonNull final IHCNodeWithChildren <?> m_aDestNode;
   private @NonNull final Locale m_aDisplayLocale;
 
-  public MiniCallbackAddToNode (@NonNull final IHCNodeWithChildren <?> aDestNode, @NonNull final Locale aDisplayLocale)
+  public FeedbackCallbackAddToNode (@NonNull final IHCNodeWithChildren <?> aDestNode,
+                                    @NonNull final Locale aDisplayLocale)
   {
     m_aDestNode = aDestNode;
     m_aDisplayLocale = aDisplayLocale;

@@ -30,8 +30,8 @@ import com.helger.base.timing.StopWatch;
 import com.helger.datetime.helper.PDTFactory;
 import com.helger.json.IJsonObject;
 import com.helger.peppol.businesscard.generic.PDBusinessCard;
+import com.helger.peppol.ui.types.feedbackcb.FeedbackCallbackLog;
 import com.helger.peppol.ui.types.mgr.PhotonPeppolMetaManager;
-import com.helger.peppol.ui.types.minicallback.MiniCallbackLog;
 import com.helger.peppol.ui.types.smlconfig.ISMLConfiguration;
 import com.helger.peppol.ui.types.smlconfig.ISMLConfigurationManager;
 import com.helger.peppol.ui.types.smp.SMPQueryParams;
@@ -116,7 +116,8 @@ public final class APISMPQueryGetBusinessCard extends AbstractAPIExecutor
     final PDBusinessCard aBC = PeppolAPIHelper.retrieveBusinessCardParsed (sLogPrefix,
                                                                            aSMPQueryParams,
                                                                            m_aHCSModifier,
-                                                                           new MiniCallbackLog (LOGGER, sLogPrefix));
+                                                                           new FeedbackCallbackLog (LOGGER, sLogPrefix),
+                                                                           ex -> {});
     final IJsonObject aBCJson = aBC == null ? null : aBC.getAsJson ();
 
     aSW.stop ();

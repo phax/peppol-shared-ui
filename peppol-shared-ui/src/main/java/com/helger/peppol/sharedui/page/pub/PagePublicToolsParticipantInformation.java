@@ -109,7 +109,7 @@ import com.helger.peppol.sml.ESMPAPIType;
 import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppol.smp.ESMPTransportProfileState;
 import com.helger.peppol.ui.CertificateUI;
-import com.helger.peppol.ui.minicallback.MiniCallbackAddToNode;
+import com.helger.peppol.ui.feedbackcb.FeedbackCallbackAddToNode;
 import com.helger.peppol.ui.nicename.NiceNameUI;
 import com.helger.peppol.ui.smlconfig.ui.SMLConfigurationSelect;
 import com.helger.peppol.ui.types.PeppolUITypes;
@@ -488,10 +488,14 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
         }
       }
 
+      final IParticipantIdentifier aParticipantID = aSMPQueryParams.getParticipantID ();
+      final URL aSMPHost = URLHelper.getAsURL (aSMPQueryParams.getSMPHostURI ());
+      final ESMPAPIType eAPIType = aSMPQueryParams.getSMPAPIType ();
+
       LOGGER.info ("Participant information of '" +
                    sParticipantIDUriEncoded +
                    "' is queried using SMP API '" +
-                   aSMPQueryParams.getSMPAPIType () +
+                   eAPIType +
                    "' from '" +
                    aSMPQueryParams.getSMPHostURI () +
                    "' using SML '" +
@@ -500,9 +504,6 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                    bXSDValidation +
                    "; verify signatures=" +
                    bVerifySignatures);
-
-      final IParticipantIdentifier aParticipantID = aSMPQueryParams.getParticipantID ();
-      final URL aSMPHost = URLHelper.getAsURL (aSMPQueryParams.getSMPHostURI ());
 
       {
         if (LOGGER.isDebugEnabled ())
@@ -518,11 +519,11 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                        .addChild (" ")
                                        .addChild (aSMPQueryParams.isProductionSML () ? badgeSuccess ("production SML")
                                                                                      : badgeWarn ("test SML")));
-        aUL.addItem (div ("Query API: ").addChild (code (aSMPQueryParams.getSMPAPIType ().getDisplayName ())));
+        aUL.addItem (div ("Query API: ").addChild (code (eAPIType.getDisplayName ())));
 
         final String sURL1 = aSMPHost.toExternalForm ();
         IHCNode aResolvedNameSuffix = null;
-        switch (aSMPQueryParams.getSMPAPIType ())
+        switch (eAPIType)
         {
           case PEPPOL:
             // Only if NAPTR is used
@@ -736,6 +737,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
         };
         final HCOL aSGOL = new HCOL ();
         final Wrapper <IHCNode> aSGExtensionNode = new Wrapper <> ();
+        final SMPExceptionHandler aExceptionHandler = new SMPExceptionHandler (eAPIType);
 
         try
         {
@@ -775,23 +777,23 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
 
                                                                              public void onBDXR1Extension (@NonNull final List <com.helger.xsds.bdxr.smp1.@NonNull ExtensionType> aExtensionList)
                                                                              {
-                                                                               final HCUL aNL2 = new HCUL ();
+                                                                               final HCUL aUL = new HCUL ();
                                                                                for (final var aExt : aExtensionList)
                                                                                  if (aExt.getAny () != null)
                                                                                  {
                                                                                    if (aExt.getAny () instanceof final Element aElement)
-                                                                                     aNL2.addItem (new HCPrismJS (EPrismLanguage.MARKUP).addChild (XMLWriter.getNodeAsString (aElement)));
+                                                                                     aUL.addItem (new HCPrismJS (EPrismLanguage.MARKUP).addChild (XMLWriter.getNodeAsString (aElement)));
                                                                                    else
-                                                                                     aNL2.addItem (code (aExt.getAny ()
-                                                                                                             .toString ()));
+                                                                                     aUL.addItem (code (aExt.getAny ()
+                                                                                                            .toString ()));
                                                                                  }
-                                                                               if (aNL2.hasChildren ())
-                                                                                 aSGExtensionNode.set (aNL2);
+                                                                               if (aUL.hasChildren ())
+                                                                                 aSGExtensionNode.set (aUL);
                                                                              }
 
                                                                              public void onBDXR2Extension (@NonNull final List <com.helger.xsds.bdxr.smp2.ec.@NonNull SMPExtensionType> aExtensionList)
                                                                              {
-                                                                               final HCUL aNL2 = new HCUL ();
+                                                                               final HCUL aUL = new HCUL ();
                                                                                for (final var aExt : aExtensionList)
                                                                                  if (aExt.getExtensionContent () !=
                                                                                      null)
@@ -801,15 +803,16 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                                    if (aAny != null)
                                                                                    {
                                                                                      if (aAny instanceof final Element aElement)
-                                                                                       aNL2.addItem (new HCPrismJS (EPrismLanguage.MARKUP).addChild (XMLWriter.getNodeAsString (aElement)));
+                                                                                       aUL.addItem (new HCPrismJS (EPrismLanguage.MARKUP).addChild (XMLWriter.getNodeAsString (aElement)));
                                                                                      else
-                                                                                       aNL2.addItem (code (aAny.toString ()));
+                                                                                       aUL.addItem (code (aAny.toString ()));
                                                                                    }
                                                                                  }
-                                                                               if (aNL2.hasChildren ())
-                                                                                 aSGExtensionNode.set (aNL2);
+                                                                               if (aUL.hasChildren ())
+                                                                                 aSGExtensionNode.set (aUL);
                                                                              }
-                                                                           });
+                                                                           },
+                                                                           aExceptionHandler);
           // Sort for consistency
           final ICommonsSortedMap <String, String> aSortedHrefs = aOrigHrefs == null ? new CommonsTreeMap <> ()
                                                                                      : new CommonsTreeMap <> (aOrigHrefs);
@@ -826,6 +829,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
           if (bShowTime)
             aH3.addChild (" ").addChild (_createTimingNode (aSWGetDocTypes.getMillis ()));
           aNodeList.addChild (aH3);
+
           final String sPathStart1 = "/" + aParticipantID.getURIEncoded () + "/services/";
           final String sPathStart2 = "/" + aParticipantID.getURIPercentEncoded () + "/services/";
 
@@ -848,6 +852,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
 
             if (nPathStart >= 0)
             {
+              // Okay, the URL looks good
               final String sDocType = sHref.substring (nPathStart + nPathStartLength);
               final IDocumentTypeIdentifier aDocType = aSMPQueryParams.getIF ().parseDocumentTypeIdentifier (sDocType);
               if (aDocType != null)
@@ -879,6 +884,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
             }
             else
             {
+              // The provided URL is bogus
               aLI.addChild (error ().addChildren (div ("Contained href does not match the rules!"),
                                                   div ("Found href: ").addChild (code (sHref)),
                                                   div ("Expected path part: ").addChild (code (sPathStart1))
@@ -893,10 +899,16 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                       .addChild ("."),
                                                 div ("This means the participant is registered but has no receiving capabilities.")));
           }
-          if (aSGExtensionNode.isSet ())
-            aSGOL.addAndReturnItem (div ("Extension: ")).addChild (aSGExtensionNode.get ());
 
           aNodeList.addChild (aSGOL);
+
+          // Put Extension outside of ordered list
+          if (aSGExtensionNode.isSet ())
+            aNodeList.addChild (div ("Extension: ").addChild (aSGExtensionNode.get ()));
+
+          // Show error box (if any)
+          if (aExceptionHandler.hasResultNode ())
+            aNodeList.addChild (aExceptionHandler.getResultNode ());
         }
         catch (final RuntimeException ex)
         {
@@ -941,7 +953,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
           final StopWatch aSWGetDetails = StopWatch.createdStarted ();
           try
           {
-            switch (aSMPQueryParams.getSMPAPIType ())
+            switch (eAPIType)
             {
               case PEPPOL:
               {
@@ -1235,7 +1247,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                                        aNowDateTime,
                                                                                        aDisplayLocale));
 
-                if (aSMPQueryParams.getSMPAPIType () == ESMPAPIType.PEPPOL)
+                if (eAPIType == ESMPAPIType.PEPPOL)
                 {
                   // Check Peppol certificate status
                   // * Do not cache
@@ -1305,7 +1317,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                                        aNowDateTime,
                                                                                        aDisplayLocale));
 
-                if (aSMPQueryParams.getSMPAPIType () == ESMPAPIType.PEPPOL)
+                if (eAPIType == ESMPAPIType.PEPPOL)
                 {
                   // Check Peppol certificate status
                   // * Do not cache
@@ -1345,11 +1357,13 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
         final StopWatch aSWGetBC = StopWatch.createdStarted ();
         aNodeList.addChild (h3 ("Business Card details"));
 
+        final SMPExceptionHandler aExceptionHandler = new SMPExceptionHandler (eAPIType);
         final byte [] aBCBytes = PeppolAPIHelper.retrieveBusinessCardBytes ("",
                                                                             aSMPQueryParams,
                                                                             aHCSModifier,
-                                                                            new MiniCallbackAddToNode (aNodeList,
-                                                                                                       aDisplayLocale));
+                                                                            new FeedbackCallbackAddToNode (aNodeList,
+                                                                                                           aDisplayLocale),
+                                                                            aExceptionHandler);
         aSWGetBC.stop ();
 
         if (aBCBytes != null)
@@ -1503,14 +1517,18 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
               aNodeList.addChild (aUL);
             }
         }
+        else
+        {
+          // Show error box (if any)
+          if (aExceptionHandler.hasResultNode ())
+            aNodeList.addChild (aExceptionHandler.getResultNode ());
+        }
       }
 
       // Audit success
       AuditHelper.onAuditExecuteSuccess ("participant-information", aParticipantID.getURIEncoded ());
     }
-    catch (
-
-    final RuntimeException ex)
+    catch (final RuntimeException ex)
     {
       LOGGER.debug ("Participant Information Error", ex);
 

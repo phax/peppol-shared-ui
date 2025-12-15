@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.peppol.ui.types.minicallback;
+package com.helger.peppol.ui.types.feedbackcb;
 
-public interface IMiniCallback extends IMiniCallbackInfo, IMiniCallbackWarn, IMiniCallbackError
+public interface IFeedbackCallback extends IFeedbackCallbackInfo, IFeedbackCallbackWarn, IFeedbackCallbackError
 {
   // empty
 }
