@@ -21,7 +21,7 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
-import java.security.cert.CertificateException; 
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -206,7 +206,8 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
   public static String getSchemeHelpText (@Nullable final String sPIValue)
   {
     if (StringHelper.isNotEmpty (sPIValue))
-      LOGGER.info ("Getting details from '" + sPIValue + "'");
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("Getting PI scheme details from '" + sPIValue + "'");
 
     if (StringHelper.getLength (sPIValue) < 4)
       return "";
