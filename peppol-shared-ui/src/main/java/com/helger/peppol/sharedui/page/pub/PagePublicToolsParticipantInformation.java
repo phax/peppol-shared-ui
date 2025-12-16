@@ -21,7 +21,6 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -154,7 +153,7 @@ import com.helger.photon.uicore.page.WebPageExecutionContext;
 import com.helger.photon.uictrls.famfam.EFamFamFlagIcon;
 import com.helger.photon.uictrls.prism.EPrismLanguage;
 import com.helger.photon.uictrls.prism.HCPrismJS;
-import com.helger.security.certificate.CertificateHelper;
+import com.helger.security.certificate.CertificateDecodeHelper;
 import com.helger.security.certificate.ECertificateCheckResult;
 import com.helger.security.certificate.TrustedCAChecker;
 import com.helger.smpclient.bdxr1.BDXRClientReadOnly;
@@ -1031,7 +1030,9 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                          aEndpoint.getTechnicalContactUrl ());
 
                           // Certificate (also add null values)
-                          final X509Certificate aAPCert = CertificateHelper.convertStringToCertficateOrNull (aEndpoint.getCertificate ());
+                          final X509Certificate aAPCert = new CertificateDecodeHelper ().source (aEndpoint.getCertificate ())
+                                                                                        .pemEncoded (true)
+                                                                                        .getDecodedOrNull ();
                           final String sAPCertIndex = aAllUsedAPCertifiactes.computeIfAbsent (aAPCert,
                                                                                               k -> Integer.toString (aAPCertificateIndex.incAndGet ()));
                           if (aAPCert != null)
@@ -1106,15 +1107,9 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                          aEndpoint.getTechnicalContactUrl ());
 
                           // Certificate (also add null values)
-                          X509Certificate aAPCert;
-                          try
-                          {
-                            aAPCert = CertificateHelper.convertByteArrayToCertficateDirect (aEndpoint.getCertificate ());
-                          }
-                          catch (final CertificateException ex)
-                          {
-                            aAPCert = null;
-                          }
+                          final X509Certificate aAPCert = new CertificateDecodeHelper ().source (aEndpoint.getCertificate ())
+                                                                                        .pemEncoded (false)
+                                                                                        .getDecodedOrNull ();
                           final String sAPCertIndex = aAllUsedAPCertifiactes.computeIfAbsent (aAPCert,
                                                                                               k -> Integer.toString (aAPCertificateIndex.incAndGet ()));
                           if (aAPCert != null)

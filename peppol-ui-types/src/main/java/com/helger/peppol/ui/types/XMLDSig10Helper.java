@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.base.enforce.ValueEnforcer;
-import com.helger.security.certificate.CertificateHelper;
+import com.helger.security.certificate.CertificateDecodeHelper;
 import com.helger.xsds.xmldsig.KeyInfoType;
 import com.helger.xsds.xmldsig.SignatureType;
 import com.helger.xsds.xmldsig.X509DataType;
@@ -101,9 +101,9 @@ public final class XMLDSig10Helper
     try
     {
       // Parse certificate
-      return CertificateHelper.convertByteArrayToCertficateDirect (aCertBytes);
+      return new CertificateDecodeHelper ().source (aCertBytes).pemEncoded (false).getDecodedOrThrow ();
     }
-    catch (final CertificateException ex)
+    catch (final IllegalArgumentException | CertificateException ex)
     {
       // Fall through
       LOGGER.warn ("Failed to parse Signature-provided X509 Certificate. Technical Details: " +

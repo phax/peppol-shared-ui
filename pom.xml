@@ -63,7 +63,7 @@
   </developers>
   
   <properties>
-    <phase4.version>4.2.0</phase4.version>
+    <phase4.version>4.2.1</phase4.version>
     <phive-rules.version>4.1.2</phive-rules.version>
     <ddd.version>0.8.1</ddd.version>
   </properties>
@@ -73,7 +73,7 @@
       <dependency>
         <groupId>com.helger.commons</groupId>
         <artifactId>ph-commons-parent-pom</artifactId>
-        <version>12.1.0</version>
+        <version>12.1.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -122,7 +122,7 @@
       <dependency>
         <groupId>com.helger.peppol</groupId>
         <artifactId>peppol-commons-parent-pom</artifactId>
-        <version>12.3.2</version>
+        <version>12.3.3</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
