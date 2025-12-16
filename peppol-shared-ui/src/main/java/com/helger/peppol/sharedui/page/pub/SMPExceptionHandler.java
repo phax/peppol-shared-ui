@@ -8,6 +8,7 @@ import com.helger.base.CGlobal;
 import com.helger.base.callback.exception.IExceptionCallback;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.html.hc.IHCNode;
+import com.helger.html.hc.html.grouping.HCDiv;
 import com.helger.http.CHttp;
 import com.helger.peppol.sml.ESMPAPIType;
 import com.helger.photon.bootstrap4.alert.BootstrapErrorBox;
@@ -29,6 +30,7 @@ final class SMPExceptionHandler implements IExceptionCallback <Exception>
   {
     int nStatusCode = CGlobal.ILLEGAL_UINT;
     boolean bIsError = true;
+    boolean bIsDirectoryQuery = false;
     if (ex instanceof final SMPClientHttpException schex)
     {
       // SMP client
@@ -39,6 +41,8 @@ final class SMPExceptionHandler implements IExceptionCallback <Exception>
       {
         // Business Card query
         nStatusCode = hrex.getStatusCode ();
+        bIsDirectoryQuery = true;
+
         if (nStatusCode == CHttp.HTTP_NOT_FOUND)
         {
           // This is expected and handled via the UI
@@ -62,8 +66,18 @@ final class SMPExceptionHandler implements IExceptionCallback <Exception>
     else
     {
       if (bIsError)
-        m_aHCNode = new BootstrapErrorBox ().addChild ("Technical error occurred while querying the SMP. Technical details: " +
-                                                       ex.getMessage ());
+      {
+        final String sTechnicalDetails = ex.getMessage ();
+        final BootstrapErrorBox aErrBox = new BootstrapErrorBox ().addChildren (new HCDiv ().addChild ("Technical error occurred while querying the SMP."),
+                                                                          new HCDiv ().addChild ("Technical details: " +
+                                                                                                 sTechnicalDetails));
+        if (bIsDirectoryQuery &&
+            sTechnicalDetails.contains ("unable to find valid certification path to requested target"))
+        {
+          aErrBox.addChild (new HCDiv ().addChild ("The error most likely stems from an outdated trusted certificate list on my end - don't worry too much."));
+        }
+        m_aHCNode = aErrBox;
+      }
     }
   }
 
