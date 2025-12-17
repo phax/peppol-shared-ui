@@ -140,6 +140,31 @@ public final class PeppolAPIHelper
     return null;
   }
 
+  /**
+   * Get all document types of a participant
+   *
+   * @param sLogPrefix
+   *        Log prefix
+   * @param aSMPQueryParams
+   *        SMP query parameters
+   * @param aHCSModifier
+   *        Optional HTTP Client settings modifier callback
+   * @param bXMLSchemaValidation
+   *        <code>true</code> to enable XML Schema validation (recommended)
+   * @param bVerifySignature
+   *        <code>true</code> to perform signature validation (recommended)
+   * @param aSMPClientCallback
+   *        The SMP client modification callback
+   * @param aDuplicateURLCallback
+   *        The Duplicate URL collector callback. Will be called with URL decoded URLs only
+   * @param aSMPMarshallerCustomizer
+   *        Optional SMP marshaller customizing callback
+   * @param aExtensionCallback
+   *        Callback to be invoked on SMP extensions.
+   * @param aExceptionCallback
+   *        Callback to be invoked on SMP exceptions
+   * @return A map from clean (URL unescaped) URL to the original URL as found in the data
+   */
   @Nullable
   public static ICommonsOrderedMap <String, String> retrieveAllDocumentTypes (@NonNull final String sLogPrefix,
                                                                               @NonNull final SMPQueryParams aSMPQueryParams,
@@ -213,10 +238,11 @@ public final class PeppolAPIHelper
             ret = new CommonsLinkedHashMap <> ();
             for (final var aSMR : aSG.getServiceMetadataReferenceCollection ().getServiceMetadataReference ())
             {
+              final String sOriginalHref = aSMR.getHref ();
               // Decoded href is important for unification
-              final String sHref = CIdentifier.createPercentDecoded (aSMR.getHref ());
-              if (ret.put (sHref, aSMR.getHref ()) != null)
-                aDuplicateURLCallback.accept (sHref);
+              final String sCleanHref = CIdentifier.createPercentDecoded (sOriginalHref);
+              if (ret.put (sCleanHref, sOriginalHref) != null)
+                aDuplicateURLCallback.accept (sCleanHref);
             }
           }
 
@@ -267,10 +293,11 @@ public final class PeppolAPIHelper
             ret = new CommonsLinkedHashMap <> ();
             for (final var aSMR : aSG.getServiceMetadataReferenceCollection ().getServiceMetadataReference ())
             {
+              final String sOriginalHref = aSMR.getHref ();
               // Decoded href is important for unification
-              final String sHref = CIdentifier.createPercentDecoded (aSMR.getHref ());
-              if (ret.put (sHref, aSMR.getHref ()) != null)
-                aDuplicateURLCallback.accept (sHref);
+              final String sCleanHref = CIdentifier.createPercentDecoded (sOriginalHref);
+              if (ret.put (sCleanHref, sOriginalHref) != null)
+                aDuplicateURLCallback.accept (sCleanHref);
             }
           }
 
@@ -326,17 +353,18 @@ public final class PeppolAPIHelper
               if (aDocTypeID != null)
               {
                 // Found a document type
-                final String sHref = aSMPQueryParams.getSMPHostURI () +
-                                     "/" +
-                                     BDXR2ClientReadOnly.PATH_OASIS_BDXR_SMP_2 +
-                                     aParticipantID.getURIPercentEncoded () +
-                                     "/" +
-                                     BDXR2ClientReadOnly.URL_PART_SERVICES +
-                                     "/" +
-                                     CIdentifier.getURIPercentEncoded (aDocTypeID);
+                final String sOriginalHref = aSMPQueryParams.getSMPHostURI ().toString () +
+                                             '/' +
+                                             BDXR2ClientReadOnly.PATH_OASIS_BDXR_SMP_2 +
+                                             aParticipantID.getURIPercentEncoded () +
+                                             '/' +
+                                             BDXR2ClientReadOnly.URL_PART_SERVICES +
+                                             '/' +
+                                             CIdentifier.getURIPercentEncoded (aDocTypeID);
                 // Decoded href is important for unification
-                if (ret.put (sHref, sHref) != null)
-                  aDuplicateURLCallback.accept (sHref);
+                final String sCleanHref = CIdentifier.createPercentDecoded (sOriginalHref);
+                if (ret.put (sCleanHref, sOriginalHref) != null)
+                  aDuplicateURLCallback.accept (sCleanHref);
               }
             }
           }

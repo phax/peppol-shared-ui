@@ -812,7 +812,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                              }
                                                                            },
                                                                            aExceptionHandler);
-          // Sort for consistency
+          // Sort for consistency by "clean href"
           final ICommonsSortedMap <String, String> aSortedHrefs = aOrigHrefs == null ? new CommonsTreeMap <> ()
                                                                                      : new CommonsTreeMap <> (aOrigHrefs);
 
@@ -835,24 +835,24 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
           // Show all ServiceGroup hrefs
           for (final var aEntry : aSortedHrefs.entrySet ())
           {
-            final String sHref = aEntry.getKey ();
+            final String sCleanHref = aEntry.getKey ();
             final String sOriginalHref = aEntry.getValue ();
 
             final HCLI aLI = aSGOL.addItem ();
             // Should be case insensitive "indexOf" here
             int nPathStartLength = sPathStart1.length ();
-            int nPathStart = sHref.toLowerCase (Locale.US).indexOf (sPathStart1.toLowerCase (Locale.US));
+            int nPathStart = sCleanHref.toLowerCase (Locale.US).indexOf (sPathStart1.toLowerCase (Locale.US));
             if (nPathStart < 0)
             {
               // Try the version with URL encoded participants
               nPathStartLength = sPathStart2.length ();
-              nPathStart = sHref.toLowerCase (Locale.US).indexOf (sPathStart2.toLowerCase (Locale.US));
+              nPathStart = sCleanHref.toLowerCase (Locale.US).indexOf (sPathStart2.toLowerCase (Locale.US));
             }
 
             if (nPathStart >= 0)
             {
               // Okay, the URL looks good
-              final String sDocType = sHref.substring (nPathStart + nPathStartLength);
+              final String sDocType = sCleanHref.substring (nPathStart + nPathStartLength);
               final IDocumentTypeIdentifier aDocType = aSMPQueryParams.getIF ().parseDocumentTypeIdentifier (sDocType);
               if (aDocType != null)
               {
@@ -864,7 +864,8 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                                                                                 .addClass (CBootstrapCSS.ML_3)
                                                                                                                                 .addClass (CBootstrapCSS.MY_1));
                 final HCDiv aDetailsDiv = aLI.addAndReturnChild (div ());
-                aDetailsDiv.addChild (div ("URL: ").addChild (code (sHref)));
+                // Make sure the URL can be copied
+                aDetailsDiv.addChild (div ("URL: ").addChild (code (sOriginalHref)));
                 aDetailsDiv.addChild (div ("Document Type ID: ").addChild (code (aDocType.getURIEncoded ())));
                 aDetailsDiv.addChild (div (_createOpenInBrowser (sOriginalHref)));
                 BootstrapCollapseHelper.makeCollapsible (aToggle, aDetailsDiv);
@@ -876,7 +877,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                 if (aSimpleDocType != null)
                   aDocTypeIDs.add (aSimpleDocType);
 
-                aLI.addChild (div (code (sHref)));
+                aLI.addChild (div (code (sCleanHref)));
                 aLI.addChild (error ("The document type ").addChild (code (sDocType))
                                                           .addChild (" could not be interpreted as a structured document type!"));
               }
@@ -885,7 +886,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
             {
               // The provided URL is bogus
               aLI.addChild (error ().addChildren (div ("Contained href does not match the rules!"),
-                                                  div ("Found href: ").addChild (code (sHref)),
+                                                  div ("Found href: ").addChild (code (sCleanHref)),
                                                   div ("Expected path part: ").addChild (code (sPathStart1))
                                                                               .addChild (" or ")
                                                                               .addChild (code (sPathStart2))));
