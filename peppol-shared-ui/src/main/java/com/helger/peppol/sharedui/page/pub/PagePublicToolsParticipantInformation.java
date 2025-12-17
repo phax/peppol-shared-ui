@@ -243,6 +243,21 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
     m_sUserAgent = sUserAgent;
   }
 
+  @Nullable
+  public String getHeaderText (@NonNull final WebPageExecutionContext aWPEC)
+  {
+    final StringBuilder ret = new StringBuilder ().append (super.getHeaderText (aWPEC));
+    if (aWPEC.hasAction (CPageParam.ACTION_PERFORM))
+    {
+      ret.append (" [")
+         .append (aWPEC.params ().getAsString (FIELD_ID_SCHEME, "").trim ())
+         .append (':')
+         .append (aWPEC.params ().getAsString (FIELD_ID_VALUE, "").trim ())
+         .append (']');
+    }
+    return ret.toString ();
+  }
+
   @NonNull
   private static BootstrapLinkButton _createOpenInBrowser (@NonNull final String sURL)
   {
