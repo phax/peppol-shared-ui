@@ -24,8 +24,12 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.annotation.Nonempty;
 import com.helger.base.string.StringHelper;
+import com.helger.base.string.StringImplode;
 import com.helger.base.string.StringRemove;
 import com.helger.cache.regex.RegExHelper;
+import com.helger.collection.commons.CommonsLinkedHashSet;
+import com.helger.collection.commons.ICommonsCollection;
+import com.helger.collection.commons.ICommonsOrderedSet;
 import com.helger.html.hc.IHCNode;
 import com.helger.html.hc.html.forms.EHCFormMethod;
 import com.helger.html.hc.html.forms.HCEdit;
@@ -80,89 +84,98 @@ public class PagePublicToolsParticipantCheckBelgium extends AbstractAppWebPage
     return new BootstrapLinkButton ().addChild ("Peppol Directory Lookup").setHref (aDirectoryURL).setTargetBlank ();
   }
 
-  private void _checkParticipant (@NonNull final WebPageExecutionContext aWPEC,
-                                  @NonNull final String sParticipantIDValue)
+  private void _checkParticipants (@NonNull final WebPageExecutionContext aWPEC,
+                                   @NonNull final ICommonsCollection <String> aParticipantIDs)
   {
     final HCNodeList aNodeList = aWPEC.getNodeList ();
     final ISMLConfigurationManager aSMLConfigurationMgr = PhotonPeppolMetaManager.getSMLConfigurationMgr ();
 
-    LOGGER.info ("Performing Belgium Participant Check for '" + sParticipantIDValue + "'");
+    if (aParticipantIDs.size () > 1)
+      aNodeList.addChild (div ("Now checking " + aParticipantIDs.size () + " different values"));
 
-    if (!VATINSyntaxChecker.isValidVATIN_BE (sParticipantIDValue))
-      aNodeList.addChild (warn ("The CBE number '" +
-                                sParticipantIDValue +
-                                "' does not seem to match the syntax requirements (length 10, start with 0 or 1, mod97 check digit)"));
-
-    final ISMLConfiguration aSMLConfiguration = aSMLConfigurationMgr.getSMLInfoOfID (ESML.DIGIT_PRODUCTION.getID ());
-
-    // 0208 does not use prefix
-    final SMPQueryParams aSMPQP_CBE = SMPQueryParams.createForSMLOrNull (aSMLConfiguration,
-                                                                         PeppolIdentifierHelper.DEFAULT_PARTICIPANT_SCHEME,
-                                                                         "0208:" + sParticipantIDValue,
-                                                                         false);
-    final boolean bIsCBE = aSMPQP_CBE == null ? false : aSMPQP_CBE.isSMPRegisteredInDNS ();
-
-    // 9925 uses prefix
-    final SMPQueryParams aSMPQP_VAT = SMPQueryParams.createForSMLOrNull (aSMLConfiguration,
-                                                                         PeppolIdentifierHelper.DEFAULT_PARTICIPANT_SCHEME,
-                                                                         "9925:be" + sParticipantIDValue,
-                                                                         false);
-    final boolean bIsVAT = aSMPQP_VAT == null ? false : aSMPQP_VAT.isSMPRegisteredInDNS ();
-
-    if (bIsCBE || bIsVAT)
+    for (final String sParticipantIDValue : aParticipantIDs)
     {
-      if (bIsCBE)
+      LOGGER.info ("Performing Belgium Participant Check for '" + sParticipantIDValue + "'");
+
+      if (aParticipantIDs.size () > 1)
+        aNodeList.addChild (h2 (code (sParticipantIDValue)));
+
+      if (!VATINSyntaxChecker.isValidVATIN_BE (sParticipantIDValue))
+        aNodeList.addChild (warn ("The CBE number '" +
+                                  sParticipantIDValue +
+                                  "' does not seem to match the syntax requirements (length 10, start with 0 or 1, mod97 check digit)"));
+
+      final ISMLConfiguration aSMLConfiguration = aSMLConfigurationMgr.getSMLInfoOfID (ESML.DIGIT_PRODUCTION.getID ());
+
+      // 0208 does not use prefix
+      final SMPQueryParams aSMPQP_CBE = SMPQueryParams.createForSMLOrNull (aSMLConfiguration,
+                                                                           PeppolIdentifierHelper.DEFAULT_PARTICIPANT_SCHEME,
+                                                                           "0208:" + sParticipantIDValue,
+                                                                           false);
+      final boolean bIsCBE = aSMPQP_CBE == null ? false : aSMPQP_CBE.isSMPRegisteredInDNS ();
+
+      // 9925 uses prefix
+      final SMPQueryParams aSMPQP_VAT = SMPQueryParams.createForSMLOrNull (aSMLConfiguration,
+                                                                           PeppolIdentifierHelper.DEFAULT_PARTICIPANT_SCHEME,
+                                                                           "9925:be" + sParticipantIDValue,
+                                                                           false);
+      final boolean bIsVAT = aSMPQP_VAT == null ? false : aSMPQP_VAT.isSMPRegisteredInDNS ();
+
+      if (bIsCBE || bIsVAT)
       {
-        final IParticipantIdentifier aPID = aSMPQP_CBE.getParticipantID ();
-        aNodeList.addChild (success ("The Belgium Enterprise is registered in the Peppol Production Network with their CBE number and the Participant ID ").addChild (code (aPID.getURIEncoded ())));
+        if (bIsCBE)
+        {
+          final IParticipantIdentifier aPID = aSMPQP_CBE.getParticipantID ();
+          aNodeList.addChild (success ("The Belgium Enterprise is registered in the Peppol Production Network with their CBE number and the Participant ID ").addChild (code (aPID.getURIEncoded ())));
 
-        final BootstrapButtonToolbar aToolbar = new BootstrapButtonToolbar (aWPEC);
-        aToolbar.addChild (new BootstrapButton ().addChild ("Participant Information")
-                                                 .setIcon (EFamFamIcon.USER_GREEN)
-                                                 .setOnClick (aWPEC.getLinkToMenuItem (CSharedUIMenuPublic.MENU_TOOLS_PARTICIPANT_INFO)
-                                                                   .add (PagePublicToolsParticipantInformation.FIELD_ID_SCHEME,
-                                                                         aPID.getScheme ())
-                                                                   .add (PagePublicToolsParticipantInformation.FIELD_ID_VALUE,
-                                                                         aPID.getValue ())
-                                                                   .add (PagePublicToolsParticipantInformation.FIELD_SML,
-                                                                         aSMLConfiguration.getID ())
-                                                                   .add (PagePublicToolsParticipantInformation.PARAM_QUERY_BUSINESS_CARD,
-                                                                         true)
-                                                                   .add (PagePublicToolsParticipantInformation.PARAM_VERIFY_SIGNATURES,
-                                                                         true)
-                                                                   .add (PagePublicToolsParticipantInformation.PARAM_XSD_VALIDATION,
-                                                                         true)
-                                                                   .add (CPageParam.PARAM_ACTION,
-                                                                         CPageParam.ACTION_PERFORM)));
+          final BootstrapButtonToolbar aToolbar = new BootstrapButtonToolbar (aWPEC);
+          aToolbar.addChild (new BootstrapButton ().addChild ("Participant Information")
+                                                   .setIcon (EFamFamIcon.USER_GREEN)
+                                                   .setOnClick (aWPEC.getLinkToMenuItem (CSharedUIMenuPublic.MENU_TOOLS_PARTICIPANT_INFO)
+                                                                     .add (PagePublicToolsParticipantInformation.FIELD_ID_SCHEME,
+                                                                           aPID.getScheme ())
+                                                                     .add (PagePublicToolsParticipantInformation.FIELD_ID_VALUE,
+                                                                           aPID.getValue ())
+                                                                     .add (PagePublicToolsParticipantInformation.FIELD_SML,
+                                                                           aSMLConfiguration.getID ())
+                                                                     .add (PagePublicToolsParticipantInformation.PARAM_QUERY_BUSINESS_CARD,
+                                                                           true)
+                                                                     .add (PagePublicToolsParticipantInformation.PARAM_VERIFY_SIGNATURES,
+                                                                           true)
+                                                                     .add (PagePublicToolsParticipantInformation.PARAM_XSD_VALIDATION,
+                                                                           true)
+                                                                     .add (CPageParam.PARAM_ACTION,
+                                                                           CPageParam.ACTION_PERFORM)));
 
-        aToolbar.addChild (createPeppolDirectoryButton (aPID));
-        aNodeList.addChild (aToolbar);
+          aToolbar.addChild (createPeppolDirectoryButton (aPID));
+          aNodeList.addChild (aToolbar);
+        }
+        if (bIsVAT)
+        {
+          final IParticipantIdentifier aPID = aSMPQP_VAT.getParticipantID ();
+          aNodeList.addChild (success ("The Belgium Enterprise is registered in the Peppol Production Network with their VATIN and the Participant ID ").addChild (code (aPID.getURIEncoded ())));
+
+          final BootstrapButtonToolbar aToolbar = new BootstrapButtonToolbar (aWPEC);
+          aToolbar.addChild (new BootstrapButton ().addChild ("Participant Information")
+                                                   .setIcon (EFamFamIcon.USER_GREEN)
+                                                   .setOnClick (aWPEC.getLinkToMenuItem (CSharedUIMenuPublic.MENU_TOOLS_PARTICIPANT_INFO)
+                                                                     .add (PagePublicToolsParticipantInformation.FIELD_ID_SCHEME,
+                                                                           aPID.getScheme ())
+                                                                     .add (PagePublicToolsParticipantInformation.FIELD_ID_VALUE,
+                                                                           aPID.getValue ())
+                                                                     .add (PagePublicToolsParticipantInformation.FIELD_SML,
+                                                                           aSMLConfiguration.getID ())
+                                                                     .add (CPageParam.PARAM_ACTION,
+                                                                           CPageParam.ACTION_PERFORM)));
+
+          aToolbar.addChild (createPeppolDirectoryButton (aPID));
+          aNodeList.addChild (aToolbar);
+        }
       }
-      if (bIsVAT)
+      else
       {
-        final IParticipantIdentifier aPID = aSMPQP_VAT.getParticipantID ();
-        aNodeList.addChild (success ("The Belgium Enterprise is registered in the Peppol Production Network with their VATIN and the Participant ID ").addChild (code (aPID.getURIEncoded ())));
-
-        final BootstrapButtonToolbar aToolbar = new BootstrapButtonToolbar (aWPEC);
-        aToolbar.addChild (new BootstrapButton ().addChild ("Participant Information")
-                                                 .setIcon (EFamFamIcon.USER_GREEN)
-                                                 .setOnClick (aWPEC.getLinkToMenuItem (CSharedUIMenuPublic.MENU_TOOLS_PARTICIPANT_INFO)
-                                                                   .add (PagePublicToolsParticipantInformation.FIELD_ID_SCHEME,
-                                                                         aPID.getScheme ())
-                                                                   .add (PagePublicToolsParticipantInformation.FIELD_ID_VALUE,
-                                                                         aPID.getValue ())
-                                                                   .add (PagePublicToolsParticipantInformation.FIELD_SML,
-                                                                         aSMLConfiguration.getID ())
-                                                                   .add (CPageParam.PARAM_ACTION,
-                                                                         CPageParam.ACTION_PERFORM)));
-
-        aToolbar.addChild (createPeppolDirectoryButton (aPID));
-        aNodeList.addChild (aToolbar);
+        aNodeList.addChild (error ("The Belgium Enterprise was not found in the Peppol Production Network - neither with the CBE number nor with the VAT number"));
       }
-    }
-    else
-    {
-      aNodeList.addChild (error ("The Belgium Enterprise was not found in the Peppol Production Network - neither with the CBE number nor with the VAT number"));
     }
   }
 
@@ -178,30 +191,37 @@ public class PagePublicToolsParticipantCheckBelgium extends AbstractAppWebPage
                                                              .addChild (" or a ")
                                                              .addChild (strong ("VAT number")));
 
-    String sParticipantIDValue = null;
     boolean bQueried = false;
+    final ICommonsOrderedSet <String> aParticipantIDs = new CommonsLinkedHashSet <> ();
     if (aWPEC.hasAction (CPageParam.ACTION_PERFORM))
     {
       // Validate fields
-      sParticipantIDValue = StringHelper.trim (aWPEC.params ().getAsString (FIELD_ID_VALUE));
+      final String sParticipantIDValue = StringHelper.trim (aWPEC.params ().getAsString (FIELD_ID_VALUE));
       if (sParticipantIDValue != null)
       {
-        // CBE values may contain "." chars
-        sParticipantIDValue = StringRemove.removeAll (sParticipantIDValue, '.');
-        // Remove all blanks
-        sParticipantIDValue = RegExHelper.stringReplacePattern ("\\s+", sParticipantIDValue, "");
-        // Lowercase
-        sParticipantIDValue = sParticipantIDValue.toLowerCase (Locale.US);
-        // Remove any "BE" prefix
-        sParticipantIDValue = StringHelper.trimStart (sParticipantIDValue, "be");
+        for (final String sPart : RegExHelper.getSplitToArray (sParticipantIDValue, "\\s+"))
+        {
+          // CBE values may contain "." chars
+          String sID = StringRemove.removeAll (sPart, '.');
+          // Lowercase
+          sID = sID.toLowerCase (Locale.US);
+          // Remove any "BE" prefix
+          sID = StringHelper.trimStart (sID, "be");
+          // Remove prefixes
+          sID = StringHelper.trimStart (sID, "0208:");
+          sID = StringHelper.trimStart (sID, "9925:");
+
+          if (!sID.isEmpty ())
+            aParticipantIDs.add (sID);
+        }
       }
 
-      if (StringHelper.isEmpty (sParticipantIDValue))
+      if (aParticipantIDs.isEmpty ())
         aFormErrors.addFieldError (FIELD_ID_VALUE, "Please provide an value to check");
 
       if (aFormErrors.isEmpty ())
       {
-        _checkParticipant (aWPEC, sParticipantIDValue);
+        _checkParticipants (aWPEC, aParticipantIDs);
         bQueried = true;
       }
     }
@@ -219,8 +239,12 @@ public class PagePublicToolsParticipantCheckBelgium extends AbstractAppWebPage
 
       aForm.addFormGroup (new BootstrapFormGroup ().setLabelMandatory ("Identifier value")
                                                    .setCtrl (new HCEdit (new RequestField (FIELD_ID_VALUE,
-                                                                                           sParticipantIDValue)).setPlaceholder ("Identifier value"))
-                                                   .setHelpText (div ("This should either be the CBE number or the VAT number of the enterprise your want to check"))
+                                                                                           StringImplode.imploder ()
+                                                                                                        .source (aParticipantIDs)
+                                                                                                        .separator (' ')
+                                                                                                        .build ())).setPlaceholder ("Identifier value"))
+                                                   .setHelpText (div ("This should either be the CBE number or the VAT number of the enterprise your want to check." +
+                                                                      " Multiple numbers can be provided with blanks as separators."))
                                                    .setErrorList (aFormErrors.getListOfField (FIELD_ID_VALUE)));
 
       final BootstrapButtonToolbar aToolbar = aForm.addAndReturnChild (new BootstrapButtonToolbar (aWPEC));
