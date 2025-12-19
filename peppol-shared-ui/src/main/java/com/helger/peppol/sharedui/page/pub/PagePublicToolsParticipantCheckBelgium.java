@@ -30,6 +30,7 @@ import com.helger.html.hc.IHCNode;
 import com.helger.html.hc.html.forms.EHCFormMethod;
 import com.helger.html.hc.html.forms.HCEdit;
 import com.helger.html.hc.impl.HCNodeList;
+import com.helger.masterdata.vat.VATINSyntaxChecker;
 import com.helger.peppol.servicedomain.EPeppolNetwork;
 import com.helger.peppol.sharedui.page.AbstractAppWebPage;
 import com.helger.peppol.sml.ESML;
@@ -86,6 +87,11 @@ public class PagePublicToolsParticipantCheckBelgium extends AbstractAppWebPage
     final ISMLConfigurationManager aSMLConfigurationMgr = PhotonPeppolMetaManager.getSMLConfigurationMgr ();
 
     LOGGER.info ("Performing Belgium Participant Check for '" + sParticipantIDValue + "'");
+
+    if (!VATINSyntaxChecker.isValidVATIN_BE (sParticipantIDValue))
+      aNodeList.addChild (warn ("The CBE number '" +
+                                sParticipantIDValue +
+                                "' does not seem to match the syntax requirements (length 10, start with 0 or 1, mod97 check digit)"));
 
     final ISMLConfiguration aSMLConfiguration = aSMLConfigurationMgr.getSMLInfoOfID (ESML.DIGIT_PRODUCTION.getID ());
 
