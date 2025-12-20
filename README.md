@@ -13,6 +13,9 @@ This project consists of the following modules, in dependency order:
 
 # News and Noteworthy
 
+v0.9.10 - work in progress
+* Belgium Participant Check was improved with syntax check and multi check possibility
+
 v0.9.9 - 2025-12-14
 * Misc small improvements
 

@@ -32,7 +32,7 @@ import com.helger.collection.commons.ICommonsCollection;
 import com.helger.collection.commons.ICommonsOrderedSet;
 import com.helger.html.hc.IHCNode;
 import com.helger.html.hc.html.forms.EHCFormMethod;
-import com.helger.html.hc.html.forms.HCEdit;
+import com.helger.html.hc.html.forms.HCTextArea;
 import com.helger.html.hc.impl.HCNodeList;
 import com.helger.masterdata.vat.VATINSyntaxChecker;
 import com.helger.peppol.servicedomain.EPeppolNetwork;
@@ -238,11 +238,12 @@ public class PagePublicToolsParticipantCheckBelgium extends AbstractAppWebPage
       }
 
       aForm.addFormGroup (new BootstrapFormGroup ().setLabelMandatory ("Identifier value")
-                                                   .setCtrl (new HCEdit (new RequestField (FIELD_ID_VALUE,
-                                                                                           StringImplode.imploder ()
-                                                                                                        .source (aParticipantIDs)
-                                                                                                        .separator (' ')
-                                                                                                        .build ())).setPlaceholder ("Identifier value"))
+                                                   .setCtrl (new HCTextArea (new RequestField (FIELD_ID_VALUE,
+                                                                                               StringImplode.imploder ()
+                                                                                                            .source (aParticipantIDs)
+                                                                                                            .separator (' ')
+                                                                                                            .build ())).setPlaceholder ("Identifier value(s)")
+                                                                                                                       .setRows (3))
                                                    .setHelpText (div ("This should either be the CBE number or the VAT number of the enterprise your want to check." +
                                                                       " Multiple numbers can be provided with blanks as separators."))
                                                    .setErrorList (aFormErrors.getListOfField (FIELD_ID_VALUE)));
