@@ -22,6 +22,7 @@ import com.helger.annotation.style.ReturnsMutableObject;
 import com.helger.collection.commons.CommonsArrayList;
 import com.helger.collection.commons.CommonsLinkedHashMap;
 import com.helger.collection.commons.ICommonsOrderedMap;
+import com.helger.hredelivery.commons.CHREDeliveryID;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.peppolid.peppol.EPeppolCodeListItemState;
 
@@ -71,11 +72,11 @@ public final class NiceNameDefaults
     DEFAULT_DOCTYPES.put ("busdox-docid-qns::urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:mfin.gov.hr:cius-2025:1.0#conformant#urn:mfin.gov.hr:ext-2025:1.0::2.1",
                           new NiceNameEntry ("HR eRacun Invoice Extension 2025 1.0",
                                              EPeppolCodeListItemState.ACTIVE,
-                                             new CommonsArrayList <> (PIF.createProcessIdentifierWithDefaultScheme ("urn:fdc:eracun.hr:poacc:en16931:any"))));
+                                             new CommonsArrayList <> (CHREDeliveryID.PROCESS_ID_HR_ERACUN)));
     DEFAULT_DOCTYPES.put ("busdox-docid-qns::urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2::CreditNote##urn:cen.eu:en16931:2017#compliant#urn:mfin.gov.hr:cius-2025:1.0#conformant#urn:mfin.gov.hr:ext-2025:1.0::2.1",
                           new NiceNameEntry ("HR eRacun CreditNote Extension 2025 1.0",
                                              EPeppolCodeListItemState.ACTIVE,
-                                             new CommonsArrayList <> (PIF.createProcessIdentifierWithDefaultScheme ("urn:fdc:eracun.hr:poacc:en16931:any"))));
+                                             new CommonsArrayList <> (CHREDeliveryID.PROCESS_ID_HR_ERACUN)));
   }
 
   private NiceNameDefaults ()

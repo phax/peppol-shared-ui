@@ -1,0 +1,89 @@
+/*
+ * Copyright (C) 2014-2025 Philip Helger (www.helger.com)
+ * philip[at]helger[dot]com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.helger.peppol.ui.types.supplementary.tools;
+
+import java.io.File;
+import java.time.OffsetDateTime;
+import java.util.Comparator;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.helger.datetime.helper.PDTFactory;
+import com.helger.datetime.web.PDTWebDateHelper;
+import com.helger.peppol.ui.types.nicename.NiceNameDefaults;
+import com.helger.peppol.ui.types.nicename.NiceNameEntry;
+import com.helger.peppolid.IProcessIdentifier;
+import com.helger.peppolid.peppol.doctype.EPredefinedDocumentTypeIdentifier;
+import com.helger.peppolid.peppol.process.EPredefinedProcessIdentifier;
+import com.helger.xml.microdom.IMicroDocument;
+import com.helger.xml.microdom.IMicroElement;
+import com.helger.xml.microdom.MicroDocument;
+import com.helger.xml.microdom.serialize.MicroWriter;
+
+public class MainCreateNiceNameMappingXML
+{
+  private static final Logger LOGGER = LoggerFactory.getLogger (MainCreateNiceNameMappingXML.class);
+
+  public static void main (final String [] args)
+  {
+    final OffsetDateTime aNow = PDTFactory.getCurrentOffsetDateTimeMillisOnlyUTC ();
+    {
+      final IMicroDocument aDoc = new MicroDocument ();
+      final IMicroElement eRoot = aDoc.addElement ("root");
+      eRoot.setAttribute ("type", "doctypeid");
+      eRoot.setAttribute ("peppol-cl", EPredefinedDocumentTypeIdentifier.CODE_LIST_VERSION);
+      eRoot.setAttribute ("creation-dt", PDTWebDateHelper.getAsStringXSD (aNow));
+
+      for (final Map.Entry <String, NiceNameEntry> aEntry : NiceNameDefaults.defaultDocTypes ()
+                                                                            .getSortedByKey (Comparator.naturalOrder ())
+                                                                            .entrySet ())
+      {
+        final NiceNameEntry aNNE = aEntry.getValue ();
+        final IMicroElement eItem = eRoot.addElement ("item")
+                                         .setAttribute ("id", aEntry.getKey ())
+                                         .setAttribute ("name", aNNE.getName ())
+                                         .setAttribute ("state", aNNE.getState ().getID ());
+        if (aNNE.hasProcessIDs ())
+          for (final IProcessIdentifier aProcID : aNNE.getAllProcIDs ())
+            eItem.addElement ("procid")
+                 .setAttribute ("scheme", aProcID.getScheme ())
+                 .setAttribute ("value", aProcID.getValue ());
+      }
+      MicroWriter.writeToFile (aDoc, new File ("docs/doctypeid-mapping.xml"));
+    }
+
+    {
+      final IMicroDocument aDoc = new MicroDocument ();
+      final IMicroElement eRoot = aDoc.addElement ("root");
+      eRoot.setAttribute ("type", "processid");
+      eRoot.setAttribute ("peppol-cl", EPredefinedProcessIdentifier.CODE_LIST_VERSION);
+      eRoot.setAttribute ("creation-dt", PDTWebDateHelper.getAsStringXSD (aNow));
+
+      for (final Map.Entry <String, NiceNameEntry> aEntry : NiceNameDefaults.defaultProcesses ()
+                                                                            .getSortedByKey (Comparator.naturalOrder ())
+                                                                            .entrySet ())
+        eRoot.addElement ("item")
+             .setAttribute ("id", aEntry.getKey ())
+             .setAttribute ("name", aEntry.getValue ().getName ())
+             .setAttribute ("state", aEntry.getValue ().getState ().getID ());
+      MicroWriter.writeToFile (aDoc, new File ("docs/processid-mapping.xml"));
+    }
+    LOGGER.info ("Done");
+  }
+}
