@@ -17,6 +17,7 @@ v0.9.10 - 2025-12-29
 * Updated to peppol-commons 12.3.4
 * Belgium Participant Check was improved with syntax check and multi check possibility
 * Updated to eDEC Code Lists v9.5
+* Renamed `IMiniCallback*` to `IFeedbackCallback*`
 
 v0.9.9 - 2025-12-14
 * Misc small improvements
