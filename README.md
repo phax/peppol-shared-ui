@@ -14,6 +14,7 @@ This project consists of the following modules, in dependency order:
 # News and Noteworthy
 
 v0.9.10 - 2025-12-29
+* Updated to peppol-commons 12.3.4
 * Belgium Participant Check was improved with syntax check and multi check possibility
 * Updated to eDEC Code Lists v9.5
 
