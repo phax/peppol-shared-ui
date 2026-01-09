@@ -104,7 +104,9 @@ import com.helger.peppol.businesscard.helper.PDBusinessCardHelper;
 import com.helger.peppol.security.PeppolTrustStores;
 import com.helger.peppol.servicedomain.EPeppolNetwork;
 import com.helger.peppol.sharedui.page.AbstractAppWebPage;
+import com.helger.peppol.sml.ESML;
 import com.helger.peppol.sml.ESMPAPIType;
+import com.helger.peppol.sml.ISMLInfo;
 import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppol.smp.ESMPTransportProfileState;
 import com.helger.peppol.ui.CertificateUI;
@@ -123,6 +125,7 @@ import com.helger.peppolid.CIdentifier;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.factory.IIdentifierFactory;
+import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.peppolid.peppol.PeppolIdentifierHelper;
 import com.helger.peppolid.peppol.pidscheme.IPeppolParticipantIdentifierScheme;
@@ -393,6 +396,13 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
     return code (s).addClass (CBootstrapCSS.TEXT_NOWRAP);
   }
 
+  private HCDiv _createSMLUsed (@NonNull final ISMLInfo aSMLInfo, final boolean bProdSML)
+  {
+    return div ("SML used: ").addChild (code (aSMLInfo.getDisplayName () + " / " + aSMLInfo.getDNSZone ()))
+                             .addChild (" ")
+                             .addChild (bProdSML ? badgeSuccess ("production SML") : badgeWarn ("test SML"));
+  }
+
   private void _queryParticipant (@NonNull final WebPageExecutionContext aWPEC,
                                   final String sParticipantIDScheme,
                                   final String sParticipantIDValue,
@@ -422,6 +432,9 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
 
     try
     {
+      final HCUL aHeaderUL = new HCUL ();
+      aNodeList.addChild (aHeaderUL);
+
       // Determine the SML if it auto detect is enabled
       // Determine the SMP query parameters
       SMPQueryParamsUI aSMPQueryParams = null;
@@ -482,6 +495,38 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
 
         if (aSMPQueryParams == null)
         {
+          // Show basic stuff anyway
+          if (aRealSMLConfiguration != null)
+          {
+            aHeaderUL.addItem (_createSMLUsed (aRealSMLConfiguration.getSMLInfo (),
+                                               aRealSMLConfiguration.isProduction ()));
+            aHeaderUL.addItem (div ("Query API: ").addChild (code (aRealSMLConfiguration.getSMPAPIType ()
+                                                                                        .getDisplayName ())));
+            switch (aRealSMLConfiguration.getSMPAPIType ())
+            {
+              case PEPPOL:
+                try
+                {
+                  final var aParticipantID = PeppolIdentifierFactory.INSTANCE.createParticipantIdentifier (sParticipantIDScheme,
+                                                                                                           sParticipantIDValue);
+                  if (aParticipantID != null)
+                  {
+                    final var ePeppolNetwork = ESML.DIGIT_PRODUCTION.getID ()
+                                                                    .equals (aRealSMLConfiguration.getSMLInfo ()
+                                                                                                  .getID ()) ? EPeppolNetwork.PRODUCTION
+                                                                                                             : EPeppolNetwork.TEST;
+                    aHeaderUL.addItem (div ("DNS NAPTR domain: ").addChild (code (PeppolNaptrURLProvider.INSTANCE.getDNSNameOfParticipant (aParticipantID,
+                                                                                                                                           ePeppolNetwork.getSMLInfo ()))));
+                  }
+                }
+                catch (final SMPDNSResolutionException ex)
+                {
+                  // Ignore
+                }
+                break;
+            }
+          }
+
           // Failed to determine SMP query params
           LOGGER.error ("Participant ID '" +
                         sParticipantIDUriEncoded +
@@ -523,29 +568,20 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
         if (LOGGER.isDebugEnabled ())
           LOGGER.debug ("Trying to resolve SMP '" + aSMPHost.getHost () + "' by DNS");
 
-        final HCUL aUL = new HCUL ();
-        aNodeList.addChild (aUL);
-
         // Information only
-        aUL.addItem (div ("SML used: ").addChild (code (aSMPQueryParams.getSMLInfo ().getDisplayName () +
-                                                        " / " +
-                                                        aSMPQueryParams.getSMLInfo ().getDNSZone ()))
-                                       .addChild (" ")
-                                       .addChild (aSMPQueryParams.isProductionSML () ? badgeSuccess ("production SML")
-                                                                                     : badgeWarn ("test SML")));
-        aUL.addItem (div ("Query API: ").addChild (code (eAPIType.getDisplayName ())));
+        aHeaderUL.addItem (_createSMLUsed (aSMPQueryParams.getSMLInfo (), aSMPQueryParams.isProductionSML ()));
+        aHeaderUL.addItem (div ("Query API: ").addChild (code (eAPIType.getDisplayName ())));
 
         final String sURL1 = aSMPHost.toExternalForm ();
         IHCNode aResolvedNameSuffix = null;
         switch (eAPIType)
         {
           case PEPPOL:
-            // Only if NAPTR is used
             try
             {
-              aUL.addItem (div ("DNS NAPTR domain: ").addChild (code (PeppolNaptrURLProvider.INSTANCE.getDNSNameOfParticipant (aParticipantID,
-                                                                                                                               aSMPQueryParams.getPeppolNetwork ()
-                                                                                                                                              .getSMLInfo ()))));
+              aHeaderUL.addItem (div ("DNS NAPTR domain: ").addChild (code (PeppolNaptrURLProvider.INSTANCE.getDNSNameOfParticipant (aParticipantID,
+                                                                                                                                     aSMPQueryParams.getPeppolNetwork ()
+                                                                                                                                                    .getSMLInfo ()))));
             }
             catch (final SMPDNSResolutionException ex)
             {
@@ -564,8 +600,8 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
             break;
         }
 
-        aUL.addItem (div ("Resolved name: ").addChild (code (sURL1)).addChild (aResolvedNameSuffix),
-                     div (_createOpenInBrowser (sURL1, "Open in browser [may fail]")));
+        aHeaderUL.addItem (div ("Resolved name: ").addChild (code (sURL1)).addChild (aResolvedNameSuffix),
+                           div (_createOpenInBrowser (sURL1, "Open in browser [may fail]")));
 
         // Explicit query with the dnsjava lookup
         // Hidden feature to show more details
@@ -624,7 +660,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                      .addChild (_createOpenInBrowser ("https://" + sURL3,
                                                       "Open reverse lookup in browser (https) [may fail]"));
               }
-              aUL.addItem (aDiv1, aDiv2);
+              aHeaderUL.addItem (aDiv1, aDiv2);
             }
           aSWDNSLookup.stop ();
           LOGGER.info ("Finished DNSJava lookup - " +
@@ -648,7 +684,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                 final InetAddress aNice = InetAddress.getByAddress (aInetAddress.getAddress ());
                 final String sURL3 = aNice.getCanonicalHostName ();
 
-                final HCLI aItem = aUL.addItem ();
+                final HCLI aItem = aHeaderUL.addItem ();
                 aItem.addChild (div ("IP v4 address: ").addChild (code (sURL2))
                                                        .addChild (" - reverse lookup: ")
                                                        .addChild (code (sURL3)));
@@ -673,7 +709,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                 final InetAddress aNice = InetAddress.getByAddress (aInetAddress.getAddress ());
                 final String sURL3 = aNice.getCanonicalHostName ();
 
-                final HCLI aItem = aUL.addItem ();
+                final HCLI aItem = aHeaderUL.addItem ();
                 aItem.addChild (div ("IP v6 address: ").addChild (code (sURL2))
                                                        .addChild (" - reverse lookup: ")
                                                        .addChild (code (sURL3)));
@@ -696,11 +732,11 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
 
             // Show only once
             final String sURL4 = sURL1 + (sURL1.endsWith ("/") ? "" : "/") + sParticipantIDUriEncoded;
-            aUL.addItem (div ("Query base URL: ").addChild (code (sURL4)), div (_createOpenInBrowser (sURL4)));
+            aHeaderUL.addItem (div ("Query base URL: ").addChild (code (sURL4)), div (_createOpenInBrowser (sURL4)));
             if (!bXSDValidation)
-              aUL.addItem (badgeWarn ("XML Schema validation of SMP responses is disabled."));
+              aHeaderUL.addItem (badgeWarn ("XML Schema validation of SMP responses is disabled."));
             if (!bVerifySignatures)
-              aUL.addItem (badgeDanger ("Signature verification of SMP responses is disabled."));
+              aHeaderUL.addItem (badgeDanger ("Signature verification of SMP responses is disabled."));
           }
           catch (final UnknownHostException ex)
           {
