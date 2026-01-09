@@ -104,7 +104,6 @@ import com.helger.peppol.businesscard.helper.PDBusinessCardHelper;
 import com.helger.peppol.security.PeppolTrustStores;
 import com.helger.peppol.servicedomain.EPeppolNetwork;
 import com.helger.peppol.sharedui.page.AbstractAppWebPage;
-import com.helger.peppol.sml.ESML;
 import com.helger.peppol.sml.ESMPAPIType;
 import com.helger.peppol.sml.ISMLInfo;
 import com.helger.peppol.smp.ESMPTransportProfile;
@@ -511,12 +510,10 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                                                            sParticipantIDValue);
                   if (aParticipantID != null)
                   {
-                    final var ePeppolNetwork = ESML.DIGIT_PRODUCTION.getID ()
-                                                                    .equals (aRealSMLConfiguration.getSMLInfo ()
-                                                                                                  .getID ()) ? EPeppolNetwork.PRODUCTION
-                                                                                                             : EPeppolNetwork.TEST;
-                    aHeaderUL.addItem (div ("DNS NAPTR domain: ").addChild (code (PeppolNaptrURLProvider.INSTANCE.getDNSNameOfParticipant (aParticipantID,
-                                                                                                                                           ePeppolNetwork.getSMLInfo ()))));
+                    final var ePeppolNetwork = EPeppolNetwork.getFromSMLInfoOrNull (aRealSMLConfiguration.getSMLInfo ());
+                    if (ePeppolNetwork != null)
+                      aHeaderUL.addItem (div ("DNS NAPTR domain: ").addChild (code (PeppolNaptrURLProvider.INSTANCE.getDNSNameOfParticipant (aParticipantID,
+                                                                                                                                             ePeppolNetwork.getSMLInfo ()))));
                   }
                 }
                 catch (final SMPDNSResolutionException ex)

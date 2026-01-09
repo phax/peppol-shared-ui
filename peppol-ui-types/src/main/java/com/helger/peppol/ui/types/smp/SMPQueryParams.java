@@ -27,7 +27,6 @@ import com.helger.annotation.concurrent.NotThreadSafe;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.state.ESuccess;
 import com.helger.peppol.servicedomain.EPeppolNetwork;
-import com.helger.peppol.sml.ESML;
 import com.helger.peppol.sml.ESMPAPIType;
 import com.helger.peppol.sml.ISMLInfo;
 import com.helger.peppol.ui.types.smlconfig.ISMLConfiguration;
@@ -67,8 +66,7 @@ public class SMPQueryParams
     if (eSMPAPIType == ESMPAPIType.PEPPOL)
     {
       m_aSMPURLProvider = PeppolNaptrURLProvider.INSTANCE;
-      m_ePeppolNetwork = ESML.DIGIT_PRODUCTION.getID ().equals (aSMLInfo.getID ()) ? EPeppolNetwork.PRODUCTION
-                                                                                   : EPeppolNetwork.TEST;
+      m_ePeppolNetwork = EPeppolNetwork.getFromSMLInfoOrNull (aSMLInfo);
     }
     else
     {
