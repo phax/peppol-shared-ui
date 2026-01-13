@@ -1535,10 +1535,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                   for (final PDContact aItem : aEntity.contacts ())
                   {
                     // Avoid empty rows
-                    if (StringHelper.isNotEmpty (aItem.getType ()) ||
-                        StringHelper.isNotEmpty (aItem.getName ()) ||
-                        StringHelper.isNotEmpty (aItem.getPhoneNumber ()) ||
-                        StringHelper.isNotEmpty (aItem.getEmail ()))
+                    if (aItem.hasAnyElementSet ())
                       aContactTab.addBodyRow ()
                                  .addCell (aItem.getType ())
                                  .addCell (aItem.getName ())
