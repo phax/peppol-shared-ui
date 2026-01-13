@@ -40,7 +40,6 @@ import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.peppolid.peppol.PeppolIdentifierHelper;
 import com.helger.photon.api.IAPIDescriptor;
 import com.helger.photon.app.PhotonUnifiedResponse;
-import com.helger.smpclient.url.PeppolNaptrURLProvider;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 
 /**
@@ -103,8 +102,7 @@ public final class APIGetCheckPeppolParticipantRegistered extends AbstractAPIExe
       bRegistered = false;
       for (final ISMLConfiguration aCurSMLConf : aSMLConfigurationMgr.getAllSorted ())
       {
-        bRegistered = PeppolExistenceCheck.isSMPRegisteredInDNSViaNaptr (PeppolNaptrURLProvider.INSTANCE,
-                                                                         aParticipantID,
+        bRegistered = PeppolExistenceCheck.isSMPRegisteredInDNSViaNaptr (aParticipantID,
                                                                          aCurSMLConf.getSMLInfo ().getDNSZone ());
         if (bRegistered)
         {
@@ -115,8 +113,7 @@ public final class APIGetCheckPeppolParticipantRegistered extends AbstractAPIExe
     }
     else
     {
-      bRegistered = PeppolExistenceCheck.isSMPRegisteredInDNSViaNaptr (PeppolNaptrURLProvider.INSTANCE,
-                                                                       aParticipantID,
+      bRegistered = PeppolExistenceCheck.isSMPRegisteredInDNSViaNaptr (aParticipantID,
                                                                        aSMLConf.getSMLInfo ().getDNSZone ());
       if (bRegistered)
         aEffectiveSMLConf = aSMLConf;
@@ -128,9 +125,7 @@ public final class APIGetCheckPeppolParticipantRegistered extends AbstractAPIExe
     if (aEffectiveSMLConf != null)
     {
       aJson.add ("smpHostURI",
-                 PeppolExistenceCheck.getSMURIViaNaptr (PeppolNaptrURLProvider.INSTANCE,
-                                                        aParticipantID,
-                                                        aEffectiveSMLConf.getSMLInfo ().getDNSZone ()));
+                 PeppolExistenceCheck.getSMPURIViaNaptr (aParticipantID, aEffectiveSMLConf.getSMLInfo ().getDNSZone ()));
     }
     // This is the main check result
     aJson.add ("exists", bRegistered);

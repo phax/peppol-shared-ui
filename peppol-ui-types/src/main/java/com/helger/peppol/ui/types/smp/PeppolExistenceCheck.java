@@ -24,6 +24,7 @@ import org.jspecify.annotations.Nullable;
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.smpclient.url.ISMPURLProvider;
+import com.helger.smpclient.url.PeppolNaptrURLProvider;
 import com.helger.smpclient.url.SMPDNSResolutionException;
 
 /**
@@ -38,9 +39,9 @@ public final class PeppolExistenceCheck
   {}
 
   @Nullable
-  public static URI getSMURIViaNaptr (@NonNull final ISMPURLProvider aSMPURLProvider,
-                                      @NonNull final IParticipantIdentifier aParticipantID,
-                                      @NonNull final String sSMLZoneName)
+  public static URI getSMUPRIViaNaptr (@NonNull final ISMPURLProvider aSMPURLProvider,
+                                       @NonNull final IParticipantIdentifier aParticipantID,
+                                       @NonNull final String sSMLZoneName)
   {
     try
     {
@@ -52,10 +53,23 @@ public final class PeppolExistenceCheck
     }
   }
 
+  @Nullable
+  public static URI getSMPURIViaNaptr (@NonNull final IParticipantIdentifier aParticipantID,
+                                       @NonNull final String sSMLZoneName)
+  {
+    return getSMUPRIViaNaptr (PeppolNaptrURLProvider.INSTANCE, aParticipantID, sSMLZoneName);
+  }
+
   public static boolean isSMPRegisteredInDNSViaNaptr (@NonNull final ISMPURLProvider aSMPURLProvider,
                                                       @NonNull final IParticipantIdentifier aParticipantID,
                                                       @NonNull final String sSMLZoneName)
   {
-    return getSMURIViaNaptr (aSMPURLProvider, aParticipantID, sSMLZoneName) != null;
+    return getSMUPRIViaNaptr (aSMPURLProvider, aParticipantID, sSMLZoneName) != null;
+  }
+
+  public static boolean isSMPRegisteredInDNSViaNaptr (@NonNull final IParticipantIdentifier aParticipantID,
+                                                      @NonNull final String sSMLZoneName)
+  {
+    return isSMPRegisteredInDNSViaNaptr (PeppolNaptrURLProvider.INSTANCE, aParticipantID, sSMLZoneName);
   }
 }
