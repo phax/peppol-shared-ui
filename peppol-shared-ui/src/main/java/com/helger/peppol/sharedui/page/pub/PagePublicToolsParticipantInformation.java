@@ -1043,58 +1043,62 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                   if (aSM.getRedirect () != null)
                     aLIDocTypeID.addChild (div ("Redirect to ").addChild (aSM.getRedirect ().getHref ()));
                   else
-                  {
-                    // For all processes
-                    final HCUL aULProcessID = new HCUL ();
-                    for (final var aProcess : aSM.getServiceInformation ().getProcessList ().getProcess ())
-                      if (aProcess.getProcessIdentifier () != null)
-                      {
-                        final IHCLI <?> aLIProcessID = aULProcessID.addItem ();
-                        aLIProcessID.addChild (div ("Process ID: ").addChild (NiceNameUI.createProcessID (aDocTypeID,
-                                                                                                          SimpleProcessIdentifier.wrap (aProcess.getProcessIdentifier ()),
-                                                                                                          true)));
-                        final HCUL aULEndpoint = new HCUL ();
-                        // For all endpoints of the process
-                        for (final var aEndpoint : aProcess.getServiceEndpointList ().getEndpoint ())
+                    if (aSM.getServiceInformation () != null)
+                    {
+                      // For all processes
+                      final HCUL aULProcessID = new HCUL ();
+                      for (final var aProcess : aSM.getServiceInformation ().getProcessList ().getProcess ())
+                        if (aProcess.getProcessIdentifier () != null)
                         {
-                          final IHCLI <?> aLIEndpoint = aULEndpoint.addItem ();
-
-                          // Endpoint URL
-                          final String sEndpointRef = aEndpoint.getEndpointReference () == null ? null
-                                                                                                : W3CEndpointReferenceHelper.getAddress (aEndpoint.getEndpointReference ());
-                          _printEndpointURL (aLIEndpoint, sEndpointRef, true);
-
-                          // Valid from
-                          _printActivationDate (aLIEndpoint, aEndpoint.getServiceActivationDate (), aDisplayLocale);
-
-                          // Valid to
-                          _printExpirationDate (aLIEndpoint, aEndpoint.getServiceExpirationDate (), aDisplayLocale);
-
-                          // Transport profile
-                          _printTransportProfile (aLIEndpoint, aEndpoint.getTransportProfile ());
-
-                          // Technical infos
-                          _printTecInfo (aLIEndpoint,
-                                         aEndpoint.getTechnicalInformationUrl (),
-                                         aEndpoint.getTechnicalContactUrl ());
-
-                          // Certificate (also add null values)
-                          final X509Certificate aAPCert = new CertificateDecodeHelper ().source (aEndpoint.getCertificate ())
-                                                                                        .pemEncoded (true)
-                                                                                        .getDecodedOrNull ();
-                          final String sAPCertIndex = aAllUsedAPCertifiactes.computeIfAbsent (aAPCert,
-                                                                                              k -> Integer.toString (aAPCertificateIndex.incAndGet ()));
-                          if (aAPCert != null)
+                          final IHCLI <?> aLIProcessID = aULProcessID.addItem ();
+                          aLIProcessID.addChild (div ("Process ID: ").addChild (NiceNameUI.createProcessID (aDocTypeID,
+                                                                                                            SimpleProcessIdentifier.wrap (aProcess.getProcessIdentifier ()),
+                                                                                                            true)));
+                          final HCUL aULEndpoint = new HCUL ();
+                          // For all endpoints of the process
+                          for (final var aEndpoint : aProcess.getServiceEndpointList ().getEndpoint ())
                           {
-                            aLIEndpoint.addChild (new HCA ().setHref (new URLBuilder ().anchor ("apcert" + sAPCertIndex)
-                                                                                       .build ())
-                                                            .addChild ("AP Certificate: #" + sAPCertIndex));
+                            final IHCLI <?> aLIEndpoint = aULEndpoint.addItem ();
+
+                            // Endpoint URL
+                            final String sEndpointRef = aEndpoint.getEndpointReference () == null ? null
+                                                                                                  : W3CEndpointReferenceHelper.getAddress (aEndpoint.getEndpointReference ());
+                            _printEndpointURL (aLIEndpoint, sEndpointRef, true);
+
+                            // Valid from
+                            _printActivationDate (aLIEndpoint, aEndpoint.getServiceActivationDate (), aDisplayLocale);
+
+                            // Valid to
+                            _printExpirationDate (aLIEndpoint, aEndpoint.getServiceExpirationDate (), aDisplayLocale);
+
+                            // Transport profile
+                            _printTransportProfile (aLIEndpoint, aEndpoint.getTransportProfile ());
+
+                            // Technical infos
+                            _printTecInfo (aLIEndpoint,
+                                           aEndpoint.getTechnicalInformationUrl (),
+                                           aEndpoint.getTechnicalContactUrl ());
+
+                            // Certificate (also add null values)
+                            final X509Certificate aAPCert = new CertificateDecodeHelper ().source (aEndpoint.getCertificate ())
+                                                                                          .pemEncoded (true)
+                                                                                          .getDecodedOrNull ();
+                            final String sAPCertIndex = aAllUsedAPCertifiactes.computeIfAbsent (aAPCert,
+                                                                                                k -> Integer.toString (aAPCertificateIndex.incAndGet ()));
+                            if (aAPCert != null)
+                            {
+                              aLIEndpoint.addChild (new HCA ().setHref (new URLBuilder ().anchor ("apcert" +
+                                                                                                  sAPCertIndex)
+                                                                                         .build ())
+                                                              .addChild ("AP Certificate: #" + sAPCertIndex));
+                            }
                           }
+                          aLIProcessID.addChild (aULEndpoint);
                         }
-                        aLIProcessID.addChild (aULEndpoint);
-                      }
-                    aLIDocTypeID.addChild (aULProcessID);
-                  }
+                      aLIDocTypeID.addChild (aULProcessID);
+                    }
+                    else
+                      aLIDocTypeID.addChild (error ("Response is neither a Redirect nor a ServiceInformation"));
                 }
                 else
                 {
