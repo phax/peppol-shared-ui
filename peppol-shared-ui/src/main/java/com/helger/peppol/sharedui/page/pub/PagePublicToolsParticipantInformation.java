@@ -510,10 +510,8 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                                                            sParticipantIDValue);
                   if (aParticipantID != null)
                   {
-                    final var ePeppolNetwork = EPeppolNetwork.getFromSMLInfoOrNull (aRealSMLConfiguration.getSMLInfo ());
-                    if (ePeppolNetwork != null)
-                      aHeaderUL.addItem (div ("DNS NAPTR domain: ").addChild (code (PeppolNaptrURLProvider.INSTANCE.getDNSNameOfParticipant (aParticipantID,
-                                                                                                                                             ePeppolNetwork.getSMLInfo ()))));
+                    aHeaderUL.addItem (div ("DNS NAPTR domain: ").addChild (code (PeppolNaptrURLProvider.INSTANCE.getDNSNameOfParticipant (aParticipantID,
+                                                                                                                                           aRealSMLConfiguration.getSMLInfo ()))));
                   }
                 }
                 catch (final SMPDNSResolutionException ex)
