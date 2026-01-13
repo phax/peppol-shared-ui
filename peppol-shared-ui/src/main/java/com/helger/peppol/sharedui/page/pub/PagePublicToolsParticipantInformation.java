@@ -577,8 +577,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
             try
             {
               aHeaderUL.addItem (div ("DNS NAPTR domain: ").addChild (code (PeppolNaptrURLProvider.INSTANCE.getDNSNameOfParticipant (aParticipantID,
-                                                                                                                                     aSMPQueryParams.getPeppolNetwork ()
-                                                                                                                                                    .getSMLInfo ()))));
+                                                                                                                                     aSMPQueryParams.getSMLInfo ()))));
             }
             catch (final SMPDNSResolutionException ex)
             {
