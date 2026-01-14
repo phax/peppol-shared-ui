@@ -391,7 +391,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
   }
 
   @NonNull
-  private HCCode codeNotBreak (@Nullable final String s)
+  private HCCode _codeNotBreak (@Nullable final String s)
   {
     return code (s).addClass (CBootstrapCSS.TEXT_NOWRAP);
   }
