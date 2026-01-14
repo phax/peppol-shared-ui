@@ -261,12 +261,6 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
   }
 
   @NonNull
-  private static BootstrapLinkButton _createOpenInBrowser (@NonNull final String sURL)
-  {
-    return _createOpenInBrowser (sURL, "Open in browser");
-  }
-
-  @NonNull
   private static BootstrapLinkButton _createOpenInBrowser (@NonNull final String sURL, @NonNull final String sLabel)
   {
     return new BootstrapLinkButton (EBootstrapButtonSize.SMALL).setButtonType (EBootstrapButtonType.OUTLINE_INFO)
@@ -276,14 +270,20 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
   }
 
   @NonNull
+  private static BootstrapLinkButton _createOpenInBrowser (@NonNull final String sURL)
+  {
+    return _createOpenInBrowser (sURL, "Open in browser");
+  }
+
+  @NonNull
   private IHCNode _createTimingNode (final long nMillis)
   {
     return badgeInfo ("took " + nMillis + " milliseconds");
   }
 
-  private void _printEndpointURL (@NonNull final IHCLI <?> aLIEndpoint,
-                                  final String sEndpointRef,
-                                  final boolean bIsPeppol)
+  private void _printSMPEndpointURL (@NonNull final IHCLI <?> aLIEndpoint,
+                                     final String sEndpointRef,
+                                     final boolean bIsPeppol)
   {
     aLIEndpoint.addChild (div ("Endpoint URL: ").addChild (StringHelper.isEmpty (sEndpointRef) ? em ("none") : code (
                                                                                                                      sEndpointRef)));
@@ -308,9 +308,9 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
     }
   }
 
-  private void _printActivationDate (@NonNull final IHCLI <?> aLIEndpoint,
-                                     @Nullable final XMLOffsetDateTime aServiceActivationDate,
-                                     @NonNull final Locale aDisplayLocale)
+  private void _printSMPActivationDate (@NonNull final IHCLI <?> aLIEndpoint,
+                                        @Nullable final XMLOffsetDateTime aServiceActivationDate,
+                                        @NonNull final Locale aDisplayLocale)
   {
     if (aServiceActivationDate != null)
     {
@@ -322,9 +322,9 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
     }
   }
 
-  private void _printExpirationDate (@NonNull final IHCLI <?> aLIEndpoint,
-                                     @Nullable final XMLOffsetDateTime aServiceExpirationDate,
-                                     @NonNull final Locale aDisplayLocale)
+  private void _printSMPExpirationDate (@NonNull final IHCLI <?> aLIEndpoint,
+                                        @Nullable final XMLOffsetDateTime aServiceExpirationDate,
+                                        @NonNull final Locale aDisplayLocale)
   {
     if (aServiceExpirationDate != null)
     {
@@ -336,7 +336,8 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
     }
   }
 
-  private void _printTransportProfile (@NonNull final IHCLI <?> aLIEndpoint, @Nullable final String sTransportProfile)
+  private void _printSMPTransportProfile (@NonNull final IHCLI <?> aLIEndpoint,
+                                          @Nullable final String sTransportProfile)
   {
     final HCDiv aDiv = div ("Transport profile: ");
     final ESMPTransportProfile eTransportProfile = ESMPTransportProfile.getFromIDOrNull (sTransportProfile);
@@ -363,7 +364,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
     aLIEndpoint.addChild (aDiv);
   }
 
-  private void _printTecInfo (@NonNull final IHCLI <?> aLIEndpoint, final String sTecInfo, final String sTecContact)
+  private void _printSMPTecInfo (@NonNull final IHCLI <?> aLIEndpoint, final String sTecInfo, final String sTecContact)
   {
     final HCDiv aDiv = div ("Technical info: ");
     if (StringHelper.isNotEmpty (sTecInfo))
@@ -1060,21 +1061,25 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                             // Endpoint URL
                             final String sEndpointRef = aEndpoint.getEndpointReference () == null ? null
                                                                                                   : W3CEndpointReferenceHelper.getAddress (aEndpoint.getEndpointReference ());
-                            _printEndpointURL (aLIEndpoint, sEndpointRef, true);
+                            _printSMPEndpointURL (aLIEndpoint, sEndpointRef, true);
 
                             // Valid from
-                            _printActivationDate (aLIEndpoint, aEndpoint.getServiceActivationDate (), aDisplayLocale);
+                            _printSMPActivationDate (aLIEndpoint,
+                                                     aEndpoint.getServiceActivationDate (),
+                                                     aDisplayLocale);
 
                             // Valid to
-                            _printExpirationDate (aLIEndpoint, aEndpoint.getServiceExpirationDate (), aDisplayLocale);
+                            _printSMPExpirationDate (aLIEndpoint,
+                                                     aEndpoint.getServiceExpirationDate (),
+                                                     aDisplayLocale);
 
                             // Transport profile
-                            _printTransportProfile (aLIEndpoint, aEndpoint.getTransportProfile ());
+                            _printSMPTransportProfile (aLIEndpoint, aEndpoint.getTransportProfile ());
 
                             // Technical infos
-                            _printTecInfo (aLIEndpoint,
-                                           aEndpoint.getTechnicalInformationUrl (),
-                                           aEndpoint.getTechnicalContactUrl ());
+                            _printSMPTecInfo (aLIEndpoint,
+                                              aEndpoint.getTechnicalInformationUrl (),
+                                              aEndpoint.getTechnicalContactUrl ());
 
                             // Certificate (also add null values)
                             final X509Certificate aAPCert = new CertificateDecodeHelper ().source (aEndpoint.getCertificate ())
@@ -1140,21 +1145,21 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                           final IHCLI <?> aLIEndpoint = aULEndpoint.addItem ();
 
                           // Endpoint URL
-                          _printEndpointURL (aLIEndpoint, aEndpoint.getEndpointURI (), false);
+                          _printSMPEndpointURL (aLIEndpoint, aEndpoint.getEndpointURI (), false);
 
                           // Valid from
-                          _printActivationDate (aLIEndpoint, aEndpoint.getServiceActivationDate (), aDisplayLocale);
+                          _printSMPActivationDate (aLIEndpoint, aEndpoint.getServiceActivationDate (), aDisplayLocale);
 
                           // Valid to
-                          _printExpirationDate (aLIEndpoint, aEndpoint.getServiceExpirationDate (), aDisplayLocale);
+                          _printSMPExpirationDate (aLIEndpoint, aEndpoint.getServiceExpirationDate (), aDisplayLocale);
 
                           // Transport profile
-                          _printTransportProfile (aLIEndpoint, aEndpoint.getTransportProfile ());
+                          _printSMPTransportProfile (aLIEndpoint, aEndpoint.getTransportProfile ());
 
                           // Technical infos
-                          _printTecInfo (aLIEndpoint,
-                                         aEndpoint.getTechnicalInformationUrl (),
-                                         aEndpoint.getTechnicalContactUrl ());
+                          _printSMPTecInfo (aLIEndpoint,
+                                            aEndpoint.getTechnicalInformationUrl (),
+                                            aEndpoint.getTechnicalContactUrl ());
 
                           // Certificate (also add null values)
                           final X509Certificate aAPCert = new CertificateDecodeHelper ().source (aEndpoint.getCertificate ())
@@ -1269,10 +1274,17 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
               final String sCertIndex = aEntry.getValue ();
 
               final IHCLI <?> aLICert = aULCerts.addItem ();
+
               final HCDiv aHeadlineDiv = aLICert.addAndReturnChild (div ("AP Certificate #" + sCertIndex));
               aHeadlineDiv.addChild (new HCA ().setName ("apcert" + sCertIndex));
+
               if (aEndpointCert != null)
               {
+                // Toggle button
+                final BootstrapButton aToggle = aHeadlineDiv.addAndReturnChild (new BootstrapButton (EBootstrapButtonType.DEFAULT,
+                                                                                                     EBootstrapButtonSize.SMALL).addChild ("Toggle Details")
+                                                                                                                                .addClass (CBootstrapCSS.ML_3));
+
                 // The owner should always be visible
                 final BootstrapCard aOwner = new BootstrapCard ();
                 aOwner.createAndAddHeader ()
@@ -1280,11 +1292,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                       .addChild (CertificateUI.getCertOwnerDetails (aEndpointCert, aDisplayLocale));
                 aLICert.addChild (aOwner);
 
-                final HCDiv aCertDetailsDiv = aLICert.addAndReturnChild (div ());
-
-                final BootstrapButton aToggle = aHeadlineDiv.addAndReturnChild (new BootstrapButton (EBootstrapButtonType.DEFAULT,
-                                                                                                     EBootstrapButtonSize.SMALL).addChild ("Toggle Details")
-                                                                                                                                .addClass (CBootstrapCSS.ML_3));
+                final HCDiv aCertDetailsDiv = div ();
                 BootstrapCollapseHelper.makeCollapsible (aToggle, aCertDetailsDiv);
 
                 aCertDetailsDiv.addChild (CertificateUI.createCertificateDetailsTable (null,
@@ -1306,13 +1314,17 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                   else
                   {
                     // TODO add Nemhandel check here
-                    aCertDetailsDiv.addChild (error ().addChild (div ("The Endpoint Certificate appears to be an invalid Peppol AP certificate. Reason: " +
-                                                                      eCertStatus.getReason ())));
+                    // Don't collapse the error
+                    aLICert.addChild (error ().addChild (div ("The Endpoint Certificate appears to be an invalid Peppol AP certificate. Reason: " +
+                                                              eCertStatus.getReason ())));
                   }
                 }
 
                 // add PEM representation as well
                 aCertDetailsDiv.addChild (CertificateUI.createCertificatePEMControl (aEndpointCert));
+
+                // Add as last - in case errors happen
+                aLICert.addChild (aCertDetailsDiv);
               }
               else
               {
@@ -1339,10 +1351,17 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
               final String sCertIndex = aEntry.getValue ();
 
               final IHCLI <?> aLICert = aULCerts.addItem ();
+
               final HCDiv aHeadlineDiv = aLICert.addAndReturnChild (div ("SMP Signing Certificate #" + sCertIndex));
               aHeadlineDiv.addChild (new HCA ().setName ("smpcert" + sCertIndex));
+
               if (aSMPCert != null)
               {
+                // Toggle button
+                final BootstrapButton aToggle = aHeadlineDiv.addAndReturnChild (new BootstrapButton (EBootstrapButtonType.DEFAULT,
+                                                                                                     EBootstrapButtonSize.SMALL).addChild ("Toggle Details")
+                                                                                                                                .addClass (CBootstrapCSS.ML_3));
+
                 // The owner should always be visible
                 final BootstrapCard aOwner = new BootstrapCard ();
                 aOwner.createAndAddHeader ()
@@ -1350,11 +1369,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                       .addChild (CertificateUI.getCertOwnerDetails (aSMPCert, aDisplayLocale));
                 aLICert.addChild (aOwner);
 
-                final HCDiv aCertDetailsDiv = aLICert.addAndReturnChild (div ());
-
-                final BootstrapButton aToggle = aHeadlineDiv.addAndReturnChild (new BootstrapButton (EBootstrapButtonType.DEFAULT,
-                                                                                                     EBootstrapButtonSize.SMALL).addChild ("Toggle Details")
-                                                                                                                                .addClass (CBootstrapCSS.ML_3));
+                final HCDiv aCertDetailsDiv = div ();
                 BootstrapCollapseHelper.makeCollapsible (aToggle, aCertDetailsDiv);
 
                 aCertDetailsDiv.addChild (CertificateUI.createCertificateDetailsTable (null,
@@ -1376,13 +1391,17 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                   else
                   {
                     // TODO add Nemhandel check here
-                    aCertDetailsDiv.addChild (error ().addChild (div ("The SMP Signing Certificate appears to be an invalid Peppol SMP certificate. Reason: " +
-                                                                      eCertStatus.getReason ())));
+                    // Don't collapse the error
+                    aLICert.addChild (error ().addChild (div ("The SMP Signing Certificate appears to be an invalid Peppol SMP certificate. Reason: " +
+                                                              eCertStatus.getReason ())));
                   }
                 }
 
                 // add PEM representation as well
                 aCertDetailsDiv.addChild (CertificateUI.createCertificatePEMControl (aSMPCert));
+
+                // Add as last - in case errors happen
+                aLICert.addChild (aCertDetailsDiv);
               }
               else
               {

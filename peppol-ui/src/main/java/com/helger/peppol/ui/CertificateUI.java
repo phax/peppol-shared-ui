@@ -133,7 +133,9 @@ public final class CertificateUI
     final HCNodeList ret = new HCNodeList ();
     ret.addChild (PDTToString.getAsString (aNotBefore, aDisplayLocale));
     if (aNowDT.isBefore (aNotBefore))
+    {
       ret.addChild (new HCDiv ().addChild (new BootstrapBadge (EBootstrapBadgeType.DANGER).addChild ("!!!NOT YET VALID!!!")));
+    }
     return ret;
   }
 
@@ -145,12 +147,16 @@ public final class CertificateUI
     final HCNodeList ret = new HCNodeList ();
     ret.addChild (PDTToString.getAsString (aNotAfter, aDisplayLocale));
     if (aNowDT.isAfter (aNotAfter))
+    {
       ret.addChild (" ").addChild (new BootstrapBadge (EBootstrapBadgeType.DANGER).addChild ("!!!NO LONGER VALID!!!"));
+    }
     else
+    {
       ret.addChild (" ")
          .addChild (new BootstrapBadge (EBootstrapBadgeType.SUCCESS).addChild ("Valid for: " +
                                                                                PDTDisplayHelper.getPeriodTextEN (aNowDT.toLocalDateTime (),
                                                                                                                  aNotAfter.toLocalDateTime ())));
+    }
     return ret;
   }
 
@@ -210,6 +216,6 @@ public final class CertificateUI
                                                   .setValue (CertificateHelper.getPEMEncodedCertificate (aCert))
                                                   .addStyle (CCSSProperties.FONT_FAMILY.newValue (CCSSValue.FONT_MONOSPACE));
     BootstrapFormHelper.markAsFormControl (aTextArea);
-    return new HCDiv ().addChild (aTextArea);
+    return new HCDiv ().addChild (new HCDiv ().addChild ("PEM representation:")).addChild (aTextArea);
   }
 }
