@@ -78,7 +78,6 @@ import com.helger.html.hc.html.script.HCScriptInline;
 import com.helger.html.hc.html.sections.HCH3;
 import com.helger.html.hc.html.sections.HCH4;
 import com.helger.html.hc.html.textlevel.HCA;
-import com.helger.html.hc.html.textlevel.HCCode;
 import com.helger.html.hc.impl.HCNodeList;
 import com.helger.html.hc.impl.HCTextNode;
 import com.helger.html.jquery.JQuery;
@@ -388,12 +387,6 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
   private static String _getEntries (final int n)
   {
     return n == 1 ? "1 entry" : n + " entries";
-  }
-
-  @NonNull
-  private HCCode _codeNotBreak (@Nullable final String s)
-  {
-    return code (s).addClass (CBootstrapCSS.TEXT_NOWRAP);
   }
 
   private HCDiv _createSMLUsed (@NonNull final ISMLInfo aSMLInfo, final boolean bProdSML)
