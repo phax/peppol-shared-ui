@@ -1406,8 +1406,8 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
         }
       }
 
-      // Query for Business Card
-      if (bQueryBusinessCard)
+      // Query for Business Card (only in the Peppol Network)
+      if (bQueryBusinessCard && aSMPQueryParams.getPeppolNetwork () != null)
       {
         EFamFamFlagIcon.registerResourcesForThisRequest ();
 
