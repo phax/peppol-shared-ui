@@ -65,7 +65,7 @@ public class PagePublicToolsParticipantCheck extends AbstractAppWebPage
 
   public PagePublicToolsParticipantCheck (@NonNull @Nonempty final String sID)
   {
-    this (sID, "Participant Check");
+    this (sID, "Peppol Participant Check");
   }
 
   public PagePublicToolsParticipantCheck (@NonNull @Nonempty final String sID, @NonNull @Nonempty final String sName)

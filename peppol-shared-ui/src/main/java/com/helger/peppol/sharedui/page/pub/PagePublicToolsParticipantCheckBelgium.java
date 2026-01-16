@@ -66,7 +66,7 @@ public class PagePublicToolsParticipantCheckBelgium extends AbstractAppWebPage
 
   public PagePublicToolsParticipantCheckBelgium (@NonNull @Nonempty final String sID)
   {
-    this (sID, "Belgium Participant Check");
+    this (sID, "Belgium Peppol Participant Check");
   }
 
   public PagePublicToolsParticipantCheckBelgium (@NonNull @Nonempty final String sID,
