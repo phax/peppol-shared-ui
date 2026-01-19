@@ -1626,7 +1626,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
       sParticipantIDScheme = StringHelper.trim (aWPEC.params ().getAsString (FIELD_ID_SCHEME));
       sParticipantIDValue = StringHelper.trim (aWPEC.params ().getAsString (FIELD_ID_VALUE));
       final String sSMLID = StringHelper.trim (aWPEC.params ().getAsString (FIELD_SML));
-      final ISMLConfiguration aSMLConfiguration = aSMLConfigurationMgr.getSMLInfoOfID (sSMLID);
+      final ISMLConfiguration aSMLConfiguration = aSMLConfigurationMgr.getSMLConfigurationfID (sSMLID);
       final boolean bSMLAutoDetect = ISMLConfigurationManager.ID_AUTO_DETECT.equals (sSMLID);
       bQueryBusinessCard = aWPEC.params ().isCheckBoxCheckedNoHiddenField (PARAM_QUERY_BUSINESS_CARD);
       bShowTime = aWPEC.params ().isCheckBoxCheckedNoHiddenField (PARAM_SHOW_TIME);

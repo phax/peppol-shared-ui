@@ -78,17 +78,17 @@ public interface ISMLConfigurationManager
    * @return Never <code>null</code>.
    */
   @NonNull
-  ISMLConfiguration createSMLInfo (@NonNull @Nonempty String sSMLInfoID,
-                                   @NonNull @Nonempty String sDisplayName,
-                                   @NonNull @Nonempty String sDNSZone,
-                                   @NonNull @Nonempty String sManagementServiceURL,
-                                   @NonNull final String sURLSuffixManageSMP,
-                                   @NonNull final String sURLSuffixManageParticipant,
-                                   boolean bClientCertificateRequired,
-                                   @NonNull ESMPAPIType eSMPAPIType,
-                                   @NonNull ESMPIdentifierType eSMPIdentifierType,
-                                   boolean bProduction,
-                                   int nPriority);
+  ISMLConfiguration createSMLConfiguration (@NonNull @Nonempty String sSMLInfoID,
+                                            @NonNull @Nonempty String sDisplayName,
+                                            @NonNull @Nonempty String sDNSZone,
+                                            @NonNull @Nonempty String sManagementServiceURL,
+                                            @NonNull final String sURLSuffixManageSMP,
+                                            @NonNull final String sURLSuffixManageParticipant,
+                                            boolean bClientCertificateRequired,
+                                            @NonNull ESMPAPIType eSMPAPIType,
+                                            @NonNull ESMPIdentifierType eSMPIdentifierType,
+                                            boolean bProduction,
+                                            int nPriority);
 
   /**
    * Update an existing SML information.
@@ -128,17 +128,17 @@ public interface ISMLConfigurationManager
    * @return {@link EChange#CHANGED} if something was changed.
    */
   @NonNull
-  EChange updateSMLInfo (@Nullable String sSMLInfoID,
-                         @NonNull @Nonempty String sDisplayName,
-                         @NonNull @Nonempty String sDNSZone,
-                         @NonNull @Nonempty String sManagementServiceURL,
-                         @NonNull final String sURLSuffixManageSMP,
-                         @NonNull final String sURLSuffixManageParticipant,
-                         boolean bClientCertificateRequired,
-                         @NonNull ESMPAPIType eSMPAPIType,
-                         @NonNull ESMPIdentifierType eSMPIdentifierType,
-                         boolean bProduction,
-                         int nPriority);
+  EChange updateSMLConfiguration (@Nullable String sSMLInfoID,
+                                  @NonNull @Nonempty String sDisplayName,
+                                  @NonNull @Nonempty String sDNSZone,
+                                  @NonNull @Nonempty String sManagementServiceURL,
+                                  @NonNull final String sURLSuffixManageSMP,
+                                  @NonNull final String sURLSuffixManageParticipant,
+                                  boolean bClientCertificateRequired,
+                                  @NonNull ESMPAPIType eSMPAPIType,
+                                  @NonNull ESMPIdentifierType eSMPIdentifierType,
+                                  boolean bProduction,
+                                  int nPriority);
 
   /**
    * Delete an existing SML information.
@@ -148,7 +148,7 @@ public interface ISMLConfigurationManager
    * @return {@link EChange#CHANGED} if the removal was successful.
    */
   @Nullable
-  EChange removeSMLInfo (@Nullable String sSMLInfoID);
+  EChange removeSMLConfiguration (@Nullable String sSMLInfoID);
 
   /**
    * @return An unsorted collection of all contained SML information. Never <code>null</code> but
@@ -170,7 +170,7 @@ public interface ISMLConfigurationManager
    * @return <code>null</code> if no such SML information exists.
    */
   @Nullable
-  ISMLConfiguration getSMLInfoOfID (@Nullable String sID);
+  ISMLConfiguration getSMLConfigurationfID (@Nullable String sID);
 
   /**
    * Find the first SML information that matches the provided predicate.
@@ -189,5 +189,5 @@ public interface ISMLConfigurationManager
    *        The ID of the SML information to be checked. May be <code>null</code>.
    * @return <code>true</code> if the ID is contained, <code>false</code> otherwise.
    */
-  boolean containsSMLInfoWithID (@Nullable String sID);
+  boolean containsSMLConfigurationWithID (@Nullable String sID);
 }

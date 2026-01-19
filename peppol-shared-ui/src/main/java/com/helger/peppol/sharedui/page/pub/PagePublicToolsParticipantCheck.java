@@ -151,7 +151,7 @@ public class PagePublicToolsParticipantCheck extends AbstractAppWebPage
       final ICommonsList <String> aPIDValues = RegExHelper.getSplitToList (sParticipantIDValue, "\\s+");
       sSML = aWPEC.params ().getAsStringTrimmed (FIELD_SML);
       final boolean bIsProdSML = SML_PROD.equals (sSML);
-      final ISMLConfiguration aSMLConfiguration = aSMLConfigurationMgr.getSMLInfoOfID (bIsProdSML ? ESML.DIGIT_PRODUCTION.getID ()
+      final ISMLConfiguration aSMLConfiguration = aSMLConfigurationMgr.getSMLConfigurationfID (bIsProdSML ? ESML.DIGIT_PRODUCTION.getID ()
                                                                                                   : ESML.DIGIT_TEST.getID ());
       final IIdentifierFactory aIF = aSMLConfiguration != null ? aSMLConfiguration.getSMPIdentifierType ()
                                                                                   .getIdentifierFactory ()

@@ -32,6 +32,7 @@ public class ParticipantIdentifierSchemeSelect extends HCExtSelect
     addOptionPleaseSelect (aDisplayLocale);
     for (final EPredefinedParticipantIdentifierScheme eIIA : EPredefinedParticipantIdentifierScheme.values ())
       if (!eIIA.isDeprecated ())
-        addOption (eIIA.getISO6523Code (), eIIA.getISO6523Code () + " - " + eIIA.getSchemeID ());
+        addOption (eIIA.getISO6523Code (),
+                   eIIA.getISO6523Code () + " (" + eIIA.getSchemeID () + ") " + eIIA.getSchemeName ());
   }
 }

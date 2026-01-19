@@ -61,7 +61,7 @@ public final class APISMPQueryGetBusinessCard extends AbstractAPIExecutor
     final ISMLConfigurationManager aSMLConfigurationMgr = PhotonPeppolMetaManager.getSMLConfigurationMgr ();
     final String sSMLID = aPathVariables.get (PeppolSharedRestAPI.PARAM_SML_ID);
     final boolean bSMLAutoDetect = ISMLConfigurationManager.ID_AUTO_DETECT.equals (sSMLID);
-    ISMLConfiguration aSMLConfig = aSMLConfigurationMgr.getSMLInfoOfID (sSMLID);
+    ISMLConfiguration aSMLConfig = aSMLConfigurationMgr.getSMLConfigurationfID (sSMLID);
     if (aSMLConfig == null && !bSMLAutoDetect)
       throw new APIParamException ("Unsupported SML ID '" + sSMLID + "' provided.");
 

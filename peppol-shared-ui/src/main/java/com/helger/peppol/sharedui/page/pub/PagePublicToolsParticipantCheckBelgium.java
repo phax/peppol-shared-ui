@@ -105,7 +105,7 @@ public class PagePublicToolsParticipantCheckBelgium extends AbstractAppWebPage
                                   sParticipantIDValue +
                                   "' does not seem to match the syntax requirements (length 10, start with 0 or 1, mod97 check digit)"));
 
-      final ISMLConfiguration aSMLConfiguration = aSMLConfigurationMgr.getSMLInfoOfID (ESML.DIGIT_PRODUCTION.getID ());
+      final ISMLConfiguration aSMLConfiguration = aSMLConfigurationMgr.getSMLConfigurationfID (ESML.DIGIT_PRODUCTION.getID ());
 
       // 0208 does not use prefix
       final SMPQueryParams aSMPQP_CBE = SMPQueryParams.createForSMLOrNull (aSMLConfiguration,

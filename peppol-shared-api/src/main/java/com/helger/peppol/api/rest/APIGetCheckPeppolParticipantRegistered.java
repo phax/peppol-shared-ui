@@ -68,7 +68,7 @@ public final class APIGetCheckPeppolParticipantRegistered extends AbstractAPIExe
 
     final String sSMLID = aPathVariables.get (PeppolSharedRestAPI.PARAM_SML_ID);
     final boolean bSMLAutoDetect = ISMLConfigurationManager.ID_AUTO_DETECT.equals (sSMLID);
-    final ISMLConfiguration aSMLConf = aSMLConfigurationMgr.getSMLInfoOfID (sSMLID);
+    final ISMLConfiguration aSMLConf = aSMLConfigurationMgr.getSMLConfigurationfID (sSMLID);
     if (aSMLConf == null && !bSMLAutoDetect)
       throw new APIParamException ("Unsupported SML ID '" + sSMLID + "' provided.");
 

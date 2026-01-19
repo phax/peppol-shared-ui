@@ -52,17 +52,17 @@ public final class SMLConfigurationManager extends AbstractPhotonMapBasedWALDAO 
   }
 
   @NonNull
-  public ISMLConfiguration createSMLInfo (@NonNull @Nonempty final String sSMLInfoID,
-                                          @NonNull @Nonempty final String sDisplayName,
-                                          @NonNull @Nonempty final String sDNSZone,
-                                          @NonNull @Nonempty final String sManagementServiceURL,
-                                          @NonNull final String sURLSuffixManageSMP,
-                                          @NonNull final String sURLSuffixManageParticipant,
-                                          final boolean bClientCertificateRequired,
-                                          @NonNull final ESMPAPIType eSMPAPIType,
-                                          @NonNull final ESMPIdentifierType eSMPIdentifierType,
-                                          final boolean bProduction,
-                                          final int nPriority)
+  public ISMLConfiguration createSMLConfiguration (@NonNull @Nonempty final String sSMLInfoID,
+                                                   @NonNull @Nonempty final String sDisplayName,
+                                                   @NonNull @Nonempty final String sDNSZone,
+                                                   @NonNull @Nonempty final String sManagementServiceURL,
+                                                   @NonNull final String sURLSuffixManageSMP,
+                                                   @NonNull final String sURLSuffixManageParticipant,
+                                                   final boolean bClientCertificateRequired,
+                                                   @NonNull final ESMPAPIType eSMPAPIType,
+                                                   @NonNull final ESMPIdentifierType eSMPIdentifierType,
+                                                   final boolean bProduction,
+                                                   final int nPriority)
   {
     final SMLInfo aSMLInfo = SMLInfo.builder ()
                                     .id (sSMLInfoID)
@@ -73,14 +73,14 @@ public final class SMLConfigurationManager extends AbstractPhotonMapBasedWALDAO 
                                     .urlSuffixManageParticipant (sURLSuffixManageParticipant)
                                     .clientCertificateRequired (bClientCertificateRequired)
                                     .build ();
-    final SMLConfiguration aExtSMLInfo = new SMLConfiguration (aSMLInfo,
-                                                               eSMPAPIType,
-                                                               eSMPIdentifierType,
-                                                               bProduction,
-                                                               nPriority);
+    final SMLConfiguration aSMLConfig = new SMLConfiguration (aSMLInfo,
+                                                              eSMPAPIType,
+                                                              eSMPIdentifierType,
+                                                              bProduction,
+                                                              nPriority);
 
-    m_aRWLock.writeLocked ( () -> { internalCreateItem (aExtSMLInfo); });
-    AuditHelper.onAuditCreateSuccess (SMLInfo.OT,
+    m_aRWLock.writeLocked ( () -> { internalCreateItem (aSMLConfig); });
+    AuditHelper.onAuditCreateSuccess (SMLConfiguration.OT,
                                       sSMLInfoID,
                                       sDisplayName,
                                       sDNSZone,
@@ -92,26 +92,26 @@ public final class SMLConfigurationManager extends AbstractPhotonMapBasedWALDAO 
                                       eSMPIdentifierType,
                                       Boolean.valueOf (bProduction),
                                       Integer.valueOf (nPriority));
-    return aExtSMLInfo;
+    return aSMLConfig;
   }
 
   @NonNull
-  public EChange updateSMLInfo (@Nullable final String sSMLInfoID,
-                                @NonNull @Nonempty final String sDisplayName,
-                                @NonNull @Nonempty final String sDNSZone,
-                                @NonNull @Nonempty final String sManagementServiceURL,
-                                @NonNull final String sURLSuffixManageSMP,
-                                @NonNull final String sURLSuffixManageParticipant,
-                                final boolean bClientCertificateRequired,
-                                @NonNull final ESMPAPIType eSMPAPIType,
-                                @NonNull final ESMPIdentifierType eSMPIdentifierType,
-                                final boolean bProduction,
-                                final int nPriority)
+  public EChange updateSMLConfiguration (@Nullable final String sSMLInfoID,
+                                         @NonNull @Nonempty final String sDisplayName,
+                                         @NonNull @Nonempty final String sDNSZone,
+                                         @NonNull @Nonempty final String sManagementServiceURL,
+                                         @NonNull final String sURLSuffixManageSMP,
+                                         @NonNull final String sURLSuffixManageParticipant,
+                                         final boolean bClientCertificateRequired,
+                                         @NonNull final ESMPAPIType eSMPAPIType,
+                                         @NonNull final ESMPIdentifierType eSMPIdentifierType,
+                                         final boolean bProduction,
+                                         final int nPriority)
   {
     final SMLConfiguration aExtSMLInfo = getOfID (sSMLInfoID);
     if (aExtSMLInfo == null)
     {
-      AuditHelper.onAuditModifyFailure (SMLInfo.OT, "all", sSMLInfoID, "no-such-id");
+      AuditHelper.onAuditModifyFailure (SMLConfiguration.OT, "all", sSMLInfoID, "no-such-id");
       return EChange.UNCHANGED;
     }
 
@@ -143,7 +143,7 @@ public final class SMLConfigurationManager extends AbstractPhotonMapBasedWALDAO 
     {
       m_aRWLock.writeLock ().unlock ();
     }
-    AuditHelper.onAuditModifySuccess (SMLInfo.OT,
+    AuditHelper.onAuditModifySuccess (SMLConfiguration.OT,
                                       "all",
                                       sSMLInfoID,
                                       sDisplayName,
@@ -160,7 +160,7 @@ public final class SMLConfigurationManager extends AbstractPhotonMapBasedWALDAO 
   }
 
   @Nullable
-  public EChange removeSMLInfo (@Nullable final String sSMLInfoID)
+  public EChange removeSMLConfiguration (@Nullable final String sSMLInfoID)
   {
     if (StringHelper.isEmpty (sSMLInfoID))
       return EChange.UNCHANGED;
@@ -171,7 +171,7 @@ public final class SMLConfigurationManager extends AbstractPhotonMapBasedWALDAO 
       final SMLConfiguration aExtSMLInfo = internalDeleteItem (sSMLInfoID);
       if (aExtSMLInfo == null)
       {
-        AuditHelper.onAuditDeleteFailure (SMLInfo.OT, "no-such-id", sSMLInfoID);
+        AuditHelper.onAuditDeleteFailure (SMLConfiguration.OT, "no-such-id", sSMLInfoID);
         return EChange.UNCHANGED;
       }
     }
@@ -179,7 +179,7 @@ public final class SMLConfigurationManager extends AbstractPhotonMapBasedWALDAO 
     {
       m_aRWLock.writeLock ().unlock ();
     }
-    AuditHelper.onAuditDeleteSuccess (SMLInfo.OT, sSMLInfoID);
+    AuditHelper.onAuditDeleteSuccess (SMLConfiguration.OT, sSMLInfoID);
     return EChange.CHANGED;
   }
 
@@ -207,12 +207,12 @@ public final class SMLConfigurationManager extends AbstractPhotonMapBasedWALDAO 
   }
 
   @Nullable
-  public ISMLConfiguration getSMLInfoOfID (@Nullable final String sID)
+  public ISMLConfiguration getSMLConfigurationfID (@Nullable final String sID)
   {
     return getOfID (sID);
   }
 
-  public boolean containsSMLInfoWithID (@Nullable final String sID)
+  public boolean containsSMLConfigurationWithID (@Nullable final String sID)
   {
     return containsWithID (sID);
   }

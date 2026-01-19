@@ -108,7 +108,7 @@ public class PageSecureSMLConfiguration extends
                                     @NonNull final ISMLConfiguration aSelectedObject)
       {
         final ISMLConfigurationManager aSMLConfigurationMgr = PhotonPeppolMetaManager.getSMLConfigurationMgr ();
-        if (aSMLConfigurationMgr.removeSMLInfo (aSelectedObject.getID ()).isChanged ())
+        if (aSMLConfigurationMgr.removeSMLConfiguration (aSelectedObject.getID ()).isChanged ())
           aWPEC.postRedirectGetInternal (success ("The SML configuration '" +
                                                   aSelectedObject.getDisplayName () +
                                                   "' with ID '" +
@@ -127,7 +127,7 @@ public class PageSecureSMLConfiguration extends
                                                  @Nullable final String sID)
   {
     final ISMLConfigurationManager aSMLConfigurationMgr = PhotonPeppolMetaManager.getSMLConfigurationMgr ();
-    return aSMLConfigurationMgr.getSMLInfoOfID (sID);
+    return aSMLConfigurationMgr.getSMLConfigurationfID (sID);
   }
 
   @Override
@@ -334,7 +334,7 @@ public class PageSecureSMLConfiguration extends
         aFormErrors.addFieldError (FIELD_ID, "This SML configuration ID is reserved!");
       else
       {
-        final ISMLConfiguration aExisting = aSMLConfigurationMgr.getSMLInfoOfID (sID);
+        final ISMLConfiguration aExisting = aSMLConfigurationMgr.getSMLConfigurationfID (sID);
         if (bEdit)
         {
           // Expect aExistring == aSelectedObject
@@ -403,7 +403,7 @@ public class PageSecureSMLConfiguration extends
 
       if (bEdit)
       {
-        aSMLConfigurationMgr.updateSMLInfo (aSelectedObject.getID (),
+        aSMLConfigurationMgr.updateSMLConfiguration (aSelectedObject.getID (),
                                             sDisplayName,
                                             sDNSZoneLC,
                                             sManagementAddressURL,
@@ -420,7 +420,7 @@ public class PageSecureSMLConfiguration extends
       }
       else
       {
-        aSMLConfigurationMgr.createSMLInfo (sID,
+        aSMLConfigurationMgr.createSMLConfiguration (sID,
                                             sDisplayName,
                                             sDNSZoneLC,
                                             sManagementAddressURL,

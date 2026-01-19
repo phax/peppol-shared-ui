@@ -23,6 +23,7 @@ import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.hashcode.HashCodeGenerator;
 import com.helger.base.state.EChange;
 import com.helger.base.tostring.ToStringGenerator;
+import com.helger.base.type.ObjectType;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppol.sml.ESMPAPIType;
 import com.helger.peppol.sml.SMLInfo;
@@ -30,6 +31,8 @@ import com.helger.peppolid.factory.ESMPIdentifierType;
 
 public final class SMLConfiguration implements ISMLConfiguration
 {
+  public static final ObjectType OT = new ObjectType ("sml.configuration");
+
   private SMLInfo m_aSMLInfo;
   private ESMPAPIType m_eSMPAPIType;
   private ESMPIdentifierType m_eSMPIdentifierType;
