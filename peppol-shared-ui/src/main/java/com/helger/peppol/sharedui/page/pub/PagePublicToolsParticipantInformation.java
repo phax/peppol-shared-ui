@@ -65,6 +65,7 @@ import com.helger.dns.ip.IPV4Addr;
 import com.helger.html.hc.IHCNode;
 import com.helger.html.hc.ext.HCA_MailTo;
 import com.helger.html.hc.ext.HCExtHelper;
+import com.helger.html.hc.html.HC_Target;
 import com.helger.html.hc.html.forms.EHCFormMethod;
 import com.helger.html.hc.html.forms.HCCheckBox;
 import com.helger.html.hc.html.forms.HCEdit;
@@ -1493,7 +1494,9 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
               final HCUL aUL = new HCUL ();
               for (final PDBusinessEntity aEntity : aBC.businessEntities ())
               {
-                final HCLI aLI = aUL.addItem ();
+                final BootstrapTable aBCTable = new BootstrapTable ().setCondensed (true)
+                                                                     .setBordered (true)
+                                                                     .addClass (CBootstrapCSS.W_AUTO);
 
                 // Name
                 for (final PDName aName : aEntity.names ())
@@ -1502,7 +1505,8 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                   final String sLanguageName = aLanguage == null ? "" : " (" +
                                                                         aLanguage.getDisplayLanguage (aDisplayLocale) +
                                                                         ")";
-                  aLI.addChild (div (aName.getName () + sLanguageName));
+
+                  aBCTable.addBodyRow ().addCell ("Name" + sLanguageName).addCell (aName.getName ());
                 }
 
                 // Country
@@ -1515,14 +1519,17 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                                     sCountryCode +
                                                                                     ")";
                   final EFamFamFlagIcon eIcon = EFamFamFlagIcon.getFromIDOrNull (sCountryCode);
-                  aLI.addChild (div ("Country: " + sCountryName + " ").addChild (eIcon == null ? null : eIcon
-                                                                                                             .getAsNode ()));
+                  aBCTable.addBodyRow ()
+                          .addCell ("Country")
+                          .addCell (span (sCountryName + " ").addChild (eIcon == null ? null : eIcon.getAsNode ()));
                 }
 
                 // Geo info
                 if (aEntity.hasGeoInfo ())
                 {
-                  aLI.addChild (div ("Geographical information: ").addChildren (HCExtHelper.nl2brList (aEntity.getGeoInfo ())));
+                  aBCTable.addBodyRow ()
+                          .addCell ("Geographical information")
+                          .addCell (HCExtHelper.nl2brList (aEntity.getGeoInfo ()));
                 }
                 // Additional IDs
                 if (aEntity.identifiers ().isNotEmpty ())
@@ -1538,17 +1545,17 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                       aIDTab.addBodyRow ().addCells (aItem.getScheme (), aItem.getValue ());
                   }
                   if (aIDTab.hasBodyRows ())
-                    aLI.addChild (div ("Additional identifiers: ").addChild (aIDTab));
+                    aBCTable.addBodyRow ().addCell ("Additional identifiers").addCell (aIDTab);
                 }
                 // Website URLs
                 if (aEntity.websiteURIs ().isNotEmpty ())
                 {
-                  final HCNodeList aWebsites = new HCNodeList ();
+                  final HCUL aWebsites = new HCUL ();
                   for (final String sItem : aEntity.websiteURIs ())
                     if (StringHelper.isNotEmpty (sItem))
-                      aWebsites.addChild (div (HCA.createLinkedWebsite (sItem)));
+                      aWebsites.addItem (div (HCA.createLinkedWebsite (sItem, HC_Target.BLANK)));
                   if (aWebsites.hasChildren ())
-                    aLI.addChild (div ("Website URLs: ").addChild (aWebsites));
+                    aBCTable.addBodyRow ().addCell ("Website URLs").addCell (aWebsites);
                 }
                 // Contacts
                 if (aEntity.contacts ().isNotEmpty ())
@@ -1568,17 +1575,22 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                  .addCell (HCA_MailTo.createLinkedEmail (aItem.getEmail ()));
                   }
                   if (aContactTab.hasBodyRows ())
-                    aLI.addChild (div ("Contact points: ").addChild (aContactTab));
+                    aBCTable.addBodyRow ().addCell ("Contact points").addCell (aContactTab);
                 }
                 if (aEntity.hasAdditionalInfo ())
                 {
-                  aLI.addChild (div ("Additional information: ").addChildren (HCExtHelper.nl2brList (aEntity.getAdditionalInfo ())));
+                  aBCTable.addBodyRow ()
+                          .addCell ("Additional information")
+                          .addCell (HCExtHelper.nl2brList (aEntity.getAdditionalInfo ()));
                 }
                 if (aEntity.hasRegistrationDate ())
                 {
-                  aLI.addChild (div ("Registration date: ").addChild (PDTToString.getAsString (aEntity.getRegistrationDate (),
-                                                                                               aDisplayLocale)));
+                  aBCTable.addBodyRow ()
+                          .addCell ("Registration date")
+                          .addCell (PDTToString.getAsString (aEntity.getRegistrationDate (), aDisplayLocale));
                 }
+
+                aUL.addItem (aBCTable);
               }
               aNodeList.addChild (aUL);
             }
