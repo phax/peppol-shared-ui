@@ -123,7 +123,6 @@ import com.helger.peppolid.CIdentifier;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.factory.IIdentifierFactory;
-import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.peppolid.peppol.PeppolIdentifierHelper;
 import com.helger.peppolid.peppol.pidscheme.IPeppolParticipantIdentifierScheme;
@@ -497,16 +496,14 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                                         .getDisplayName ())));
             switch (aRealSMLConfiguration.getSMPAPIType ())
             {
-              case PEPPOL:
+              // All use NAPTR
+              default:
                 try
                 {
-                  final var aParticipantID = PeppolIdentifierFactory.INSTANCE.createParticipantIdentifier (sParticipantIDScheme,
+                  final var aParticipantID = SimpleIdentifierFactory.INSTANCE.createParticipantIdentifier (sParticipantIDScheme,
                                                                                                            sParticipantIDValue);
-                  if (aParticipantID != null)
-                  {
-                    aHeaderUL.addItem (div ("DNS NAPTR domain: ").addChild (code (PeppolNaptrURLProvider.INSTANCE.getDNSNameOfParticipant (aParticipantID,
-                                                                                                                                           aRealSMLConfiguration.getSMLInfo ()))));
-                  }
+                  aHeaderUL.addItem (div ("DNS NAPTR domain: ").addChild (code (PeppolNaptrURLProvider.INSTANCE.getDNSNameOfParticipant (aParticipantID,
+                                                                                                                                         aRealSMLConfiguration.getSMLInfo ()))));
                 }
                 catch (final SMPDNSResolutionException ex)
                 {
@@ -565,7 +562,8 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
         IHCNode aResolvedNameSuffix = null;
         switch (eAPIType)
         {
-          case PEPPOL:
+          // Currently all use NAPTR
+          default:
             try
             {
               aHeaderUL.addItem (div ("DNS NAPTR domain: ").addChild (code (PeppolNaptrURLProvider.INSTANCE.getDNSNameOfParticipant (aParticipantID,
@@ -575,7 +573,12 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
             {
               // Ignore
             }
+        }
 
+        // Check schema
+        switch (eAPIType)
+        {
+          case PEPPOL:
             if (!sURL1.startsWith ("https://"))
             {
               // Mandatory per 1.2.2026 to use https
@@ -584,7 +587,6 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
               else
                 aResolvedNameSuffix = badgeDanger ("Not yet using https").addClass (CBootstrapCSS.ML_2);
             }
-
             break;
         }
 
