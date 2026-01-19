@@ -58,18 +58,18 @@ import com.helger.photon.uictrls.famfam.EFamFamIcon;
 import com.helger.url.ISimpleURL;
 import com.helger.url.SimpleURL;
 
-public class PagePublicToolsParticipantCheckBelgium extends AbstractAppWebPage
+public class PagePublicToolsPeppolParticipantCheckBelgium extends AbstractAppWebPage
 {
   public static final String FIELD_ID_VALUE = "value";
 
-  private static final Logger LOGGER = LoggerFactory.getLogger (PagePublicToolsParticipantCheckBelgium.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (PagePublicToolsPeppolParticipantCheckBelgium.class);
 
-  public PagePublicToolsParticipantCheckBelgium (@NonNull @Nonempty final String sID)
+  public PagePublicToolsPeppolParticipantCheckBelgium (@NonNull @Nonempty final String sID)
   {
     this (sID, "Belgium Peppol Participant Check");
   }
 
-  public PagePublicToolsParticipantCheckBelgium (@NonNull @Nonempty final String sID,
+  public PagePublicToolsPeppolParticipantCheckBelgium (@NonNull @Nonempty final String sID,
                                                  @NonNull @Nonempty final String sName)
   {
     super (sID, sName);

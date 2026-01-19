@@ -53,7 +53,7 @@ import com.helger.photon.uictrls.famfam.EFamFamIcon;
 import com.helger.url.ISimpleURL;
 import com.helger.url.SimpleURL;
 
-public class PagePublicToolsParticipantCheck extends AbstractAppWebPage
+public class PagePublicToolsPeppolParticipantCheck extends AbstractAppWebPage
 {
   public static final String SML_PROD = "smlprod";
   public static final String SML_TEST = "smltest";
@@ -63,12 +63,12 @@ public class PagePublicToolsParticipantCheck extends AbstractAppWebPage
 
   public static final String DEFAULT_ID_SCHEME = PeppolIdentifierHelper.DEFAULT_PARTICIPANT_SCHEME;
 
-  public PagePublicToolsParticipantCheck (@NonNull @Nonempty final String sID)
+  public PagePublicToolsPeppolParticipantCheck (@NonNull @Nonempty final String sID)
   {
     this (sID, "Peppol Participant Check");
   }
 
-  public PagePublicToolsParticipantCheck (@NonNull @Nonempty final String sID, @NonNull @Nonempty final String sName)
+  public PagePublicToolsPeppolParticipantCheck (@NonNull @Nonempty final String sID, @NonNull @Nonempty final String sName)
   {
     super (sID, sName);
   }
