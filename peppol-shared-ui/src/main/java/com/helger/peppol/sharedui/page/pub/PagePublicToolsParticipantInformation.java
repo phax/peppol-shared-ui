@@ -593,6 +593,14 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
         aHeaderUL.addItem (div ("Resolved name: ").addChild (code (sURL1)).addChild (aResolvedNameSuffix),
                            div (_createOpenInBrowser (sURL1, "Open in browser [may fail]")));
 
+        final BootstrapButton aNetworkToggle = new BootstrapButton (EBootstrapButtonType.DEFAULT,
+                                                                    EBootstrapButtonSize.SMALL).addChild ("Toggle Network Details");
+        final HCLI aNetworkItem = aHeaderUL.addAndReturnItem (aNetworkToggle);
+
+        final HCUL aNetworkUL = new HCUL ();
+        aNetworkItem.addChild (aNetworkUL);
+        BootstrapCollapseHelper.makeCollapsible (aNetworkToggle, aNetworkUL);
+
         // Explicit query with the dnsjava lookup
         // Hidden feature to show more details
         if (aWPEC.params ().hasStringValue ("dnsjava", "true"))
@@ -650,7 +658,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                      .addChild (_createOpenInBrowser ("https://" + sURL3,
                                                       "Open reverse lookup in browser (https) [may fail]"));
               }
-              aHeaderUL.addItem (aDiv1, aDiv2);
+              aNetworkUL.addItem (aDiv1, aDiv2);
             }
           aSWDNSLookup.stop ();
           LOGGER.info ("Finished DNSJava lookup - " +
@@ -674,7 +682,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                 final InetAddress aNice = InetAddress.getByAddress (aInetAddress.getAddress ());
                 final String sURL3 = aNice.getCanonicalHostName ();
 
-                final HCLI aItem = aHeaderUL.addItem ();
+                final HCLI aItem = aNetworkUL.addItem ();
                 aItem.addChild (div ("IP v4 address: ").addChild (code (sURL2))
                                                        .addChild (" - reverse lookup: ")
                                                        .addChild (code (sURL3)));
@@ -699,7 +707,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                 final InetAddress aNice = InetAddress.getByAddress (aInetAddress.getAddress ());
                 final String sURL3 = aNice.getCanonicalHostName ();
 
-                final HCLI aItem = aHeaderUL.addItem ();
+                final HCLI aItem = aNetworkUL.addItem ();
                 aItem.addChild (div ("IP v6 address: ").addChild (code (sURL2))
                                                        .addChild (" - reverse lookup: ")
                                                        .addChild (code (sURL3)));
@@ -1545,7 +1553,9 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                 // Contacts
                 if (aEntity.contacts ().isNotEmpty ())
                 {
-                  final BootstrapTable aContactTab = new BootstrapTable ().setCondensed (true);
+                  final BootstrapTable aContactTab = new BootstrapTable ().setCondensed (true)
+                                                                          .setBordered (true)
+                                                                          .addClass (CBootstrapCSS.W_AUTO);
                   aContactTab.addHeaderRow ().addCells ("Type", "Name", "Phone", "Email");
                   for (final PDContact aItem : aEntity.contacts ())
                   {
