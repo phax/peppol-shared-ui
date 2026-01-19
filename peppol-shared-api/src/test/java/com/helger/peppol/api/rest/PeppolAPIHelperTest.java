@@ -1,7 +1,6 @@
 package com.helger.peppol.api.rest;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -17,11 +16,10 @@ import com.helger.peppolid.peppol.PeppolIdentifierHelper;
 
 public class PeppolAPIHelperTest
 {
-
   private static final Logger LOGGER = LoggerFactory.getLogger (PeppolAPIHelperTest.class);
 
   @Test
-  public void testReadBCOnfactInvalid ()
+  public void testReadBCOnfactNowValid ()
   {
     final SMPQueryParams aSMPQueryParams = SMPQueryParams.createForSMLOrNull (ESML.DIGIT_PRODUCTION,
                                                                               ESMPAPIType.PEPPOL,
@@ -35,6 +33,6 @@ public class PeppolAPIHelperTest
                                                                            x -> {},
                                                                            new FeedbackCallbackLog (LOGGER, ""),
                                                                            ex -> LOGGER.error ("oops", ex));
-    assertNull (aBC);
+    assertNotNull (aBC);
   }
 }
