@@ -3,6 +3,8 @@
 Shared UI components for Peppol related websites like peppol.helger.com
 This includes primarily UI and web application related components.
 
+As the UI framework used is proprietory (ph-oton) and the users are limited and the version is pre 1.0 I decided to not to spend too much effort in documenting all the detailed changes. Expect this to start after 1.0.
+
 This project consists of the following modules, in dependency order:
 * `peppol-ui-types` - general UI related data types
 * `peppol-ui` - general UI related help classes etc.
@@ -16,6 +18,7 @@ This project consists of the following modules, in dependency order:
 v0.9.11 - 2026-01-23
 * Updated to peppol-commons 12.3.7
 * Showing the DNS NAPTR URL for Peppol also if participant was not found
+* Showing a warning in the Participant Information UI if the SMP base URL differs from the per document type base URL
 
 v0.9.10 - 2025-12-29
 * Updated to peppol-commons 12.3.4
