@@ -879,6 +879,8 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
             aH3.addChild (" ").addChild (_createTimingNode (aSWGetDocTypes.getMillis ()));
           aNodeList.addChild (aH3);
 
+          final String sSMPQueryBaseURL = aSMPQueryParams.getSMPHostURI ().toString ();
+          final String sSMPQueryBaseURLLC = sSMPQueryBaseURL.toLowerCase (Locale.US);
           final String sPathStart1 = "/" + aParticipantID.getURIEncoded () + "/services/";
           final String sPathStart2 = "/" + aParticipantID.getURIPercentEncoded () + "/services/";
 
@@ -889,6 +891,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
             final String sOriginalHref = aEntry.getValue ();
 
             final HCLI aLI = aSGOL.addItem ();
+
             // Should be case insensitive "indexOf" here
             int nPathStartLength = sPathStart1.length ();
             int nPathStart = sCleanHref.toLowerCase (Locale.US).indexOf (sPathStart1.toLowerCase (Locale.US));
@@ -913,7 +916,9 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                                                      EBootstrapButtonSize.SMALL).addChild ("Toggle Details")
                                                                                                                                 .addClass (CBootstrapCSS.ML_3)
                                                                                                                                 .addClass (CBootstrapCSS.MY_1));
-                final HCDiv aDetailsDiv = aLI.addAndReturnChild (div ());
+                final HCDiv aDetailsDiv = aLI.addAndReturnChild (div ().addClasses (CBootstrapCSS.CONTAINER,
+                                                                                    CBootstrapCSS.P_0,
+                                                                                    CBootstrapCSS.M_0));
                 // Make sure the URL can be copied
                 aDetailsDiv.addChild (div ("URL: ").addChild (code (sOriginalHref)));
                 aDetailsDiv.addChild (div ("Document Type ID: ").addChild (code (aDocType.getURIEncoded ())));
@@ -930,6 +935,13 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                 aLI.addChild (div (code (sCleanHref)));
                 aLI.addChild (error ("The document type ").addChild (code (sDocType))
                                                           .addChild (" could not be interpreted as a structured document type!"));
+              }
+
+              // Case-insensitive starts-with
+              if (!sOriginalHref.toLowerCase (Locale.US).startsWith (sSMPQueryBaseURLLC))
+              {
+                // The SMP spec means: should point to a site signed with the same Peppol SMP cert
+                aLI.addChild (warn ("The document type-specific base URL differs from the SML determined base URL"));
               }
             }
             else
@@ -1479,7 +1491,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
               aNodeList.addChild (aH4);
 
               final String sBCURL = PeppolAPIHelper.getBusinessCardURL (aSMPQueryParams);
-              final HCDiv aButtonDiv = aNodeList.addAndReturnChild (div (_createOpenInBrowser (sBCURL)));
+              final HCDiv aButtonDiv = aNodeList.addAndReturnChild (div (_createOpenInBrowser (sBCURL)).addClass (CBootstrapCSS.MY_2));
 
               final EPeppolNetwork ePN = aSMPQueryParams.getPeppolNetwork ();
               if (ePN != null)

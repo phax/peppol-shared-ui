@@ -14,7 +14,7 @@ This project consists of the following modules, in dependency order:
 # News and Noteworthy
 
 v0.9.11 - work in progress
-* Updated to peppol-commons 12.3.6
+* Updated to peppol-commons 12.3.7
 * Showing the DNS NAPTR URL for Peppol also if participant was not found
 
 v0.9.10 - 2025-12-29
