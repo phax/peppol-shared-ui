@@ -22,6 +22,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +42,8 @@ import com.helger.peppolid.peppol.PeppolIdentifierHelper;
 import com.helger.photon.api.IAPIDescriptor;
 import com.helger.photon.app.PhotonUnifiedResponse;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
+import com.helger.xml.microdom.IMicroElement;
+import com.helger.xml.microdom.MicroElement;
 
 /**
  * Determine if a participant ID is registered in the Peppol Network or not.
@@ -54,6 +57,45 @@ public final class APIGetCheckPeppolParticipantRegistered extends AbstractAPIExe
   public APIGetCheckPeppolParticipantRegistered (@NonNull @Nonempty final String sUserAgent)
   {
     super (sUserAgent);
+  }
+
+  @NonNull
+  public static IJsonObject createResultJson (@NonNull final String sSMLID,
+                                              @NonNull final ISMLConfiguration aEffectiveSMLConf,
+                                              @NonNull final IParticipantIdentifier aParticipantID)
+  {
+    final IJsonObject ret = new JsonObject ();
+    ret.add ("participantID", aParticipantID.getURIEncoded ());
+    ret.add ("sml", sSMLID);
+    if (aEffectiveSMLConf != null)
+    {
+      ret.add ("smpHostURI",
+               PeppolExistenceCheck.getSMPURIViaNaptr (aParticipantID, aEffectiveSMLConf.getSMLInfo ().getDNSZone ()));
+    }
+    // This is the main check result
+    ret.add ("exists", aEffectiveSMLConf != null);
+    return ret;
+  }
+
+  @NonNull
+  public static IMicroElement createResultMicroElement (@Nullable final String sNamespaceURI,
+                                                        @NonNull final String sTagName,
+                                                        @NonNull final String sSMLID,
+                                                        @NonNull final ISMLConfiguration aEffectiveSMLConf,
+                                                        @NonNull final IParticipantIdentifier aParticipantID)
+  {
+    final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
+    ret.addElementNS (sNamespaceURI, "ParticipantID").addText (aParticipantID.getURIEncoded ());
+    ret.setAttribute ("sml", sSMLID);
+    if (aEffectiveSMLConf != null)
+    {
+      ret.addElementNS (sNamespaceURI, "SMPHostURI")
+         .addText (PeppolExistenceCheck.getSMPURIViaNaptr (aParticipantID,
+                                                           aEffectiveSMLConf.getSMLInfo ().getDNSZone ()).toString ());
+    }
+    // This is the main check result
+    ret.setAttribute ("exists", aEffectiveSMLConf != null);
+    return ret;
   }
 
   @Override
@@ -119,16 +161,8 @@ public final class APIGetCheckPeppolParticipantRegistered extends AbstractAPIExe
         aEffectiveSMLConf = aSMLConf;
     }
 
-    final IJsonObject aJson = new JsonObject ();
-    aJson.add ("participantID", aParticipantID.getURIEncoded ());
-    aJson.add ("sml", sSMLID);
-    if (aEffectiveSMLConf != null)
-    {
-      aJson.add ("smpHostURI",
-                 PeppolExistenceCheck.getSMPURIViaNaptr (aParticipantID, aEffectiveSMLConf.getSMLInfo ().getDNSZone ()));
-    }
-    // This is the main check result
-    aJson.add ("exists", bRegistered);
+    final IJsonObject aJson = createResultJson (sSMLID, aEffectiveSMLConf, aParticipantID);
+
     aSW.stop ();
 
     aJson.add ("queryDateTime", DateTimeFormatter.ISO_ZONED_DATE_TIME.format (aQueryDT));
