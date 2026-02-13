@@ -74,6 +74,61 @@ public final class PeppolAPIHelper
   private PeppolAPIHelper ()
   {}
 
+  @Nullable
+  public static SMPQueryParams resolveSMPQueryParams (@Nullable final String sSMLID,
+                                                      @Nullable final String sParticipantID,
+                                                      @NonNull final Consumer <String> aOnError)
+  {
+    final ISMLConfigurationManager aSMLConfigurationMgr = PhotonPeppolMetaManager.getSMLConfigurationMgr ();
+    final boolean bSMLAutoDetect = ISMLConfigurationManager.ID_AUTO_DETECT.equals (sSMLID);
+    ISMLConfiguration aSMLConfig = aSMLConfigurationMgr.getSMLConfigurationfID (sSMLID);
+    if (aSMLConfig == null && !bSMLAutoDetect)
+      throw new APIParamException ("Unsupported SML ID '" + sSMLID + "' provided.");
+
+    // Use the SimpleIdentifierFactory here
+    final IParticipantIdentifier aPID = SimpleIdentifierFactory.INSTANCE.parseParticipantIdentifier (sParticipantID);
+    if (aPID == null)
+      throw new APIParamException ("Invalid participant ID '" + sParticipantID + "' provided.");
+
+    SMPQueryParams aSMPQueryParams = null;
+    if (bSMLAutoDetect)
+    {
+      for (final ISMLConfiguration aCurSML : aSMLConfigurationMgr.getAllSorted ())
+      {
+        aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aCurSML, aPID.getScheme (), aPID.getValue (), false);
+        if (aSMPQueryParams != null && aSMPQueryParams.isSMPRegisteredInDNS ())
+        {
+          // Found it
+          aSMLConfig = aCurSML;
+          break;
+        }
+      }
+
+      // Ensure to go into the exception handler
+      if (aSMLConfig == null)
+      {
+        final String sMsg = "The participant identifier '" + sParticipantID + "' could not be found in any SML.";
+        aOnError.accept (sMsg);
+        return null;
+      }
+    }
+    else
+    {
+      aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aSMLConfig, aPID.getScheme (), aPID.getValue (), true);
+    }
+    if (aSMPQueryParams == null)
+    {
+      final String sMsg = "Failed to resolve participant ID '" +
+                          sParticipantID +
+                          "' for the provided SML '" +
+                          aSMLConfig.getID () +
+                          "'";
+      aOnError.accept (sMsg);
+      return null;
+    }
+    return aSMPQueryParams;
+  }
+
   @NonNull
   public static String getBusinessCardURL (@NonNull final SMPQueryParams aSMPQueryParams)
   {
@@ -397,12 +452,12 @@ public final class PeppolAPIHelper
   }
 
   @Nullable
-  public static <T> T getServiceInformation (@Nullable final String sSMLID,
+  public static <T> T getServiceInformation (@NonNull final String sLogPrefix,
+                                             @Nullable final String sSMLID,
                                              @Nullable final String sParticipantID,
                                              @Nullable final String sDocTypeID,
                                              final boolean bXMLSchemaValidation,
                                              final boolean bVerifySignature,
-                                             @NonNull final String sLogPrefix,
                                              @NonNull final Consumer <? super HttpClientSettings> aHCSModifier,
                                              @NonNull final Consumer <? super GenericJAXBMarshaller <?>> aSMPMarshallerCustomizer,
                                              @NonNull final Consumer <String> aOnError,
@@ -410,61 +465,26 @@ public final class PeppolAPIHelper
                                              @NonNull final IConversionService <com.helger.xsds.bdxr.smp1.ServiceMetadataType, T> aBdxr1Func,
                                              @NonNull final IConversionService <com.helger.xsds.bdxr.smp2.ServiceMetadataType, T> aBdxr2Func)
   {
-    final ISMLConfigurationManager aSMLConfigurationMgr = PhotonPeppolMetaManager.getSMLConfigurationMgr ();
-    final boolean bSMLAutoDetect = ISMLConfigurationManager.ID_AUTO_DETECT.equals (sSMLID);
-    ISMLConfiguration aSMLConfig = aSMLConfigurationMgr.getSMLConfigurationfID (sSMLID);
-    if (aSMLConfig == null && !bSMLAutoDetect)
-      throw new APIParamException ("Unsupported SML ID '" + sSMLID + "' provided.");
-
-    final IParticipantIdentifier aPID = SimpleIdentifierFactory.INSTANCE.parseParticipantIdentifier (sParticipantID);
-    if (aPID == null)
-      throw new APIParamException ("Invalid participant ID '" + sParticipantID + "' provided.");
-
-    final IDocumentTypeIdentifier aDTID = SimpleIdentifierFactory.INSTANCE.parseDocumentTypeIdentifier (sDocTypeID);
-    if (aDTID == null)
-      throw new APIParamException ("Invalid document type ID '" + sDocTypeID + "' provided.");
-
-    SMPQueryParams aSMPQueryParams = null;
-    if (bSMLAutoDetect)
-    {
-      for (final ISMLConfiguration aCurSML : aSMLConfigurationMgr.getAllSorted ())
-      {
-        aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aCurSML, aPID.getScheme (), aPID.getValue (), false);
-        if (aSMPQueryParams != null && aSMPQueryParams.isSMPRegisteredInDNS ())
-        {
-          // Found it
-          aSMLConfig = aCurSML;
-          break;
-        }
-      }
-
-      // Ensure to go into the exception handler
-      if (aSMLConfig == null)
-      {
-        final String sMsg = "The participant identifier '" + sParticipantID + "' could not be found in any SML.";
-        aOnError.accept (sMsg);
-        return null;
-      }
-    }
-    else
-    {
-      aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aSMLConfig, aPID.getScheme (), aPID.getValue (), true);
-    }
+    final SMPQueryParams aSMPQueryParams = resolveSMPQueryParams (sSMLID, sParticipantID, aOnError);
     if (aSMPQueryParams == null)
     {
-      final String sMsg = "Failed to resolve participant ID '" +
+      // Errors already logged and handled
+      return null;
+    }
+
+    final IParticipantIdentifier aParticipantID = aSMPQueryParams.getIF ().parseParticipantIdentifier (sParticipantID);
+    if (aParticipantID == null)
+    {
+      final String sMsg = "Invalid participant ID '" +
                           sParticipantID +
-                          "' for the provided SML '" +
-                          aSMLConfig.getID () +
+                          "' provided for SML '" +
+                          aSMPQueryParams.getSMLInfo ().getID () +
                           "'";
       aOnError.accept (sMsg);
       return null;
     }
 
-    final IParticipantIdentifier aParticipantID = aSMPQueryParams.getParticipantID ();
-    final IDocumentTypeIdentifier aDocTypeID = aSMPQueryParams.getIF ()
-                                                              .createDocumentTypeIdentifier (aDTID.getScheme (),
-                                                                                             aDTID.getValue ());
+    final IDocumentTypeIdentifier aDocTypeID = aSMPQueryParams.getIF ().parseDocumentTypeIdentifier (sDocTypeID);
     if (aDocTypeID == null)
     {
       final String sMsg = "Failed to resolve document type ID '" +
@@ -472,7 +492,7 @@ public final class PeppolAPIHelper
                           "' for participant ID '" +
                           sParticipantID +
                           "' for the provided SML '" +
-                          aSMLConfig.getID () +
+                          aSMPQueryParams.getSMLInfo ().getID () +
                           "'";
       aOnError.accept (sMsg);
       return null;
@@ -486,7 +506,7 @@ public final class PeppolAPIHelper
                  "' from '" +
                  aSMPQueryParams.getSMPHostURI () +
                  "' using SML '" +
-                 aSMLConfig.getID () +
+                 aSMPQueryParams.getSMLInfo ().getID () +
                  "' for document type '" +
                  aDocTypeID.getURIEncoded () +
                  "'; XSD validation=" +
@@ -582,7 +602,7 @@ public final class PeppolAPIHelper
       final String sMsg = "Failed to perform the SMP lookup for participant ID '" +
                           sParticipantID +
                           "' for the provided SML '" +
-                          aSMLConfig.getID () +
+                          aSMPQueryParams.getSMLInfo ().getID () +
                           "'";
       aOnError.accept (sMsg);
       return null;
@@ -605,12 +625,12 @@ public final class PeppolAPIHelper
     final ZonedDateTime aQueryDT = PDTFactory.getCurrentZonedDateTimeUTC ();
     final StopWatch aSW = StopWatch.createdStarted ();
 
-    final IJsonObject aJson = getServiceInformation (sSMLID,
+    final IJsonObject aJson = getServiceInformation (sLogPrefix,
+                                                     sSMLID,
                                                      sParticipantID,
                                                      sDocTypeID,
                                                      bXMLSchemaValidation,
                                                      bVerifySignature,
-                                                     sLogPrefix,
                                                      aHCSModifier,
                                                      aSMPMarshallerCustomizer,
                                                      aOnError,
