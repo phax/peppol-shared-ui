@@ -22,7 +22,7 @@
   <parent>
     <groupId>com.helger.peppol.ui</groupId>
     <artifactId>peppol-shared-ui-parent-pom</artifactId>
-    <version>0.9.12</version>
+    <version>0.9.13-SNAPSHOT</version>
   </parent>
   <artifactId>peppol-ui-types</artifactId>
   <packaging>jar</packaging>
