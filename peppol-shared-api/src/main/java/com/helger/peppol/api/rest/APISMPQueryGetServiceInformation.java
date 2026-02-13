@@ -16,34 +16,26 @@
  */
 package com.helger.peppol.api.rest;
 
-import java.security.GeneralSecurityException;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.annotation.Nonempty;
 import com.helger.base.CGlobal;
+import com.helger.base.numeric.mutable.MutableBoolean;
 import com.helger.base.timing.StopWatch;
 import com.helger.datetime.helper.PDTFactory;
+import com.helger.httpclient.HttpClientSettings;
 import com.helger.json.IJsonObject;
-import com.helger.peppol.ui.types.PeppolUITypes;
-import com.helger.peppol.ui.types.mgr.PhotonPeppolMetaManager;
-import com.helger.peppol.ui.types.smlconfig.ISMLConfiguration;
-import com.helger.peppol.ui.types.smlconfig.ISMLConfigurationManager;
-import com.helger.peppol.ui.types.smp.SMPQueryParams;
-import com.helger.peppolid.IDocumentTypeIdentifier;
-import com.helger.peppolid.IParticipantIdentifier;
-import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.photon.api.IAPIDescriptor;
 import com.helger.photon.app.PhotonUnifiedResponse;
-import com.helger.smpclient.bdxr1.BDXRClientReadOnly;
-import com.helger.smpclient.bdxr2.BDXR2ClientReadOnly;
 import com.helger.smpclient.json.SMPJsonResponse;
-import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 
 public final class APISMPQueryGetServiceInformation extends AbstractAPIExecutor
@@ -58,6 +50,44 @@ public final class APISMPQueryGetServiceInformation extends AbstractAPIExecutor
     super (sUserAgent);
   }
 
+  @Nullable
+  public static IJsonObject getServiceInformationAsJson (@Nullable final String sSMLID,
+                                                         @Nullable final String sParticipantID,
+                                                         @Nullable final String sDocTypeID,
+                                                         final boolean bXMLSchemaValidation,
+                                                         final boolean bVerifySignature,
+                                                         @NonNull final String sLogPrefix,
+                                                         @NonNull final Consumer <? super HttpClientSettings> aHCSModifier,
+                                                         @NonNull final Consumer <String> aOnError)
+  {
+    final ZonedDateTime aQueryDT = PDTFactory.getCurrentZonedDateTimeUTC ();
+    final StopWatch aSW = StopWatch.createdStarted ();
+
+    final IJsonObject aJson = PeppolAPIHelper.getServiceInformation (sSMLID,
+                                                                     sParticipantID,
+                                                                     sDocTypeID,
+                                                                     bXMLSchemaValidation,
+                                                                     bVerifySignature,
+                                                                     sLogPrefix,
+                                                                     aHCSModifier,
+                                                                     null,
+                                                                     aOnError,
+                                                                     SMPJsonResponse::convert,
+                                                                     SMPJsonResponse::convert,
+                                                                     SMPJsonResponse::convert);
+
+    aSW.stop ();
+
+    if (aJson != null)
+    {
+      LOGGER.info (sLogPrefix + "Succesfully finished lookup after " + aSW.getMillis () + " milliseconds");
+      aJson.add ("queryDateTime", DateTimeFormatter.ISO_ZONED_DATE_TIME.format (aQueryDT));
+      aJson.add ("queryDurationMillis", aSW.getMillis ());
+    }
+
+    return aJson;
+  }
+
   @Override
   protected void invokeAPI (@NonNull @Nonempty final String sLogPrefix,
                             @NonNull final IAPIDescriptor aAPIDescriptor,
@@ -66,201 +96,32 @@ public final class APISMPQueryGetServiceInformation extends AbstractAPIExecutor
                             @NonNull final IRequestWebScopeWithoutResponse aRequestScope,
                             @NonNull final PhotonUnifiedResponse aUnifiedResponse) throws Exception
   {
-    final ISMLConfigurationManager aSMLConfigurationMgr = PhotonPeppolMetaManager.getSMLConfigurationMgr ();
     final String sSMLID = aPathVariables.get (PeppolSharedRestAPI.PARAM_SML_ID);
-    final boolean bSMLAutoDetect = ISMLConfigurationManager.ID_AUTO_DETECT.equals (sSMLID);
-    ISMLConfiguration aSMLConfig = aSMLConfigurationMgr.getSMLConfigurationfID (sSMLID);
-    if (aSMLConfig == null && !bSMLAutoDetect)
-      throw new APIParamException ("Unsupported SML ID '" + sSMLID + "' provided.");
-
     final String sParticipantID = aPathVariables.get (PeppolSharedRestAPI.PARAM_PARTICIPANT_ID);
-    final IParticipantIdentifier aPID = SimpleIdentifierFactory.INSTANCE.parseParticipantIdentifier (sParticipantID);
-    if (aPID == null)
-      throw new APIParamException ("Invalid participant ID '" + sParticipantID + "' provided.");
-
     final String sDocTypeID = aPathVariables.get (PeppolSharedRestAPI.PARAM_DOCTYPE_ID);
-    final IDocumentTypeIdentifier aDTID = SimpleIdentifierFactory.INSTANCE.parseDocumentTypeIdentifier (sDocTypeID);
-    if (aDTID == null)
-      throw new APIParamException ("Invalid document type ID '" + sDocTypeID + "' provided.");
-
     final boolean bXMLSchemaValidation = aRequestScope.params ().getAsBoolean (PARAM_XML_SCHEMA_VALIDATION, true);
     final boolean bVerifySignature = aRequestScope.params ().getAsBoolean (PARAM_VERIFY_SIGNATURE, true);
 
-    final ZonedDateTime aQueryDT = PDTFactory.getCurrentZonedDateTimeUTC ();
-    final StopWatch aSW = StopWatch.createdStarted ();
-
-    SMPQueryParams aSMPQueryParams = null;
-    if (bSMLAutoDetect)
-    {
-      for (final ISMLConfiguration aCurSML : aSMLConfigurationMgr.getAllSorted ())
-      {
-        aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aCurSML, aPID.getScheme (), aPID.getValue (), false);
-        if (aSMPQueryParams != null && aSMPQueryParams.isSMPRegisteredInDNS ())
-        {
-          // Found it
-          aSMLConfig = aCurSML;
-          break;
-        }
-      }
-
-      // Ensure to go into the exception handler
-      if (aSMLConfig == null)
-      {
-        final String sMsg = "The participant identifier '" + sParticipantID + "' could not be found in any SML.";
-        LOGGER.warn (sLogPrefix + sMsg);
-        aUnifiedResponse.createNotFound ().text (sMsg);
-        return;
-      }
-    }
-    else
-    {
-      aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aSMLConfig, aPID.getScheme (), aPID.getValue (), true);
-    }
-    if (aSMPQueryParams == null)
-    {
-      final String sMsg = "Failed to resolve participant ID '" +
-                          sParticipantID +
-                          "' for the provided SML '" +
-                          aSMLConfig.getID () +
-                          "'";
-      LOGGER.warn (sLogPrefix + sMsg);
-      aUnifiedResponse.createNotFound ().text (sMsg);
-      return;
-    }
-
-    final IParticipantIdentifier aParticipantID = aSMPQueryParams.getParticipantID ();
-    final IDocumentTypeIdentifier aDocTypeID = aSMPQueryParams.getIF ()
-                                                              .createDocumentTypeIdentifier (aDTID.getScheme (),
-                                                                                             aDTID.getValue ());
-    if (aDocTypeID == null)
-    {
-      final String sMsg = "Failed to resolve document type ID '" +
-                          sDocTypeID +
-                          "' for participant ID '" +
-                          sParticipantID +
-                          "' for the provided SML '" +
-                          aSMLConfig.getID () +
-                          "'";
-      LOGGER.warn (sLogPrefix + sMsg);
-      aUnifiedResponse.createNotFound ().text (sMsg);
-      return;
-    }
-
-    LOGGER.info (sLogPrefix +
-                 "Participant information of '" +
-                 aParticipantID.getURIEncoded () +
-                 "' is queried using SMP API '" +
-                 aSMPQueryParams.getSMPAPIType () +
-                 "' from '" +
-                 aSMPQueryParams.getSMPHostURI () +
-                 "' using SML '" +
-                 aSMLConfig.getID () +
-                 "' for document type '" +
-                 aDocTypeID.getURIEncoded () +
-                 "'; XSD validation=" +
-                 bXMLSchemaValidation +
-                 "; signature verification=" +
-                 bVerifySignature);
-
-    IJsonObject aJson = null;
-    switch (aSMPQueryParams.getSMPAPIType ())
-    {
-      case PEPPOL:
-      {
-        final SMPClientReadOnly aSMPClient = new SMPClientReadOnly (aSMPQueryParams.getSMPHostURI ());
-        aSMPClient.setSecureValidation (PeppolUITypes.DEFAULT_SMP_USE_SECURE_VALIDATION);
-        aSMPClient.withHttpClientSettings (m_aHCSModifier);
-        aSMPClient.setXMLSchemaValidation (bXMLSchemaValidation);
-        aSMPClient.setVerifySignature (bVerifySignature);
-        if (aSMPQueryParams.isTrustAllCertificates ())
-          try
-          {
-            aSMPClient.httpClientSettings ().setSSLContextTrustAll ();
-          }
-          catch (final GeneralSecurityException ex)
-          {
-            // Ignore
-          }
-
-        final var aSSM = aSMPClient.getSchemeSpecificServiceMetadataOrNull (aParticipantID, aDocTypeID);
-        if (aSSM != null)
-        {
-          final com.helger.xsds.peppol.smp1.ServiceMetadataType aSM = aSSM.getServiceMetadata ();
-          aJson = SMPJsonResponse.convert (aParticipantID, aDocTypeID, aSM);
-        }
-        break;
-      }
-      case OASIS_BDXR_V1:
-      {
-        final BDXRClientReadOnly aBDXR1Client = new BDXRClientReadOnly (aSMPQueryParams.getSMPHostURI ());
-        aBDXR1Client.setSecureValidation (PeppolUITypes.DEFAULT_SMP_USE_SECURE_VALIDATION);
-        aBDXR1Client.withHttpClientSettings (m_aHCSModifier);
-        aBDXR1Client.setXMLSchemaValidation (bXMLSchemaValidation);
-        aBDXR1Client.setVerifySignature (bVerifySignature);
-        if (aSMPQueryParams.isTrustAllCertificates ())
-          try
-          {
-            aBDXR1Client.httpClientSettings ().setSSLContextTrustAll ();
-          }
-          catch (final GeneralSecurityException ex)
-          {
-            // Ignore
-          }
-
-        final var aSSM = aBDXR1Client.getServiceMetadataOrNull (aParticipantID, aDocTypeID);
-        if (aSSM != null)
-        {
-          final var aSM = aSSM.getServiceMetadata ();
-          aJson = SMPJsonResponse.convert (aParticipantID, aDocTypeID, aSM);
-        }
-        break;
-      }
-      case OASIS_BDXR_V2:
-      {
-        final BDXR2ClientReadOnly aBDXR2Client = new BDXR2ClientReadOnly (aSMPQueryParams.getSMPHostURI ());
-        aBDXR2Client.setSecureValidation (PeppolUITypes.DEFAULT_SMP_USE_SECURE_VALIDATION);
-        aBDXR2Client.withHttpClientSettings (m_aHCSModifier);
-        aBDXR2Client.setXMLSchemaValidation (bXMLSchemaValidation);
-        aBDXR2Client.setVerifySignature (bVerifySignature);
-        if (aSMPQueryParams.isTrustAllCertificates ())
-          try
-          {
-            aBDXR2Client.httpClientSettings ().setSSLContextTrustAll ();
-          }
-          catch (final GeneralSecurityException ex)
-          {
-            // Ignore
-          }
-
-        final var aSM = aBDXR2Client.getServiceMetadataOrNull (aParticipantID, aDocTypeID);
-        if (aSM != null)
-        {
-          aJson = SMPJsonResponse.convert (aParticipantID, aDocTypeID, aSM);
-        }
-        break;
-      }
-    }
-
-    aSW.stop ();
+    final MutableBoolean aResponseSet = new MutableBoolean (false);
+    final IJsonObject aJson = getServiceInformationAsJson (sSMLID,
+                                                           sParticipantID,
+                                                           sDocTypeID,
+                                                           bXMLSchemaValidation,
+                                                           bVerifySignature,
+                                                           sLogPrefix,
+                                                           m_aHCSModifier,
+                                                           sMsg -> {
+                                                             LOGGER.warn (sLogPrefix + sMsg);
+                                                             aUnifiedResponse.createNotFound ().text (sMsg);
+                                                             aResponseSet.set (true);
+                                                           });
 
     if (aJson == null)
     {
-      final String sMsg = "Failed to perform the SMP lookup for participant ID '" +
-                          sParticipantID +
-                          "' for the provided SML '" +
-                          aSMLConfig.getID () +
-                          "'";
-      LOGGER.warn (sLogPrefix + sMsg);
-      aUnifiedResponse.createNotFound ().text (sMsg);
+      // Response object is filled
+      return;
     }
-    else
-    {
-      LOGGER.info (sLogPrefix + "Succesfully finished lookup lookup after " + aSW.getMillis () + " milliseconds");
 
-      aJson.add ("queryDateTime", DateTimeFormatter.ISO_ZONED_DATE_TIME.format (aQueryDT));
-      aJson.add ("queryDurationMillis", aSW.getMillis ());
-
-      aUnifiedResponse.json (aJson).enableCaching (3 * CGlobal.SECONDS_PER_HOUR);
-    }
+    aUnifiedResponse.json (aJson).enableCaching (3 * CGlobal.SECONDS_PER_HOUR);
   }
 }

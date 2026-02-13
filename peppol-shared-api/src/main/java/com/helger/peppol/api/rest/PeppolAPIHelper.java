@@ -41,6 +41,9 @@ import com.helger.peppol.businesscard.helper.PDBusinessCardHelper;
 import com.helger.peppol.sml.ESMPAPIType;
 import com.helger.peppol.ui.types.PeppolUITypes;
 import com.helger.peppol.ui.types.feedbackcb.IFeedbackCallback;
+import com.helger.peppol.ui.types.mgr.PhotonPeppolMetaManager;
+import com.helger.peppol.ui.types.smlconfig.ISMLConfiguration;
+import com.helger.peppol.ui.types.smlconfig.ISMLConfigurationManager;
 import com.helger.peppol.ui.types.smp.ISMPClientCreationCallback;
 import com.helger.peppol.ui.types.smp.ISMPExtensionsCallback;
 import com.helger.peppol.ui.types.smp.SMPQueryParams;
@@ -48,9 +51,11 @@ import com.helger.peppolid.CIdentifier;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.factory.IIdentifierFactory;
+import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.smpclient.bdxr1.BDXRClientReadOnly;
 import com.helger.smpclient.bdxr2.BDXR2ClientReadOnly;
 import com.helger.smpclient.exception.SMPClientException;
+import com.helger.smpclient.httpclient.AbstractGenericSMPClient;
 import com.helger.smpclient.httpclient.SMPHttpClientSettings;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.xsds.bdxr.smp2.bc.IDType;
@@ -140,6 +145,29 @@ public final class PeppolAPIHelper
     return null;
   }
 
+  private static void _customizeSMPClient (@NonNull final AbstractGenericSMPClient <?> aSMPClient,
+                                           @Nullable final Consumer <? super SMPHttpClientSettings> aHCSModifier,
+                                           final boolean bXMLSchemaValidation,
+                                           final boolean bVerifySignature,
+                                           @NonNull final Consumer <? super GenericJAXBMarshaller <?>> aSMPMarshallerCustomizer,
+                                           final boolean bIsTrustAllCertificates)
+  {
+    aSMPClient.setSecureValidation (PeppolUITypes.DEFAULT_SMP_USE_SECURE_VALIDATION);
+    aSMPClient.withHttpClientSettings (aHCSModifier);
+    aSMPClient.setXMLSchemaValidation (bXMLSchemaValidation);
+    aSMPClient.setVerifySignature (bVerifySignature);
+    aSMPClient.setMarshallerCustomizer (aSMPMarshallerCustomizer);
+    if (bIsTrustAllCertificates)
+      try
+      {
+        aSMPClient.httpClientSettings ().setSSLContextTrustAll ();
+      }
+      catch (final GeneralSecurityException ex)
+      {
+        // Ignore
+      }
+  }
+
   /**
    * Get all document types of a participant
    *
@@ -163,7 +191,8 @@ public final class PeppolAPIHelper
    *        Callback to be invoked on SMP extensions.
    * @param aExceptionCallback
    *        Callback to be invoked on SMP exceptions
-   * @return A map from clean (URL unescaped) URL to the original URL as found in the data
+   * @return A map from clean (URL unescaped) URL to the original URL as found in the data.
+   *         <code>null</code> if no document type list could be retrieved.
    */
   @Nullable
   public static ICommonsOrderedMap <String, String> retrieveAllDocumentTypes (@NonNull final String sLogPrefix,
@@ -201,21 +230,12 @@ public final class PeppolAPIHelper
       case PEPPOL:
       {
         final SMPClientReadOnly aSMPClient = new SMPClientReadOnly (aSMPQueryParams.getSMPHostURI ());
-        aSMPClient.setSecureValidation (PeppolUITypes.DEFAULT_SMP_USE_SECURE_VALIDATION);
-        aSMPClient.withHttpClientSettings (aHCSModifier);
-        aSMPClient.setXMLSchemaValidation (bXMLSchemaValidation);
-        aSMPClient.setVerifySignature (bVerifySignature);
-        aSMPClient.setMarshallerCustomizer (aSMPMarshallerCustomizer);
-        if (aSMPQueryParams.isTrustAllCertificates ())
-          try
-          {
-            aSMPClient.httpClientSettings ().setSSLContextTrustAll ();
-          }
-          catch (final GeneralSecurityException ex)
-          {
-            // Ignore
-          }
-
+        _customizeSMPClient (aSMPClient,
+                             aHCSModifier,
+                             bXMLSchemaValidation,
+                             bVerifySignature,
+                             aSMPMarshallerCustomizer,
+                             aSMPQueryParams.isTrustAllCertificates ());
         aSMPClientCallback.onPeppolSMPClient (aSMPClient);
 
         // Get all HRefs
@@ -256,21 +276,12 @@ public final class PeppolAPIHelper
       case OASIS_BDXR_V1:
       {
         final BDXRClientReadOnly aBDXR1Client = new BDXRClientReadOnly (aSMPQueryParams.getSMPHostURI ());
-        aBDXR1Client.setSecureValidation (PeppolUITypes.DEFAULT_SMP_USE_SECURE_VALIDATION);
-        aBDXR1Client.withHttpClientSettings (aHCSModifier);
-        aBDXR1Client.setXMLSchemaValidation (bXMLSchemaValidation);
-        aBDXR1Client.setVerifySignature (bVerifySignature);
-        aBDXR1Client.setMarshallerCustomizer (aSMPMarshallerCustomizer);
-        if (aSMPQueryParams.isTrustAllCertificates ())
-          try
-          {
-            aBDXR1Client.httpClientSettings ().setSSLContextTrustAll ();
-          }
-          catch (final GeneralSecurityException ex)
-          {
-            // Ignore
-          }
-
+        _customizeSMPClient (aBDXR1Client,
+                             aHCSModifier,
+                             bXMLSchemaValidation,
+                             bVerifySignature,
+                             aSMPMarshallerCustomizer,
+                             aSMPQueryParams.isTrustAllCertificates ());
         aSMPClientCallback.onBDXR1Client (aBDXR1Client);
 
         // Get all HRefs and sort them by decoded URL
@@ -311,21 +322,12 @@ public final class PeppolAPIHelper
       case OASIS_BDXR_V2:
       {
         final BDXR2ClientReadOnly aBDXR2Client = new BDXR2ClientReadOnly (aSMPQueryParams.getSMPHostURI ());
-        aBDXR2Client.setSecureValidation (PeppolUITypes.DEFAULT_SMP_USE_SECURE_VALIDATION);
-        aBDXR2Client.withHttpClientSettings (aHCSModifier);
-        aBDXR2Client.setXMLSchemaValidation (bXMLSchemaValidation);
-        aBDXR2Client.setVerifySignature (bVerifySignature);
-        aBDXR2Client.setMarshallerCustomizer (aSMPMarshallerCustomizer);
-        if (aSMPQueryParams.isTrustAllCertificates ())
-          try
-          {
-            aBDXR2Client.httpClientSettings ().setSSLContextTrustAll ();
-          }
-          catch (final GeneralSecurityException ex)
-          {
-            // Ignore
-          }
-
+        _customizeSMPClient (aBDXR2Client,
+                             aHCSModifier,
+                             bXMLSchemaValidation,
+                             bVerifySignature,
+                             aSMPMarshallerCustomizer,
+                             aSMPQueryParams.isTrustAllCertificates ());
         aSMPClientCallback.onBDXR2Client (aBDXR2Client);
 
         // Get all HRefs and sort them by decoded URL
@@ -377,6 +379,209 @@ public final class PeppolAPIHelper
         break;
       }
     }
+    return ret;
+  }
+
+  public interface IConversionService <SRC, DST>
+  {
+    @Nullable
+    DST convert (@NonNull IParticipantIdentifier aParticipantID,
+                 @NonNull IDocumentTypeIdentifier aDocTypeID,
+                 @NonNull SRC aServiceMetadata);
+  }
+
+  @Nullable
+  public static <T> T getServiceInformation (@Nullable final String sSMLID,
+                                             @Nullable final String sParticipantID,
+                                             @Nullable final String sDocTypeID,
+                                             final boolean bXMLSchemaValidation,
+                                             final boolean bVerifySignature,
+                                             @NonNull final String sLogPrefix,
+                                             @NonNull final Consumer <? super HttpClientSettings> aHCSModifier,
+                                             @NonNull final Consumer <? super GenericJAXBMarshaller <?>> aSMPMarshallerCustomizer,
+                                             @NonNull final Consumer <String> aOnError,
+                                             @NonNull final IConversionService <com.helger.xsds.peppol.smp1.ServiceMetadataType, T> aPeppolFunc,
+                                             @NonNull final IConversionService <com.helger.xsds.bdxr.smp1.ServiceMetadataType, T> aBdxr1Func,
+                                             @NonNull final IConversionService <com.helger.xsds.bdxr.smp2.ServiceMetadataType, T> aBdxr2Func)
+  {
+    final ISMLConfigurationManager aSMLConfigurationMgr = PhotonPeppolMetaManager.getSMLConfigurationMgr ();
+    final boolean bSMLAutoDetect = ISMLConfigurationManager.ID_AUTO_DETECT.equals (sSMLID);
+    ISMLConfiguration aSMLConfig = aSMLConfigurationMgr.getSMLConfigurationfID (sSMLID);
+    if (aSMLConfig == null && !bSMLAutoDetect)
+      throw new APIParamException ("Unsupported SML ID '" + sSMLID + "' provided.");
+
+    final IParticipantIdentifier aPID = SimpleIdentifierFactory.INSTANCE.parseParticipantIdentifier (sParticipantID);
+    if (aPID == null)
+      throw new APIParamException ("Invalid participant ID '" + sParticipantID + "' provided.");
+
+    final IDocumentTypeIdentifier aDTID = SimpleIdentifierFactory.INSTANCE.parseDocumentTypeIdentifier (sDocTypeID);
+    if (aDTID == null)
+      throw new APIParamException ("Invalid document type ID '" + sDocTypeID + "' provided.");
+
+    SMPQueryParams aSMPQueryParams = null;
+    if (bSMLAutoDetect)
+    {
+      for (final ISMLConfiguration aCurSML : aSMLConfigurationMgr.getAllSorted ())
+      {
+        aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aCurSML, aPID.getScheme (), aPID.getValue (), false);
+        if (aSMPQueryParams != null && aSMPQueryParams.isSMPRegisteredInDNS ())
+        {
+          // Found it
+          aSMLConfig = aCurSML;
+          break;
+        }
+      }
+
+      // Ensure to go into the exception handler
+      if (aSMLConfig == null)
+      {
+        final String sMsg = "The participant identifier '" + sParticipantID + "' could not be found in any SML.";
+        aOnError.accept (sMsg);
+        return null;
+      }
+    }
+    else
+    {
+      aSMPQueryParams = SMPQueryParams.createForSMLOrNull (aSMLConfig, aPID.getScheme (), aPID.getValue (), true);
+    }
+    if (aSMPQueryParams == null)
+    {
+      final String sMsg = "Failed to resolve participant ID '" +
+                          sParticipantID +
+                          "' for the provided SML '" +
+                          aSMLConfig.getID () +
+                          "'";
+      aOnError.accept (sMsg);
+      return null;
+    }
+
+    final IParticipantIdentifier aParticipantID = aSMPQueryParams.getParticipantID ();
+    final IDocumentTypeIdentifier aDocTypeID = aSMPQueryParams.getIF ()
+                                                              .createDocumentTypeIdentifier (aDTID.getScheme (),
+                                                                                             aDTID.getValue ());
+    if (aDocTypeID == null)
+    {
+      final String sMsg = "Failed to resolve document type ID '" +
+                          sDocTypeID +
+                          "' for participant ID '" +
+                          sParticipantID +
+                          "' for the provided SML '" +
+                          aSMLConfig.getID () +
+                          "'";
+      aOnError.accept (sMsg);
+      return null;
+    }
+
+    LOGGER.info (sLogPrefix +
+                 "Participant information of '" +
+                 aParticipantID.getURIEncoded () +
+                 "' is queried using SMP API '" +
+                 aSMPQueryParams.getSMPAPIType () +
+                 "' from '" +
+                 aSMPQueryParams.getSMPHostURI () +
+                 "' using SML '" +
+                 aSMLConfig.getID () +
+                 "' for document type '" +
+                 aDocTypeID.getURIEncoded () +
+                 "'; XSD validation=" +
+                 bXMLSchemaValidation +
+                 "; signature verification=" +
+                 bVerifySignature);
+
+    T ret = null;
+    switch (aSMPQueryParams.getSMPAPIType ())
+    {
+      case PEPPOL:
+      {
+        final SMPClientReadOnly aSMPClient = new SMPClientReadOnly (aSMPQueryParams.getSMPHostURI ());
+        _customizeSMPClient (aSMPClient,
+                             aHCSModifier,
+                             bXMLSchemaValidation,
+                             bVerifySignature,
+                             aSMPMarshallerCustomizer,
+                             aSMPQueryParams.isTrustAllCertificates ());
+
+        com.helger.xsds.peppol.smp1.SignedServiceMetadataType aSSM;
+        try
+        {
+          aSSM = aSMPClient.getSchemeSpecificServiceMetadataOrNull (aParticipantID, aDocTypeID);
+        }
+        catch (final SMPClientException ex)
+        {
+          aSSM = null;
+          aOnError.accept ("Error querying SMP. Details: " + ex.getMessage ());
+        }
+        if (aSSM != null)
+        {
+          ret = aPeppolFunc.convert (aParticipantID, aDocTypeID, aSSM.getServiceMetadata ());
+        }
+        break;
+      }
+      case OASIS_BDXR_V1:
+      {
+        final BDXRClientReadOnly aBDXR1Client = new BDXRClientReadOnly (aSMPQueryParams.getSMPHostURI ());
+        _customizeSMPClient (aBDXR1Client,
+                             aHCSModifier,
+                             bXMLSchemaValidation,
+                             bVerifySignature,
+                             aSMPMarshallerCustomizer,
+                             aSMPQueryParams.isTrustAllCertificates ());
+
+        com.helger.xsds.bdxr.smp1.SignedServiceMetadataType aSSM;
+        try
+        {
+          aSSM = aBDXR1Client.getServiceMetadataOrNull (aParticipantID, aDocTypeID);
+        }
+        catch (final SMPClientException ex)
+        {
+          aSSM = null;
+          aOnError.accept ("Error querying SMP. Details: " + ex.getMessage ());
+        }
+        if (aSSM != null)
+        {
+          ret = aBdxr1Func.convert (aParticipantID, aDocTypeID, aSSM.getServiceMetadata ());
+        }
+        break;
+      }
+      case OASIS_BDXR_V2:
+      {
+        final BDXR2ClientReadOnly aBDXR2Client = new BDXR2ClientReadOnly (aSMPQueryParams.getSMPHostURI ());
+        _customizeSMPClient (aBDXR2Client,
+                             aHCSModifier,
+                             bXMLSchemaValidation,
+                             bVerifySignature,
+                             aSMPMarshallerCustomizer,
+                             aSMPQueryParams.isTrustAllCertificates ());
+
+        com.helger.xsds.bdxr.smp2.ServiceMetadataType aSM;
+        try
+        {
+          aSM = aBDXR2Client.getServiceMetadataOrNull (aParticipantID, aDocTypeID);
+        }
+        catch (final SMPClientException ex)
+        {
+          aSM = null;
+          aOnError.accept ("Error querying SMP. Details: " + ex.getMessage ());
+        }
+        if (aSM != null)
+        {
+          ret = aBdxr2Func.convert (aParticipantID, aDocTypeID, aSM);
+        }
+        break;
+      }
+    }
+
+    if (ret == null)
+    {
+      final String sMsg = "Failed to perform the SMP lookup for participant ID '" +
+                          sParticipantID +
+                          "' for the provided SML '" +
+                          aSMLConfig.getID () +
+                          "'";
+      aOnError.accept (sMsg);
+      return null;
+    }
+
     return ret;
   }
 }
