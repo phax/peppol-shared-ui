@@ -15,6 +15,9 @@ This project consists of the following modules, in dependency order:
 
 # News and Noteworthy
 
+v0.9.12 - 2026-02-13
+* Extracted API support methods into reusable components
+
 v0.9.11 - 2026-01-23
 * Updated to peppol-commons 12.3.7
 * Showing the DNS NAPTR URL for Peppol also if participant was not found
