@@ -19,6 +19,8 @@ package com.helger.peppol.api.rest;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.function.Consumer;
 
 import org.apache.hc.client5.http.classic.methods.HttpGet;
@@ -30,12 +32,15 @@ import org.slf4j.LoggerFactory;
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.base.callback.exception.IExceptionCallback;
 import com.helger.base.string.StringHelper;
+import com.helger.base.timing.StopWatch;
 import com.helger.collection.commons.CommonsLinkedHashMap;
 import com.helger.collection.commons.ICommonsOrderedMap;
+import com.helger.datetime.helper.PDTFactory;
 import com.helger.httpclient.HttpClientManager;
 import com.helger.httpclient.HttpClientSettings;
 import com.helger.httpclient.response.ResponseHandlerByteArray;
 import com.helger.jaxb.GenericJAXBMarshaller;
+import com.helger.json.IJsonObject;
 import com.helger.peppol.businesscard.generic.PDBusinessCard;
 import com.helger.peppol.businesscard.helper.PDBusinessCardHelper;
 import com.helger.peppol.sml.ESMPAPIType;
@@ -57,6 +62,7 @@ import com.helger.smpclient.bdxr2.BDXR2ClientReadOnly;
 import com.helger.smpclient.exception.SMPClientException;
 import com.helger.smpclient.httpclient.AbstractGenericSMPClient;
 import com.helger.smpclient.httpclient.SMPHttpClientSettings;
+import com.helger.smpclient.json.SMPJsonResponse;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.xsds.bdxr.smp2.bc.IDType;
 
@@ -583,5 +589,44 @@ public final class PeppolAPIHelper
     }
 
     return ret;
+  }
+
+  @Nullable
+  public static IJsonObject getServiceInformationAsJson (@Nullable final String sSMLID,
+                                                         @Nullable final String sParticipantID,
+                                                         @Nullable final String sDocTypeID,
+                                                         final boolean bXMLSchemaValidation,
+                                                         final boolean bVerifySignature,
+                                                         @NonNull final String sLogPrefix,
+                                                         @NonNull final Consumer <? super HttpClientSettings> aHCSModifier,
+                                                         @NonNull final Consumer <? super GenericJAXBMarshaller <?>> aSMPMarshallerCustomizer,
+                                                         @NonNull final Consumer <String> aOnError)
+  {
+    final ZonedDateTime aQueryDT = PDTFactory.getCurrentZonedDateTimeUTC ();
+    final StopWatch aSW = StopWatch.createdStarted ();
+
+    final IJsonObject aJson = getServiceInformation (sSMLID,
+                                                     sParticipantID,
+                                                     sDocTypeID,
+                                                     bXMLSchemaValidation,
+                                                     bVerifySignature,
+                                                     sLogPrefix,
+                                                     aHCSModifier,
+                                                     aSMPMarshallerCustomizer,
+                                                     aOnError,
+                                                     SMPJsonResponse::convert,
+                                                     SMPJsonResponse::convert,
+                                                     SMPJsonResponse::convert);
+
+    aSW.stop ();
+
+    if (aJson != null)
+    {
+      LOGGER.info (sLogPrefix + "Succesfully finished lookup after " + aSW.getMillis () + " milliseconds");
+      aJson.add ("queryDateTime", DateTimeFormatter.ISO_ZONED_DATE_TIME.format (aQueryDT));
+      aJson.add ("queryDurationMillis", aSW.getMillis ());
+    }
+
+    return aJson;
   }
 }
