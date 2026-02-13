@@ -892,20 +892,19 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
 
             final HCLI aLI = aSGOL.addItem ();
 
-            // Should be case insensitive "indexOf" here
-            int nPathStartLength = sPathStart1.length ();
-            int nPathStart = sCleanHref.toLowerCase (Locale.US).indexOf (sPathStart1.toLowerCase (Locale.US));
+            // Find one or the other
+            String sSearch = sPathStart1;
+            int nPathStart = StringHelper.getIndexOfIgnoreCase (sCleanHref, sSearch, Locale.US);
             if (nPathStart < 0)
             {
-              // Try the version with URL encoded participants
-              nPathStartLength = sPathStart2.length ();
-              nPathStart = sCleanHref.toLowerCase (Locale.US).indexOf (sPathStart2.toLowerCase (Locale.US));
+              sSearch = sPathStart2;
+              nPathStart = StringHelper.getIndexOfIgnoreCase (sCleanHref, sSearch, Locale.US);
             }
 
             if (nPathStart >= 0)
             {
               // Okay, the URL looks good
-              final String sDocType = sCleanHref.substring (nPathStart + nPathStartLength);
+              final String sDocType = sCleanHref.substring (nPathStart + sSearch.length ());
               final IDocumentTypeIdentifier aDocType = aSMPQueryParams.getIF ().parseDocumentTypeIdentifier (sDocType);
               if (aDocType != null)
               {
