@@ -443,7 +443,7 @@ public final class PeppolAPIHelper
     return ret;
   }
 
-  public interface IConversionService <SRC, DST>
+  public interface IServiceInformationConverter <SRC, DST>
   {
     @Nullable
     DST convert (@NonNull IParticipantIdentifier aParticipantID,
@@ -456,14 +456,14 @@ public final class PeppolAPIHelper
                                              @Nullable final String sSMLID,
                                              @Nullable final String sParticipantID,
                                              @Nullable final String sDocTypeID,
+                                             @NonNull final Consumer <? super SMPHttpClientSettings> aHCSModifier,
                                              final boolean bXMLSchemaValidation,
                                              final boolean bVerifySignature,
-                                             @NonNull final Consumer <? super HttpClientSettings> aHCSModifier,
                                              @NonNull final Consumer <? super GenericJAXBMarshaller <?>> aSMPMarshallerCustomizer,
                                              @NonNull final Consumer <String> aOnError,
-                                             @NonNull final IConversionService <com.helger.xsds.peppol.smp1.ServiceMetadataType, T> aPeppolFunc,
-                                             @NonNull final IConversionService <com.helger.xsds.bdxr.smp1.ServiceMetadataType, T> aBdxr1Func,
-                                             @NonNull final IConversionService <com.helger.xsds.bdxr.smp2.ServiceMetadataType, T> aBdxr2Func)
+                                             @NonNull final IServiceInformationConverter <com.helger.xsds.peppol.smp1.ServiceMetadataType, T> aPeppolFunc,
+                                             @NonNull final IServiceInformationConverter <com.helger.xsds.bdxr.smp1.ServiceMetadataType, T> aBdxr1Func,
+                                             @NonNull final IServiceInformationConverter <com.helger.xsds.bdxr.smp2.ServiceMetadataType, T> aBdxr2Func)
   {
     final SMPQueryParams aSMPQueryParams = resolveSMPQueryParams (sSMLID, sParticipantID, aOnError);
     if (aSMPQueryParams == null)
@@ -612,13 +612,13 @@ public final class PeppolAPIHelper
   }
 
   @Nullable
-  public static IJsonObject getServiceInformationAsJson (@Nullable final String sSMLID,
+  public static IJsonObject getServiceInformationAsJson (@NonNull final String sLogPrefix,
+                                                         @Nullable final String sSMLID,
                                                          @Nullable final String sParticipantID,
                                                          @Nullable final String sDocTypeID,
+                                                         @NonNull final Consumer <? super SMPHttpClientSettings> aHCSModifier,
                                                          final boolean bXMLSchemaValidation,
                                                          final boolean bVerifySignature,
-                                                         @NonNull final String sLogPrefix,
-                                                         @NonNull final Consumer <? super HttpClientSettings> aHCSModifier,
                                                          @NonNull final Consumer <? super GenericJAXBMarshaller <?>> aSMPMarshallerCustomizer,
                                                          @NonNull final Consumer <String> aOnError)
   {
@@ -629,9 +629,9 @@ public final class PeppolAPIHelper
                                                      sSMLID,
                                                      sParticipantID,
                                                      sDocTypeID,
+                                                     aHCSModifier,
                                                      bXMLSchemaValidation,
                                                      bVerifySignature,
-                                                     aHCSModifier,
                                                      aSMPMarshallerCustomizer,
                                                      aOnError,
                                                      SMPJsonResponse::convert,

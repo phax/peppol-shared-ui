@@ -55,13 +55,13 @@ public final class APISMPQueryGetServiceInformation extends AbstractAPIExecutor
     final boolean bXMLSchemaValidation = aRequestScope.params ().getAsBoolean (PARAM_XML_SCHEMA_VALIDATION, true);
     final boolean bVerifySignature = aRequestScope.params ().getAsBoolean (PARAM_VERIFY_SIGNATURE, true);
 
-    final IJsonObject aJson = PeppolAPIHelper.getServiceInformationAsJson (sSMLID,
+    final IJsonObject aJson = PeppolAPIHelper.getServiceInformationAsJson (sLogPrefix,
+                                                                           sSMLID,
                                                                            sParticipantID,
                                                                            sDocTypeID,
+                                                                           m_aHCSModifier,
                                                                            bXMLSchemaValidation,
                                                                            bVerifySignature,
-                                                                           sLogPrefix,
-                                                                           m_aHCSModifier,
                                                                            null,
                                                                            sMsg -> {
                                                                              LOGGER.warn (sLogPrefix + sMsg);
