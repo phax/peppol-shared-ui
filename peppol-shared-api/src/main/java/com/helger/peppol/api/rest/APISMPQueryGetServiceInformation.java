@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.annotation.Nonempty;
 import com.helger.base.CGlobal;
-import com.helger.base.numeric.mutable.MutableBoolean;
 import com.helger.json.IJsonObject;
 import com.helger.photon.api.IAPIDescriptor;
 import com.helger.photon.app.PhotonUnifiedResponse;
@@ -56,7 +55,6 @@ public final class APISMPQueryGetServiceInformation extends AbstractAPIExecutor
     final boolean bXMLSchemaValidation = aRequestScope.params ().getAsBoolean (PARAM_XML_SCHEMA_VALIDATION, true);
     final boolean bVerifySignature = aRequestScope.params ().getAsBoolean (PARAM_VERIFY_SIGNATURE, true);
 
-    final MutableBoolean aResponseSet = new MutableBoolean (false);
     final IJsonObject aJson = PeppolAPIHelper.getServiceInformationAsJson (sSMLID,
                                                                            sParticipantID,
                                                                            sDocTypeID,
@@ -69,7 +67,6 @@ public final class APISMPQueryGetServiceInformation extends AbstractAPIExecutor
                                                                              LOGGER.warn (sLogPrefix + sMsg);
                                                                              aUnifiedResponse.createNotFound ()
                                                                                              .text (sMsg);
-                                                                             aResponseSet.set (true);
                                                                            });
 
     if (aJson == null)
