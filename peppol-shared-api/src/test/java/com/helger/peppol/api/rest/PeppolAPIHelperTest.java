@@ -18,6 +18,7 @@ package com.helger.peppol.api.rest;
 
 import static org.junit.Assert.assertNotNull;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,11 +31,35 @@ import com.helger.peppol.ui.types.smp.SMPQueryParams;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.peppolid.peppol.PeppolIdentifierHelper;
 
-public class PeppolAPIHelperTest
+/**
+ * Test class for class {@link PeppolAPIHelper}
+ *
+ * @author Philip Helger
+ */
+public final class PeppolAPIHelperTest
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (PeppolAPIHelperTest.class);
 
   @Test
+  public void testReadBCHelgerSMK ()
+  {
+    final SMPQueryParams aSMPQueryParams = SMPQueryParams.createForSMLOrNull (ESML.DIGIT_TEST,
+                                                                              ESMPAPIType.PEPPOL,
+                                                                              PeppolIdentifierFactory.INSTANCE,
+                                                                              PeppolIdentifierHelper.DEFAULT_PARTICIPANT_SCHEME,
+                                                                              "9915:helger",
+                                                                              true);
+    assertNotNull (aSMPQueryParams);
+    final PDBusinessCard aBC = PeppolAPIHelper.retrieveBusinessCardParsed ("",
+                                                                           aSMPQueryParams,
+                                                                           x -> {},
+                                                                           new FeedbackCallbackLog (LOGGER, ""),
+                                                                           ex -> LOGGER.error ("oops", ex));
+    assertNotNull (aBC);
+  }
+
+  @Test
+  @Ignore ("No longer present")
   public void testReadBCOnfactNowValid ()
   {
     final SMPQueryParams aSMPQueryParams = SMPQueryParams.createForSMLOrNull (ESML.DIGIT_PRODUCTION,
