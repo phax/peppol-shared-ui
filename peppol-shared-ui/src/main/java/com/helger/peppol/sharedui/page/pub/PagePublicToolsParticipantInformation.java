@@ -191,10 +191,12 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
   private static final LocalDate PEPPOL_SMP_HTTP_MANDATORY_DATE = PDTFactory.createLocalDate (2026, Month.FEBRUARY, 1);
 
   // Contain AP G2 and AP G3
+  @SuppressWarnings ("deprecation")
   private static final TrustedCAChecker PEPPOL_CA_AP_FULL = new TrustedCAChecker (PeppolTrustStores.Config2018.CERTIFICATE_PILOT_AP,
                                                                                   PeppolTrustStores.Config2018.CERTIFICATE_PRODUCTION_AP,
                                                                                   PeppolTrustStores.Config2025.CERTIFICATE_TEST_AP,
                                                                                   PeppolTrustStores.Config2025.CERTIFICATE_PRODUCTION_AP);
+  @SuppressWarnings ("deprecation")
   private static final TrustedCAChecker PEPPOL_CA_SMP_FULL = new TrustedCAChecker (PeppolTrustStores.Config2018.CERTIFICATE_PILOT_SMP,
                                                                                    PeppolTrustStores.Config2018.CERTIFICATE_PRODUCTION_SMP,
                                                                                    PeppolTrustStores.Config2025.CERTIFICATE_TEST_SMP,
