@@ -66,6 +66,8 @@ import com.helger.smpclient.json.SMPJsonResponse;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.xsds.bdxr.smp2.bc.IDType;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @Immutable
 public final class PeppolAPIHelper
 {
@@ -73,6 +75,18 @@ public final class PeppolAPIHelper
 
   private PeppolAPIHelper ()
   {}
+
+  @NonNull
+  public static String getRemoteIPAddrProxyAware (@NonNull final HttpServletRequest aHttpRequest)
+  {
+    String ret = aHttpRequest.getRemoteAddr ();
+    if (StringHelper.isEmpty (ret) || "0:0:0:0:0:0:0:1".equals (ret))
+    {
+      // When run behind mod-proxy
+      ret = aHttpRequest.getHeader ("x-forwarded-for");
+    }
+    return ret;
+  }
 
   @Nullable
   public static SMPQueryParams resolveSMPQueryParams (@Nullable final String sSMLID,

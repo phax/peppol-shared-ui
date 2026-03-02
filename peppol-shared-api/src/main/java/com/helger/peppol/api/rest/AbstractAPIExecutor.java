@@ -117,7 +117,7 @@ public abstract class AbstractAPIExecutor implements IAPIExecutor
 
     if (m_bRateLimitEnabled)
     {
-      final String sRateLimitKey = "ip:" + aRequestScope.getRemoteAddr ();
+      final String sRateLimitKey = "ip:" + PeppolAPIHelper.getRemoteIPAddrProxyAware (aRequestScope.getRequest ());
       final boolean bOverRateLimit = m_aRequestRateLimiter != null ? m_aRequestRateLimiter.overLimitWhenIncremented (
                                                                                                                      sRateLimitKey)
                                                                    : false;
