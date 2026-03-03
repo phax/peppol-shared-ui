@@ -15,6 +15,10 @@ This project consists of the following modules, in dependency order:
 
 # News and Noteworthy
 
+v0.9.13 - 2026-03-03
+* Dependency updates
+* Improved IP address detection when running behind a proxy
+
 v0.9.12 - 2026-02-13
 * Extracted API support methods into reusable components
 
