@@ -3,6 +3,8 @@
 Shared UI components for Peppol related websites like peppol.helger.com
 This includes primarily UI and web application related components.
 
+peppol-shared-ui is part of my Peppol solution stack. See https://github.com/phax/peppol for other components and libraries in that area.
+
 As the UI framework used is proprietory (ph-oton) and the users are limited and the version is pre 1.0 I decided to not to spend too much effort in documenting all the detailed changes. Expect this to start after 1.0.
 
 This project consists of the following modules, in dependency order:
