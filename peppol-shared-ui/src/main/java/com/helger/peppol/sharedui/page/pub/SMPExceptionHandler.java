@@ -17,16 +17,20 @@
 package com.helger.peppol.sharedui.page.pub;
 
 import org.apache.hc.client5.http.HttpResponseException;
+import org.apache.hc.core5.http.Header;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import com.helger.base.CGlobal;
 import com.helger.base.callback.exception.IExceptionCallback;
 import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.string.StringHelper;
 import com.helger.html.hc.IHCNode;
 import com.helger.html.hc.ext.HCExtHelper;
 import com.helger.html.hc.html.grouping.HCHR;
 import com.helger.http.CHttp;
+import com.helger.http.CHttpHeader;
+import com.helger.httpclient.response.ExtendedHttpResponseException;
 import com.helger.peppol.sml.ESMPAPIType;
 import com.helger.photon.bootstrap4.alert.BootstrapErrorBox;
 import com.helger.photon.bootstrap4.traits.IHCBootstrap4Trait;
@@ -49,10 +53,17 @@ final class SMPExceptionHandler implements IExceptionCallback <Exception>, IHCBo
     int nStatusCode = CGlobal.ILLEGAL_UINT;
     boolean bIsError = true;
     boolean bIsDirectoryQuery = false;
+    String sRedirectLocation = null;
     if (ex instanceof final SMPClientHttpException schex)
     {
       // SMP client
       nStatusCode = schex.getResponseStatusCode ();
+      if (schex.getCause () instanceof final ExtendedHttpResponseException ehrEx)
+      {
+        final Header aHeader = ehrEx.getHttpResponse ().getFirstHeader (CHttpHeader.LOCATION);
+        if (aHeader != null)
+          sRedirectLocation = aHeader.getValue ();
+      }
     }
     else
       if (ex instanceof final HttpResponseException hrex)
@@ -67,6 +78,12 @@ final class SMPExceptionHandler implements IExceptionCallback <Exception>, IHCBo
           nStatusCode = CGlobal.ILLEGAL_UINT;
           bIsError = false;
         }
+        if (ex instanceof final ExtendedHttpResponseException ehrEx)
+        {
+          final Header aHeader = ehrEx.getHttpResponse ().getFirstHeader (CHttpHeader.LOCATION);
+          if (aHeader != null)
+            sRedirectLocation = aHeader.getValue ();
+        }
       }
 
     if (nStatusCode != CGlobal.ILLEGAL_UINT)
@@ -75,7 +92,9 @@ final class SMPExceptionHandler implements IExceptionCallback <Exception>, IHCBo
       {
         m_aHCNode = error ().addChild ("The SMP server responsed with an HTTP Redirect Code (" +
                                        nStatusCode +
-                                       ") which is not allowed according to Peppol SMP specification.");
+                                       ") which is not allowed according to Peppol SMP specification.")
+                            .addChild (StringHelper.isEmpty (sRedirectLocation) ? null : div (
+                                                                                              " The redirect points to ").addChild (code (sRedirectLocation)));
       }
       else
       {
