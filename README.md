@@ -22,6 +22,11 @@ This project consists of the following modules, in dependency order:
 
 # News and Noteworthy
 
+v0.9.14 - 2026-03-20
+* Dependency updates
+* Showing redirect target URL in SMP exception handler if possible
+* Predefined Peppol SML lookups use Peppol SML instead of EC SML (via peppol-commons 12.4.0)
+
 v0.9.13 - 2026-03-03
 * Dependency updates
 * Improved IP address detection when running behind a proxy
