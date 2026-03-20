@@ -183,7 +183,7 @@ public class PageSecurePeppolSendAS4 extends AbstractBootstrapWebPage <WebPageEx
   protected void fillContent (@NonNull final WebPageExecutionContext aWPEC)
   {
     final HCNodeList aNodeList = aWPEC.getNodeList ();
-    Locale aDisplayLocale = aWPEC.getDisplayLocale ();
+    final Locale aDisplayLocale = aWPEC.getDisplayLocale ();
     final IIdentifierFactory aIF = Phase4PeppolSender.IF;
 
     final FormErrorList aFormErrors = new FormErrorList ();
@@ -263,7 +263,7 @@ public class PageSecurePeppolSendAS4 extends AbstractBootstrapWebPage <WebPageEx
         {
           final SMPClientReadOnly aSMPClient = new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                       aReceiverID,
-                                                                      ESML.DIGIT_TEST);
+                                                                      ESML.PEPPOL_TEST);
           aSMPClient.setSecureValidation (PeppolUITypes.DEFAULT_SMP_USE_SECURE_VALIDATION);
 
           // What to remember

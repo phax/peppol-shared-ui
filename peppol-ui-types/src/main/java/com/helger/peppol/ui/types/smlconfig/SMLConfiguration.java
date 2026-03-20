@@ -132,7 +132,8 @@ public final class SMLConfiguration implements ISMLConfiguration
   @NonNull
   public static SMLConfiguration createForPeppol (@NonNull final ESML eSML)
   {
-    final boolean bIsProd = eSML == ESML.DIGIT_PRODUCTION;
+    @SuppressWarnings ("removal")
+    final boolean bIsProd = eSML == ESML.DIGIT_PRODUCTION || eSML == ESML.PEPPOL_PRODUCTION;
     return new SMLConfiguration (SMLInfo.builder (eSML).build (),
                                  ESMPAPIType.PEPPOL,
                                  ESMPIdentifierType.PEPPOL,
