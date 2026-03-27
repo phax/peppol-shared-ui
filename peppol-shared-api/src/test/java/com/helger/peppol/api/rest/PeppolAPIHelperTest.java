@@ -43,7 +43,7 @@ public final class PeppolAPIHelperTest
   @Test
   public void testReadBCHelgerSMK ()
   {
-    final SMPQueryParams aSMPQueryParams = SMPQueryParams.createForSMLOrNull (ESML.DIGIT_TEST,
+    final SMPQueryParams aSMPQueryParams = SMPQueryParams.createForSMLOrNull (ESML.PEPPOL_TEST,
                                                                               ESMPAPIType.PEPPOL,
                                                                               PeppolIdentifierFactory.INSTANCE,
                                                                               PeppolIdentifierHelper.DEFAULT_PARTICIPANT_SCHEME,
@@ -62,7 +62,7 @@ public final class PeppolAPIHelperTest
   @Ignore ("No longer present")
   public void testReadBCOnfactNowValid ()
   {
-    final SMPQueryParams aSMPQueryParams = SMPQueryParams.createForSMLOrNull (ESML.DIGIT_PRODUCTION,
+    final SMPQueryParams aSMPQueryParams = SMPQueryParams.createForSMLOrNull (ESML.PEPPOL_PRODUCTION,
                                                                               ESMPAPIType.PEPPOL,
                                                                               PeppolIdentifierFactory.INSTANCE,
                                                                               PeppolIdentifierHelper.DEFAULT_PARTICIPANT_SCHEME,

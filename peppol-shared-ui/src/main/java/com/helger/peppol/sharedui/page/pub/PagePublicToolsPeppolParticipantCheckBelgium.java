@@ -70,7 +70,7 @@ public class PagePublicToolsPeppolParticipantCheckBelgium extends AbstractAppWeb
   }
 
   public PagePublicToolsPeppolParticipantCheckBelgium (@NonNull @Nonempty final String sID,
-                                                 @NonNull @Nonempty final String sName)
+                                                       @NonNull @Nonempty final String sName)
   {
     super (sID, sName);
   }
@@ -105,7 +105,7 @@ public class PagePublicToolsPeppolParticipantCheckBelgium extends AbstractAppWeb
                                   sParticipantIDValue +
                                   "' does not seem to match the syntax requirements (length 10, start with 0 or 1, mod97 check digit)"));
 
-      final ISMLConfiguration aSMLConfiguration = aSMLConfigurationMgr.getSMLConfigurationfID (ESML.DIGIT_PRODUCTION.getID ());
+      final ISMLConfiguration aSMLConfiguration = aSMLConfigurationMgr.getSMLConfigurationfID (ESML.PEPPOL_PRODUCTION.getID ());
 
       // 0208 does not use prefix
       final SMPQueryParams aSMPQP_CBE = SMPQueryParams.createForSMLOrNull (aSMLConfiguration,

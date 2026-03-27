@@ -68,7 +68,8 @@ public class PagePublicToolsPeppolParticipantCheck extends AbstractAppWebPage
     this (sID, "Peppol Participant Check");
   }
 
-  public PagePublicToolsPeppolParticipantCheck (@NonNull @Nonempty final String sID, @NonNull @Nonempty final String sName)
+  public PagePublicToolsPeppolParticipantCheck (@NonNull @Nonempty final String sID,
+                                                @NonNull @Nonempty final String sName)
   {
     super (sID, sName);
   }
@@ -151,8 +152,8 @@ public class PagePublicToolsPeppolParticipantCheck extends AbstractAppWebPage
       final ICommonsList <String> aPIDValues = RegExHelper.getSplitToList (sParticipantIDValue, "\\s+");
       sSML = aWPEC.params ().getAsStringTrimmed (FIELD_SML);
       final boolean bIsProdSML = SML_PROD.equals (sSML);
-      final ISMLConfiguration aSMLConfiguration = aSMLConfigurationMgr.getSMLConfigurationfID (bIsProdSML ? ESML.DIGIT_PRODUCTION.getID ()
-                                                                                                  : ESML.DIGIT_TEST.getID ());
+      final ISMLConfiguration aSMLConfiguration = aSMLConfigurationMgr.getSMLConfigurationfID (bIsProdSML ? ESML.PEPPOL_PRODUCTION.getID ()
+                                                                                                          : ESML.PEPPOL_TEST.getID ());
       final IIdentifierFactory aIF = aSMLConfiguration != null ? aSMLConfiguration.getSMPIdentifierType ()
                                                                                   .getIdentifierFactory ()
                                                                : SimpleIdentifierFactory.INSTANCE;
