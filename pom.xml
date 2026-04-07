@@ -63,9 +63,9 @@
   </developers>
   
   <properties>
-    <phase4.version>4.4.1</phase4.version>
-    <phive-rules.version>4.2.5</phive-rules.version>
-    <ddd.version>0.8.2</ddd.version>
+    <phase4.version>4.4.2</phase4.version>
+    <phive-rules.version>4.3.0</phive-rules.version>
+    <ddd.version>0.8.3</ddd.version>
   </properties>
   
   <dependencyManagement>
