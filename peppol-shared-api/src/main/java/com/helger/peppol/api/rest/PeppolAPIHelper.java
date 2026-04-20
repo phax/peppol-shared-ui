@@ -656,7 +656,7 @@ public final class PeppolAPIHelper
 
     if (aJson != null)
     {
-      LOGGER.info (sLogPrefix + "Succesfully finished lookup after " + aSW.getMillis () + " milliseconds");
+      LOGGER.info (sLogPrefix + "Successfully finished lookup after " + aSW.getMillis () + " milliseconds");
       aJson.add ("queryDateTime", DateTimeFormatter.ISO_ZONED_DATE_TIME.format (aQueryDT));
       aJson.add ("queryDurationMillis", aSW.getMillis ());
     }

@@ -92,7 +92,7 @@ public final class APISMPQueryGetBusinessCard extends AbstractAPIExecutor
     else
     {
       LOGGER.info (sLogPrefix +
-                   "Succesfully finished BusinessCard lookup lookup after " +
+                   "Successfully finished BusinessCard lookup after " +
                    aSW.getMillis () +
                    " milliseconds");
 

@@ -142,7 +142,7 @@ public final class APISMPQueryGetDocTypes extends AbstractAPIExecutor
     }
     else
     {
-      LOGGER.info (sLogPrefix + "Succesfully finished lookup lookup after " + aSW.getMillis () + " milliseconds");
+      LOGGER.info (sLogPrefix + "Successfully finished lookup after " + aSW.getMillis () + " milliseconds");
 
       aJson.add ("queryDateTime", DateTimeFormatter.ISO_ZONED_DATE_TIME.format (aQueryDT));
       aJson.add ("queryDurationMillis", aSW.getMillis ());

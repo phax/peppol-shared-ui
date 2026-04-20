@@ -217,7 +217,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
     final String sScheme = sPIValue.substring (0, 4);
     final IPeppolParticipantIdentifierScheme aScheme = PeppolParticipantIdentifierSchemeManager.getSchemeOfISO6523Code (sScheme);
     if (aScheme == null)
-      return "Unkwnown scheme (" + sScheme + ")";
+      return "Unknown scheme (" + sScheme + ")";
 
     String sCountry = aScheme.getCountryCode ();
     final Locale aCountryLocale = CountryCache.getInstance ().getCountry (sCountry);

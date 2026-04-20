@@ -151,7 +151,7 @@ public abstract class AbstractAPIExecutor implements IAPIExecutor
     aSW.stop ();
     if (aSW.getMillis () > 100)
       LOGGER.info (sLogPrefix +
-                   "Succesfully finished '" +
+                   "Successfully finished '" +
                    aAPIDescriptor.getPathDescriptor ().getAsURLString () +
                    "' after " +
                    aSW.getMillis () +
