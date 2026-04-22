@@ -300,7 +300,6 @@ public class PageSecurePeppolSendAS4 extends AbstractBootstrapWebPage <WebPageEx
                                                                         aEndpointCert.set (cert);
                                                                         aEndpointCertCheck.set (res);
                                                                       })
-                                                                      .validationConfiguration (null)
                                                                       .buildMessageCallback (aBuildMessageCallback)
                                                                       .outgoingDumper (new AS4OutgoingDumperFileBased ())
                                                                       .incomingDumper (new AS4IncomingDumperFileBased ())
