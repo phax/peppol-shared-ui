@@ -254,7 +254,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
     {
       ret.append (" [")
          .append (aWPEC.params ().getAsString (FIELD_ID_SCHEME, "").trim ())
-         .append (':')
+         .append ("::")
          .append (aWPEC.params ().getAsString (FIELD_ID_VALUE, "").trim ())
          .append (']');
     }
