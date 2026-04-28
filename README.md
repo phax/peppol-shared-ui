@@ -22,6 +22,10 @@ This project consists of the following modules, in dependency order:
 
 # News and Noteworthy
 
+v0.9.15 - 2026-04-28
+* Dependency updates
+* Made sure the Peppol G2 certificates are no longer usable
+
 v0.9.14 - 2026-03-20
 * Dependency updates
 * Showing redirect target URL in SMP exception handler if possible
