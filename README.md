@@ -22,6 +22,9 @@ This project consists of the following modules, in dependency order:
 
 # News and Noteworthy
 
+v0.9.16 - 2026-05-19
+* Dependency updates
+
 v0.9.15 - 2026-05-18
 * Dependency updates
 * Made sure the Peppol G2 certificates are no longer usable
