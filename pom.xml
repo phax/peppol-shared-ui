@@ -22,7 +22,7 @@
   <parent>
     <groupId>com.helger</groupId>
     <artifactId>parent-pom</artifactId>
-    <version>3.0.3</version>
+    <version>3.0.5</version>
   </parent>
   <groupId>com.helger.peppol.ui</groupId>
   <artifactId>peppol-shared-ui-parent-pom</artifactId>
@@ -63,9 +63,9 @@
   </developers>
   
   <properties>
-    <phase4.version>4.5.0</phase4.version>
-    <phive-rules.version>4.3.2</phive-rules.version>
-    <ddd.version>0.8.7</ddd.version>
+    <phase4.version>4.5.1</phase4.version>
+    <phive-rules.version>4.3.5</phive-rules.version>
+    <ddd.version>0.8.8</ddd.version>
   </properties>
   
   <dependencyManagement>
