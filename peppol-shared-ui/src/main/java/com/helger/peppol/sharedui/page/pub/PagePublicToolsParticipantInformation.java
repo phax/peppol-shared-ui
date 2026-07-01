@@ -192,15 +192,19 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
 
   // Contain AP G2 and AP G3
   @SuppressWarnings ("deprecation")
-  private static final TrustedCAChecker PEPPOL_CA_AP_FULL = new TrustedCAChecker (PeppolTrustStores.Config2018.CERTIFICATE_PILOT_AP,
-                                                                                  PeppolTrustStores.Config2018.CERTIFICATE_PRODUCTION_AP,
-                                                                                  PeppolTrustStores.Config2025.CERTIFICATE_TEST_AP,
-                                                                                  PeppolTrustStores.Config2025.CERTIFICATE_PRODUCTION_AP);
+  private static final TrustedCAChecker PEPPOL_CA_AP_FULL = TrustedCAChecker.builder ()
+                                                                            .trustedCACertificates (PeppolTrustStores.Config2018.CERTIFICATE_PILOT_AP,
+                                                                                                    PeppolTrustStores.Config2018.CERTIFICATE_PRODUCTION_AP,
+                                                                                                    PeppolTrustStores.Config2025.CERTIFICATE_TEST_AP,
+                                                                                                    PeppolTrustStores.Config2025.CERTIFICATE_PRODUCTION_AP)
+                                                                            .build ();
   @SuppressWarnings ("deprecation")
-  private static final TrustedCAChecker PEPPOL_CA_SMP_FULL = new TrustedCAChecker (PeppolTrustStores.Config2018.CERTIFICATE_PILOT_SMP,
-                                                                                   PeppolTrustStores.Config2018.CERTIFICATE_PRODUCTION_SMP,
-                                                                                   PeppolTrustStores.Config2025.CERTIFICATE_TEST_SMP,
-                                                                                   PeppolTrustStores.Config2025.CERTIFICATE_PRODUCTION_SMP);
+  private static final TrustedCAChecker PEPPOL_CA_SMP_FULL = TrustedCAChecker.builder ()
+                                                                             .trustedCACertificates (PeppolTrustStores.Config2018.CERTIFICATE_PILOT_SMP,
+                                                                                                     PeppolTrustStores.Config2018.CERTIFICATE_PRODUCTION_SMP,
+                                                                                                     PeppolTrustStores.Config2025.CERTIFICATE_TEST_SMP,
+                                                                                                     PeppolTrustStores.Config2025.CERTIFICATE_PRODUCTION_SMP)
+                                                                             .build ();
 
   private final String m_sUserAgent;
 
@@ -226,7 +230,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
     return sCountry + " - " + aScheme.getSchemeName ();
   }
 
-  private static final AjaxFunctionDeclaration AJAX_FIND_PI_SCHEME = addAjax ( (aRequestScope, aAjaxResponse) -> {
+  private static final AjaxFunctionDeclaration AJAX_FIND_PI_SCHEME = addAjax ((aRequestScope, aAjaxResponse) -> {
     final String sPIValue = aRequestScope.params ().getAsString (FIELD_ID_VALUE);
     final String ret = getSchemeHelpText (sPIValue);
     aAjaxResponse.text (ret).disableCaching ();
@@ -286,8 +290,8 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                      final String sEndpointRef,
                                      final boolean bIsPeppol)
   {
-    aLIEndpoint.addChild (div ("Endpoint URL: ").addChild (StringHelper.isEmpty (sEndpointRef) ? em ("none") : code (
-                                                                                                                     sEndpointRef)));
+    aLIEndpoint.addChild (div ("Endpoint URL: ").addChild (StringHelper.isEmpty (sEndpointRef) ? em ("none")
+                                                                                               : code (sEndpointRef)));
     if (bIsPeppol)
     {
       if (StringHelper.isEmpty (sEndpointRef))
@@ -525,8 +529,8 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
 
           aNodeList.addChild (error (div ("Failed to resolve participant ID " +
                                           sParticipantIDUriEncoded +
-                                          " for the provided network.")).addChild (bSMLAutoDetect ? null : div (
-                                                                                                                "Try selecting a different SML - maybe this helps")));
+                                          " for the provided network.")).addChild (bSMLAutoDetect ? null
+                                                                                                  : div ("Try selecting a different SML - maybe this helps")));
 
           // Audit failure
           AuditHelper.onAuditExecuteFailure ("participant-information",
@@ -846,8 +850,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                              {
                                                                                final HCUL aUL = new HCUL ();
                                                                                for (final var aExt : aExtensionList)
-                                                                                 if (aExt.getExtensionContent () !=
-                                                                                     null)
+                                                                                 if (aExt.getExtensionContent () != null)
                                                                                  {
                                                                                    final Object aAny = aExt.getExtensionContent ()
                                                                                                            .getAny ();
@@ -1485,8 +1488,9 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
             else
             {
               final HCH4 aH4 = h4 ("Business Card contains " +
-                                   (aBC.businessEntities ().size () > 0 ? "1 entity" : aBC.businessEntities ().size () +
-                                                                                       " entities"));
+                                   (aBC.businessEntities ().size () > 0 ? "1 entity"
+                                                                        : aBC.businessEntities ().size () +
+                                                                          " entities"));
               if (bShowTime)
                 aH4.addChild (" ").addChild (_createTimingNode (aSWGetBC.getMillis ()));
               aNodeList.addChild (aH4);
@@ -1515,9 +1519,10 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                 for (final PDName aName : aEntity.names ())
                 {
                   final Locale aLanguage = LanguageCache.getInstance ().getLanguage (aName.getLanguageCode ());
-                  final String sLanguageName = aLanguage == null ? "" : " (" +
-                                                                        aLanguage.getDisplayLanguage (aDisplayLocale) +
-                                                                        ")";
+                  final String sLanguageName = aLanguage == null ? ""
+                                                                 : " (" +
+                                                                   aLanguage.getDisplayLanguage (aDisplayLocale) +
+                                                                   ")";
 
                   aBCTable.addBodyRow ().addCell ("Name" + sLanguageName).addCell (aName.getName ());
                 }
@@ -1526,11 +1531,11 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                 {
                   final String sCountryCode = aEntity.getCountryCode ();
                   final Locale aCountryCode = CountryCache.getInstance ().getCountry (sCountryCode);
-                  final String sCountryName = aCountryCode == null ? sCountryCode : aCountryCode.getDisplayCountry (
-                                                                                                                    aDisplayLocale) +
-                                                                                    " (" +
-                                                                                    sCountryCode +
-                                                                                    ")";
+                  final String sCountryName = aCountryCode == null ? sCountryCode
+                                                                   : aCountryCode.getDisplayCountry (aDisplayLocale) +
+                                                                     " (" +
+                                                                     sCountryCode +
+                                                                     ")";
                   final EFamFamFlagIcon eIcon = EFamFamFlagIcon.getFromIDOrNull (sCountryCode);
                   aBCTable.addBodyRow ()
                           .addCell ("Country")
@@ -1740,14 +1745,14 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                                                       JQuery.idRef (sHelpFieldID)
                                                                                                             .show ()
                                                                                                             .val (aSuccessParam)))
-                                                                   .error (true ? null : new JSAnonymousFunction (
-                                                                                                                  new CommonsArrayList <> (new JSParam ("jqXHR"),
-                                                                                                                                           new JSParam ("textStatus"),
-                                                                                                                                           new JSParam ("errorThrown")),
-                                                                                                                  JSHtml.consoleLog (JSExpr.lit ("AJAX error occurred: ")
-                                                                                                                                           .plus (JSExpr.ref ("textStatus"))
-                                                                                                                                           .plus (" - Error thrown: ")
-                                                                                                                                           .plus (JSExpr.ref ("errorThrown")))))
+                                                                   .error (true ? null
+                                                                                : new JSAnonymousFunction (new CommonsArrayList <> (new JSParam ("jqXHR"),
+                                                                                                                                    new JSParam ("textStatus"),
+                                                                                                                                    new JSParam ("errorThrown")),
+                                                                                                           JSHtml.consoleLog (JSExpr.lit ("AJAX error occurred: ")
+                                                                                                                                    .plus (JSExpr.ref ("textStatus"))
+                                                                                                                                    .plus (" - Error thrown: ")
+                                                                                                                                    .plus (JSExpr.ref ("errorThrown")))))
                                                                    .build ();
         // Override global error handler - hack to avoid pop up if interrupted
         aForm.addChild (new HCScriptInline (JQuery.jQueryDocument ().off ("ajaxError")));
