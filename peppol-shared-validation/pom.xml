@@ -136,6 +136,11 @@
     </dependency>
     <dependency>
       <groupId>com.helger.phive.rules</groupId>
+      <artifactId>phive-rules-osa</artifactId>
+      <version>${phive-rules.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.helger.phive.rules</groupId>
       <artifactId>phive-rules-peppol</artifactId>
       <version>${phive-rules.version}</version>
     </dependency>
@@ -147,6 +152,11 @@
     <dependency>
       <groupId>com.helger.phive.rules</groupId>
       <artifactId>phive-rules-peppol-legacy</artifactId>
+      <version>${phive-rules.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.helger.phive.rules</groupId>
+      <artifactId>phive-rules-serbia</artifactId>
       <version>${phive-rules.version}</version>
     </dependency>
     <dependency>
@@ -167,6 +177,11 @@
     <dependency>
       <groupId>com.helger.phive.rules</groupId>
       <artifactId>phive-rules-teapps</artifactId>
+      <version>${phive-rules.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.helger.phive.rules</groupId>
+      <artifactId>phive-rules-turkey</artifactId>
       <version>${phive-rules.version}</version>
     </dependency>
     <dependency>
