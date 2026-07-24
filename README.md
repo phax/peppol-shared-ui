@@ -24,6 +24,9 @@ This project consists of the following modules, in dependency order:
 
 # News and Noteworthy
 
+v0.9.17 - 2026-07-24
+* Dependency updates
+
 v0.9.16 - 2026-05-19
 * Dependency updates
 
