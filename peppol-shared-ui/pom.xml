@@ -95,6 +95,10 @@
       <groupId>com.helger.peppol.ui</groupId>
       <artifactId>peppol-shared-api</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.helger.photon.icon</groupId>
+      <artifactId>ph-oton-icon-fontawesome5</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>jakarta.servlet</groupId>
