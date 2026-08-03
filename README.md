@@ -98,3 +98,8 @@ v0.9.1 - 2025-10-28
 
 v0.9.0 - 2025-10-20
 * Initial release
+
+---
+
+My personal [Coding Styleguide](https://github.com/phax/meta/blob/master/CodingStyleguide.md) |
+It is appreciated if you star the GitHub project if you like it.
