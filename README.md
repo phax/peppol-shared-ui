@@ -24,6 +24,9 @@ This project consists of the following modules, in dependency order:
 
 # News and Noteworthy
 
+v0.9.19 - 2026-08-03
+* Using ph-web 10.4.3 and phive-rules 4.5.0
+
 v0.9.18 - 2026-07-25
 * Using ph-oton 10.3.0 and ph-oton-icon 1.0.1
 
