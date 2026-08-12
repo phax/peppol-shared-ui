@@ -58,6 +58,10 @@
       <groupId>com.helger.commons</groupId>
       <artifactId>ph-xml</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.helger.masterdata</groupId>
+      <artifactId>ph-masterdata</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>com.helger</groupId>
