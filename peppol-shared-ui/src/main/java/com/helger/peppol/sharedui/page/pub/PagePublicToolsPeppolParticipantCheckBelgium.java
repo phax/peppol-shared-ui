@@ -50,6 +50,7 @@ import com.helger.photon.bootstrap5.button.BootstrapLinkButton;
 import com.helger.photon.bootstrap5.buttongroup.BootstrapButtonToolbar;
 import com.helger.photon.bootstrap5.form.BootstrapForm;
 import com.helger.photon.bootstrap5.form.BootstrapFormGroup;
+import com.helger.photon.bootstrap5.grid.BootstrapGridSpec;
 import com.helger.photon.core.form.FormErrorList;
 import com.helger.photon.core.form.RequestField;
 import com.helger.photon.uicore.css.CPageParam;
@@ -230,7 +231,10 @@ public class PagePublicToolsPeppolParticipantCheckBelgium extends AbstractAppWeb
     {
       final BootstrapForm aForm = aNodeList.addAndReturnChild (getUIHandler ().createFormSelf (aWPEC)
                                                                               .setMethod (EHCFormMethod.GET)
-                                                                              .setLeft (3, 3, 3, 2, 2, 2));
+                                                                              .setLeft (BootstrapGridSpec.builder ()
+                                                                                                         .xs (3)
+                                                                                                         .lg (2)
+                                                                                                         .build ()));
       if (bQueried)
       {
         // Just some spacing
