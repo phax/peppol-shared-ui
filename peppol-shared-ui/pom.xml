@@ -88,7 +88,7 @@
     </dependency>
     <dependency>
       <groupId>com.helger.photon</groupId>
-      <artifactId>ph-oton-bootstrap4-pages</artifactId>
+      <artifactId>ph-oton-bootstrap5-pages</artifactId>
     </dependency>
 
     <dependency>
@@ -101,7 +101,7 @@
     </dependency>
     <dependency>
       <groupId>com.helger.photon.icon</groupId>
-      <artifactId>ph-oton-icon-fontawesome5</artifactId>
+      <artifactId>ph-oton-icon-fontawesome6</artifactId>
     </dependency>
 
     <dependency>

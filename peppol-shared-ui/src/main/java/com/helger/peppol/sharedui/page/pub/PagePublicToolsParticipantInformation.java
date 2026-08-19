@@ -131,20 +131,21 @@ import com.helger.peppolid.peppol.pidscheme.PeppolParticipantIdentifierSchemeMan
 import com.helger.peppolid.simple.process.SimpleProcessIdentifier;
 import com.helger.photon.ajax.decl.AjaxFunctionDeclaration;
 import com.helger.photon.audit.AuditHelper;
-import com.helger.photon.bootstrap4.CBootstrapCSS;
-import com.helger.photon.bootstrap4.alert.BootstrapErrorBox;
-import com.helger.photon.bootstrap4.alert.BootstrapWarnBox;
-import com.helger.photon.bootstrap4.button.BootstrapButton;
-import com.helger.photon.bootstrap4.button.BootstrapLinkButton;
-import com.helger.photon.bootstrap4.button.EBootstrapButtonSize;
-import com.helger.photon.bootstrap4.button.EBootstrapButtonType;
-import com.helger.photon.bootstrap4.buttongroup.BootstrapButtonToolbar;
-import com.helger.photon.bootstrap4.card.BootstrapCard;
-import com.helger.photon.bootstrap4.form.BootstrapForm;
-import com.helger.photon.bootstrap4.form.BootstrapFormGroup;
-import com.helger.photon.bootstrap4.table.BootstrapTable;
-import com.helger.photon.bootstrap4.uictrls.ext.BootstrapTechnicalUI;
-import com.helger.photon.bootstrap4.utils.BootstrapCollapseHelper;
+import com.helger.photon.bootstrap5.CBootstrapCSS;
+import com.helger.photon.bootstrap5.alert.BootstrapErrorBox;
+import com.helger.photon.bootstrap5.alert.BootstrapWarnBox;
+import com.helger.photon.bootstrap5.button.BootstrapButton;
+import com.helger.photon.bootstrap5.button.BootstrapLinkButton;
+import com.helger.photon.bootstrap5.button.EBootstrapButtonSize;
+import com.helger.photon.bootstrap5.button.EBootstrapButtonType;
+import com.helger.photon.bootstrap5.buttongroup.BootstrapButtonToolbar;
+import com.helger.photon.bootstrap5.card.BootstrapCard;
+import com.helger.photon.bootstrap5.form.BootstrapForm;
+import com.helger.photon.bootstrap5.form.BootstrapFormGroup;
+import com.helger.photon.bootstrap5.grid.BootstrapGridSpec;
+import com.helger.photon.bootstrap5.table.BootstrapTable;
+import com.helger.photon.bootstrap5.uictrls.ext.BootstrapTechnicalUI;
+import com.helger.photon.bootstrap5.utils.BootstrapCollapseHelper;
 import com.helger.photon.core.form.FormErrorList;
 import com.helger.photon.core.form.RequestField;
 import com.helger.photon.core.form.RequestFieldBoolean;
@@ -290,8 +291,8 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                      final String sEndpointRef,
                                      final boolean bIsPeppol)
   {
-    aLIEndpoint.addChild (div ("Endpoint URL: ").addChild (StringHelper.isEmpty (sEndpointRef) ? em ("none")
-                                                                                               : code (sEndpointRef)));
+    aLIEndpoint.addChild (div ("Endpoint URL: ").addChild (StringHelper.isEmpty (sEndpointRef) ? em ("none") : code (
+                                                                                                                     sEndpointRef)));
     if (bIsPeppol)
     {
       if (StringHelper.isEmpty (sEndpointRef))
@@ -352,11 +353,11 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
       final ESMPTransportProfileState eState = eTransportProfile.getState ();
       if (eState.isDeleted ())
         aDiv.addChild (badgeDanger ().addChild (eTransportProfile.getName ()))
-            .addChild (badgeDanger ("Identifier is removed").addClass (CBootstrapCSS.ML_2));
+            .addChild (badgeDanger ("Identifier is removed").addClass (CBootstrapCSS.MS_2));
       else
         if (eState.isDeprecated ())
           aDiv.addChild (badgeWarn ().addChild (eTransportProfile.getName ()))
-              .addChild (badgeWarn ("Identifier is deprecated").addClass (CBootstrapCSS.ML_2));
+              .addChild (badgeWarn ("Identifier is deprecated").addClass (CBootstrapCSS.MS_2));
         else
           aDiv.addChild (badgeSuccess ().addChild (eTransportProfile.getName ()));
 
@@ -529,8 +530,8 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
 
           aNodeList.addChild (error (div ("Failed to resolve participant ID " +
                                           sParticipantIDUriEncoded +
-                                          " for the provided network.")).addChild (bSMLAutoDetect ? null
-                                                                                                  : div ("Try selecting a different SML - maybe this helps")));
+                                          " for the provided network.")).addChild (bSMLAutoDetect ? null : div (
+                                                                                                                "Try selecting a different SML - maybe this helps")));
 
           // Audit failure
           AuditHelper.onAuditExecuteFailure ("participant-information",
@@ -590,9 +591,9 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
             {
               // Mandatory per 1.2.2026 to use https
               if (aNowLocalDateTime.toLocalDate ().isBefore (PEPPOL_SMP_HTTP_MANDATORY_DATE))
-                aResolvedNameSuffix = badgeWarn ("Not yet using https").addClass (CBootstrapCSS.ML_2);
+                aResolvedNameSuffix = badgeWarn ("Not yet using https").addClass (CBootstrapCSS.MS_2);
               else
-                aResolvedNameSuffix = badgeDanger ("Not yet using https").addClass (CBootstrapCSS.ML_2);
+                aResolvedNameSuffix = badgeDanger ("Not yet using https").addClass (CBootstrapCSS.MS_2);
             }
             break;
         }
@@ -850,7 +851,8 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                              {
                                                                                final HCUL aUL = new HCUL ();
                                                                                for (final var aExt : aExtensionList)
-                                                                                 if (aExt.getExtensionContent () != null)
+                                                                                 if (aExt.getExtensionContent () !=
+                                                                                     null)
                                                                                  {
                                                                                    final Object aAny = aExt.getExtensionContent ()
                                                                                                            .getAny ();
@@ -918,7 +920,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                 final HCDiv aHeadlineDiv = aLI.addAndReturnChild (div (NiceNameUI.createDocTypeID (aDocType, false)));
                 final BootstrapButton aToggle = aHeadlineDiv.addAndReturnChild (new BootstrapButton (EBootstrapButtonType.DEFAULT,
                                                                                                      EBootstrapButtonSize.SMALL).addChild ("Toggle Details")
-                                                                                                                                .addClass (CBootstrapCSS.ML_3)
+                                                                                                                                .addClass (CBootstrapCSS.MS_3)
                                                                                                                                 .addClass (CBootstrapCSS.MY_1));
                 final HCDiv aDetailsDiv = aLI.addAndReturnChild (div ().addClasses (CBootstrapCSS.CONTAINER,
                                                                                     CBootstrapCSS.P_0,
@@ -1303,7 +1305,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                 // Toggle button
                 final BootstrapButton aToggle = aHeadlineDiv.addAndReturnChild (new BootstrapButton (EBootstrapButtonType.DEFAULT,
                                                                                                      EBootstrapButtonSize.SMALL).addChild ("Toggle Details")
-                                                                                                                                .addClass (CBootstrapCSS.ML_3));
+                                                                                                                                .addClass (CBootstrapCSS.MS_3));
 
                 // The owner should always be visible
                 final BootstrapCard aOwner = new BootstrapCard ();
@@ -1380,7 +1382,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                 // Toggle button
                 final BootstrapButton aToggle = aHeadlineDiv.addAndReturnChild (new BootstrapButton (EBootstrapButtonType.DEFAULT,
                                                                                                      EBootstrapButtonSize.SMALL).addChild ("Toggle Details")
-                                                                                                                                .addClass (CBootstrapCSS.ML_3));
+                                                                                                                                .addClass (CBootstrapCSS.MS_3));
 
                 // The owner should always be visible
                 final BootstrapCard aOwner = new BootstrapCard ();
@@ -1488,9 +1490,8 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
             else
             {
               final HCH4 aH4 = h4 ("Business Card contains " +
-                                   (aBC.businessEntities ().size () > 0 ? "1 entity"
-                                                                        : aBC.businessEntities ().size () +
-                                                                          " entities"));
+                                   (aBC.businessEntities ().size () > 0 ? "1 entity" : aBC.businessEntities ().size () +
+                                                                                       " entities"));
               if (bShowTime)
                 aH4.addChild (" ").addChild (_createTimingNode (aSWGetBC.getMillis ()));
               aNodeList.addChild (aH4);
@@ -1519,10 +1520,9 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                 for (final PDName aName : aEntity.names ())
                 {
                   final Locale aLanguage = LanguageCache.getInstance ().getLanguage (aName.getLanguageCode ());
-                  final String sLanguageName = aLanguage == null ? ""
-                                                                 : " (" +
-                                                                   aLanguage.getDisplayLanguage (aDisplayLocale) +
-                                                                   ")";
+                  final String sLanguageName = aLanguage == null ? "" : " (" +
+                                                                        aLanguage.getDisplayLanguage (aDisplayLocale) +
+                                                                        ")";
 
                   aBCTable.addBodyRow ().addCell ("Name" + sLanguageName).addCell (aName.getName ());
                 }
@@ -1531,11 +1531,11 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                 {
                   final String sCountryCode = aEntity.getCountryCode ();
                   final Locale aCountryCode = CountryCache.getInstance ().getCountry (sCountryCode);
-                  final String sCountryName = aCountryCode == null ? sCountryCode
-                                                                   : aCountryCode.getDisplayCountry (aDisplayLocale) +
-                                                                     " (" +
-                                                                     sCountryCode +
-                                                                     ")";
+                  final String sCountryName = aCountryCode == null ? sCountryCode : aCountryCode.getDisplayCountry (
+                                                                                                                    aDisplayLocale) +
+                                                                                    " (" +
+                                                                                    sCountryCode +
+                                                                                    ")";
                   final EFamFamFlagIcon eIcon = EFamFamFlagIcon.getFromIDOrNull (sCountryCode);
                   aBCTable.addBodyRow ()
                           .addCell ("Country")
@@ -1720,7 +1720,11 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
     {
       final BootstrapForm aForm = aNodeList.addAndReturnChild (getUIHandler ().createFormSelf (aWPEC)
                                                                               .setMethod (EHCFormMethod.GET)
-                                                                              .setLeft (-1, 12, -1, 3, 2));
+                                                                              .setLeft (BootstrapGridSpec.builder ()
+                                                                                                         .sm (12)
+                                                                                                         .lg (3)
+                                                                                                         .xl (2)
+                                                                                                         .build ()));
       aForm.addChild (info ().addChildren (div ("Show all processes, document types and endpoints of a participant."),
                                            div ("You may want to try scheme ").addChild (code (DEFAULT_ID_SCHEME))
                                                                               .addChild (" and value ")
@@ -1745,14 +1749,14 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                                                       JQuery.idRef (sHelpFieldID)
                                                                                                             .show ()
                                                                                                             .val (aSuccessParam)))
-                                                                   .error (true ? null
-                                                                                : new JSAnonymousFunction (new CommonsArrayList <> (new JSParam ("jqXHR"),
-                                                                                                                                    new JSParam ("textStatus"),
-                                                                                                                                    new JSParam ("errorThrown")),
-                                                                                                           JSHtml.consoleLog (JSExpr.lit ("AJAX error occurred: ")
-                                                                                                                                    .plus (JSExpr.ref ("textStatus"))
-                                                                                                                                    .plus (" - Error thrown: ")
-                                                                                                                                    .plus (JSExpr.ref ("errorThrown")))))
+                                                                   .error (true ? null : new JSAnonymousFunction (
+                                                                                                                  new CommonsArrayList <> (new JSParam ("jqXHR"),
+                                                                                                                                           new JSParam ("textStatus"),
+                                                                                                                                           new JSParam ("errorThrown")),
+                                                                                                                  JSHtml.consoleLog (JSExpr.lit ("AJAX error occurred: ")
+                                                                                                                                           .plus (JSExpr.ref ("textStatus"))
+                                                                                                                                           .plus (" - Error thrown: ")
+                                                                                                                                           .plus (JSExpr.ref ("errorThrown")))))
                                                                    .build ();
         // Override global error handler - hack to avoid pop up if interrupted
         aForm.addChild (new HCScriptInline (JQuery.jQueryDocument ().off ("ajaxError")));

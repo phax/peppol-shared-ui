@@ -32,11 +32,11 @@ import com.helger.http.CHttp;
 import com.helger.http.CHttpHeader;
 import com.helger.httpclient.response.ExtendedHttpResponseException;
 import com.helger.peppol.sml.ESMPAPIType;
-import com.helger.photon.bootstrap4.alert.BootstrapErrorBox;
-import com.helger.photon.bootstrap4.traits.IHCBootstrap4Trait;
+import com.helger.photon.bootstrap5.alert.BootstrapErrorBox;
+import com.helger.photon.bootstrap5.traits.IHCBootstrap5Trait;
 import com.helger.smpclient.exception.SMPClientHttpException;
 
-final class SMPExceptionHandler implements IExceptionCallback <Exception>, IHCBootstrap4Trait
+final class SMPExceptionHandler implements IExceptionCallback <Exception>, IHCBootstrap5Trait
 {
   @NonNull
   private final ESMPAPIType m_eAPIType;
