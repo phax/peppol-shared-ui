@@ -60,15 +60,15 @@
     </dependency>
     <dependency>
       <groupId>com.helger.photon</groupId>
-      <artifactId>ph-oton-bootstrap4</artifactId>
+      <artifactId>ph-oton-bootstrap5</artifactId>
     </dependency>
     <dependency>
       <groupId>com.helger.photon</groupId>
-      <artifactId>ph-oton-bootstrap4-uictrls</artifactId>
+      <artifactId>ph-oton-bootstrap5-uictrls</artifactId>
     </dependency>
     <dependency>
       <groupId>com.helger.photon</groupId>
-      <artifactId>ph-oton-bootstrap4-pages</artifactId>
+      <artifactId>ph-oton-bootstrap5-pages</artifactId>
     </dependency>
     <dependency>
       <groupId>com.helger.peppol.ui</groupId>

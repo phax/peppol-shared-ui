@@ -37,13 +37,13 @@ import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.peppolid.peppol.PeppolIdentifierHelper;
-import com.helger.photon.bootstrap4.CBootstrapCSS;
-import com.helger.photon.bootstrap4.button.BootstrapButton;
-import com.helger.photon.bootstrap4.button.BootstrapLinkButton;
-import com.helger.photon.bootstrap4.buttongroup.BootstrapButtonToolbar;
-import com.helger.photon.bootstrap4.form.BootstrapForm;
-import com.helger.photon.bootstrap4.form.BootstrapFormCheck;
-import com.helger.photon.bootstrap4.form.BootstrapFormGroup;
+import com.helger.photon.bootstrap5.CBootstrapCSS;
+import com.helger.photon.bootstrap5.button.BootstrapButton;
+import com.helger.photon.bootstrap5.button.BootstrapLinkButton;
+import com.helger.photon.bootstrap5.buttongroup.BootstrapButtonToolbar;
+import com.helger.photon.bootstrap5.form.BootstrapForm;
+import com.helger.photon.bootstrap5.form.BootstrapFormCheck;
+import com.helger.photon.bootstrap5.form.BootstrapFormGroup;
 import com.helger.photon.core.form.FormErrorList;
 import com.helger.photon.core.form.RequestField;
 import com.helger.photon.core.form.RequestFieldBooleanMultiValue;
@@ -214,7 +214,7 @@ public class PagePublicToolsPeppolParticipantCheck extends AbstractAppWebPage
     {
       final BootstrapForm aForm = aNodeList.addAndReturnChild (getUIHandler ().createFormSelf (aWPEC)
                                                                               .setMethod (EHCFormMethod.POST)
-                                                                              .setLeft (3, 3, 3, 2, 2));
+                                                                              .setLeft (3, 3, 3, 2, 2, 2));
       if (bQueried)
       {
         // Just some spacing

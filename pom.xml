@@ -114,8 +114,8 @@
       </dependency>
       <dependency>
         <groupId>com.helger.photon</groupId>
-        <artifactId>ph-oton-bootstrap4-parent-pom</artifactId>
-        <version>10.2.0</version>
+        <artifactId>ph-oton-bootstrap5-parent-pom</artifactId>
+        <version>0.9.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>

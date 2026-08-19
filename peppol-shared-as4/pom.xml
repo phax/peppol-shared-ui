@@ -56,7 +56,7 @@
   <dependencies>
     <dependency>
       <groupId>com.helger.photon</groupId>
-      <artifactId>ph-oton-bootstrap4-pages</artifactId>
+      <artifactId>ph-oton-bootstrap5-pages</artifactId>
     </dependency>
 
     <dependency>

@@ -35,14 +35,14 @@ import com.helger.peppol.sharedui.SharedUIHelper;
 import com.helger.peppol.sharedui.config.SharedUIConfig;
 import com.helger.peppol.sharedui.page.AbstractAppWebPage;
 import com.helger.photon.audit.AuditHelper;
-import com.helger.photon.bootstrap4.CBootstrapCSS;
-import com.helger.photon.bootstrap4.button.BootstrapSubmitButton;
-import com.helger.photon.bootstrap4.form.BootstrapForm;
-import com.helger.photon.bootstrap4.form.BootstrapFormGroup;
+import com.helger.photon.bootstrap5.CBootstrapCSS;
+import com.helger.photon.bootstrap5.button.BootstrapSubmitButton;
+import com.helger.photon.bootstrap5.form.BootstrapForm;
+import com.helger.photon.bootstrap5.form.BootstrapFormGroup;
 import com.helger.photon.core.form.FormErrorList;
 import com.helger.photon.core.form.RequestField;
 import com.helger.photon.core.interror.InternalErrorSettings;
-import com.helger.photon.icon.fontawesome5.EFontAwesome5Icon;
+import com.helger.photon.icon.fontawesome6.EFontAwesome6Icon;
 import com.helger.photon.uicore.css.CPageParam;
 import com.helger.photon.uicore.html.google.CaptchaStateSessionSingleton;
 import com.helger.photon.uicore.html.google.HCReCaptchaV3;
@@ -237,9 +237,9 @@ public final class PagePublicContact extends AbstractAppWebPage
         }
 
       aForm.addChild (new HCHiddenField (CPageParam.PARAM_ACTION, CPageParam.ACTION_PERFORM));
-      aForm.addChild (new BootstrapSubmitButton ().addChild ("Send message").setIcon (EFontAwesome5Icon.PAPER_PLANE));
+      aForm.addChild (new BootstrapSubmitButton ().addChild ("Send message").setIcon (EFontAwesome6Icon.PAPER_PLANE));
 
-      EFontAwesome5Icon.registerResourcesForThisRequest ();
+      EFontAwesome6Icon.registerResourcesForThisRequest ();
     }
   }
 }

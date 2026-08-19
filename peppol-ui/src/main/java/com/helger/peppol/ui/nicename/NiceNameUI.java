@@ -30,8 +30,8 @@ import com.helger.peppol.ui.types.nicename.NiceNameManager;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.peppol.EPeppolCodeListItemState;
-import com.helger.photon.bootstrap4.badge.BootstrapBadge;
-import com.helger.photon.bootstrap4.badge.EBootstrapBadgeType;
+import com.helger.photon.bootstrap5.badge.BootstrapBadge;
+import com.helger.photon.bootstrap5.badge.EBootstrapBadgeType;
 
 /**
  * Helper class for display Participant IDs, Document Type IDs and Process IDs in combination with

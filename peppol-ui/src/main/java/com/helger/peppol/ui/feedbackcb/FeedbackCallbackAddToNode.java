@@ -24,9 +24,9 @@ import org.jspecify.annotations.Nullable;
 import com.helger.html.hc.IHCNodeWithChildren;
 import com.helger.html.hc.html.grouping.HCDiv;
 import com.helger.peppol.ui.types.feedbackcb.IFeedbackCallback;
-import com.helger.photon.bootstrap4.alert.BootstrapErrorBox;
-import com.helger.photon.bootstrap4.alert.BootstrapWarnBox;
-import com.helger.photon.bootstrap4.uictrls.ext.BootstrapTechnicalUI;
+import com.helger.photon.bootstrap5.alert.BootstrapErrorBox;
+import com.helger.photon.bootstrap5.alert.BootstrapWarnBox;
+import com.helger.photon.bootstrap5.uictrls.ext.BootstrapTechnicalUI;
 
 public class FeedbackCallbackAddToNode implements IFeedbackCallback
 {
