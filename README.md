@@ -24,6 +24,9 @@ This project consists of the following modules, in dependency order:
 
 # News and Noteworthy
 
+v0.10.0 - 2026-08-19
+* Updated to Bootstrap 5
+
 v0.9.19 - 2026-08-03
 * Using ph-web 10.4.3 and phive-rules 4.5.0
 
