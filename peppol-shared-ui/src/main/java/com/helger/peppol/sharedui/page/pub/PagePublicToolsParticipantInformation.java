@@ -47,6 +47,7 @@ import com.helger.base.email.EmailAddressHelper;
 import com.helger.base.id.factory.GlobalIDFactory;
 import com.helger.base.numeric.mutable.MutableInt;
 import com.helger.base.state.ETriState;
+import com.helger.base.string.StringCount;
 import com.helger.base.string.StringHelper;
 import com.helger.base.string.StringImplode;
 import com.helger.base.timing.StopWatch;
@@ -191,19 +192,13 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
   private static final Logger LOGGER = LoggerFactory.getLogger (PagePublicToolsParticipantInformation.class);
   private static final LocalDate PEPPOL_SMP_HTTP_MANDATORY_DATE = PDTFactory.createLocalDate (2026, Month.FEBRUARY, 1);
 
-  // Contain AP G2 and AP G3
-  @SuppressWarnings ("deprecation")
+  // Contains only G3
   private static final TrustedCAChecker PEPPOL_CA_AP_FULL = TrustedCAChecker.builder ()
-                                                                            .trustedCACertificates (PeppolTrustStores.Config2018.CERTIFICATE_PILOT_AP,
-                                                                                                    PeppolTrustStores.Config2018.CERTIFICATE_PRODUCTION_AP,
-                                                                                                    PeppolTrustStores.Config2025.CERTIFICATE_TEST_AP,
+                                                                            .trustedCACertificates (PeppolTrustStores.Config2025.CERTIFICATE_TEST_AP,
                                                                                                     PeppolTrustStores.Config2025.CERTIFICATE_PRODUCTION_AP)
                                                                             .build ();
-  @SuppressWarnings ("deprecation")
   private static final TrustedCAChecker PEPPOL_CA_SMP_FULL = TrustedCAChecker.builder ()
-                                                                             .trustedCACertificates (PeppolTrustStores.Config2018.CERTIFICATE_PILOT_SMP,
-                                                                                                     PeppolTrustStores.Config2018.CERTIFICATE_PRODUCTION_SMP,
-                                                                                                     PeppolTrustStores.Config2025.CERTIFICATE_TEST_SMP,
+                                                                             .trustedCACertificates (PeppolTrustStores.Config2025.CERTIFICATE_TEST_SMP,
                                                                                                      PeppolTrustStores.Config2025.CERTIFICATE_PRODUCTION_SMP)
                                                                              .build ();
 
@@ -287,12 +282,48 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
     return badgeInfo ("took " + nMillis + " milliseconds");
   }
 
+  /**
+   * Create a "danger" badge, in case the provided value read from the SMP contains leading and/or
+   * trailing whitespace characters.
+   *
+   * @param sValueName
+   *        The name of the value, to be used in the badge text.
+   * @param aValue
+   *        The values as read+. May be <code>null</code>.
+   * @return <code>null</code> if the value has neither leading nor trailing whitespace characters.
+   */
+  @Nullable
+  private IHCNode _createWhitespaceBadge (@NonNull final String sValueName, @Nullable final String... aValues)
+  {
+    for (final String sValue : aValues)
+    {
+      if (sValue.isBlank ())
+        continue;
+
+      final boolean bLeading = StringCount.getLeadingWhitespaceCount (sValue) > 0;
+      final boolean bTrailing = StringCount.getTrailingWhitespaceCount (sValue) > 0;
+      if (!bLeading && !bTrailing)
+        continue;
+
+      final String sWhat;
+      if (bLeading && bTrailing)
+        sWhat = "leading and trailing";
+      else
+        sWhat = bLeading ? "leading" : "trailing";
+      final String sText = "The " + sValueName + " contains " + sWhat + " whitespace characters";
+      return badgeDanger (sText).addClass (CBootstrapCSS.MS_2);
+    }
+
+    return null;
+  }
+
   private void _printSMPEndpointURL (@NonNull final IHCLI <?> aLIEndpoint,
                                      final String sEndpointRef,
                                      final boolean bIsPeppol)
   {
     aLIEndpoint.addChild (div ("Endpoint URL: ").addChild (StringHelper.isEmpty (sEndpointRef) ? em ("none") : code (
-                                                                                                                     sEndpointRef)));
+                                                                                                                     sEndpointRef))
+                                                .addChild (_createWhitespaceBadge ("endpoint URL", sEndpointRef)));
     if (bIsPeppol)
     {
       if (StringHelper.isEmpty (sEndpointRef))
@@ -367,6 +398,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
     {
       aDiv.addChild (code (sTransportProfile)).addChild (" ").addChild (badgeWarn ("non-standard"));
     }
+    aDiv.addChild (_createWhitespaceBadge ("transport profile", sTransportProfile));
     aLIEndpoint.addChild (aDiv);
   }
 
@@ -377,6 +409,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
     {
       final boolean bIsEmail = EmailAddressHelper.isValid (sTecInfo);
       aDiv.addChild (bIsEmail ? HCA_MailTo.createLinkedEmail (sTecInfo) : new HCTextNode (sTecInfo));
+      aDiv.addChild (_createWhitespaceBadge ("technical information", sTecInfo));
     }
     if (StringHelper.isNotEmpty (sTecContact))
     {
@@ -384,6 +417,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
         aDiv.addChild (" / ");
       final boolean bIsEmail = EmailAddressHelper.isValid (sTecContact);
       aDiv.addChild (bIsEmail ? HCA_MailTo.createLinkedEmail (sTecContact) : new HCTextNode (sTecContact));
+      aDiv.addChild (_createWhitespaceBadge ("technical contact", sTecContact));
     }
     if (aDiv.getChildCount () > 1)
       aLIEndpoint.addChild (aDiv);
@@ -918,6 +952,7 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                 aDocTypeIDs.add (aDocType);
 
                 final HCDiv aHeadlineDiv = aLI.addAndReturnChild (div (NiceNameUI.createDocTypeID (aDocType, false)));
+                aHeadlineDiv.addChild (_createWhitespaceBadge ("document type href", sOriginalHref, sCleanHref));
                 final BootstrapButton aToggle = aHeadlineDiv.addAndReturnChild (new BootstrapButton (EBootstrapButtonType.DEFAULT,
                                                                                                      EBootstrapButtonSize.SMALL).addChild ("Toggle Details")
                                                                                                                                 .addClass (CBootstrapCSS.MS_3)
@@ -938,7 +973,9 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                 if (aSimpleDocType != null)
                   aDocTypeIDs.add (aSimpleDocType);
 
-                aLI.addChild (div (code (sCleanHref)));
+                aLI.addChild (div (code (sCleanHref)).addChild (_createWhitespaceBadge ("document type href",
+                                                                                        sOriginalHref,
+                                                                                        sCleanHref)));
                 aLI.addChild (error ("The document type ").addChild (code (sDocType))
                                                           .addChild (" could not be interpreted as a structured document type!"));
               }
@@ -954,7 +991,10 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
             {
               // The provided URL is bogus
               aLI.addChild (error ().addChildren (div ("Contained href does not match the rules!"),
-                                                  div ("Found href: ").addChild (code (sCleanHref)),
+                                                  div ("Found href: ").addChild (code (sCleanHref))
+                                                                      .addChild (_createWhitespaceBadge ("document type href",
+                                                                                                         sOriginalHref,
+                                                                                                         sCleanHref)),
                                                   div ("Expected path part: ").addChild (code (sPathStart1))
                                                                               .addChild (" or ")
                                                                               .addChild (code (sPathStart2))));
@@ -1061,7 +1101,12 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
 
                   final var aSM = aSSM.getServiceMetadata ();
                   if (aSM.getRedirect () != null)
-                    aLIDocTypeID.addChild (div ("Redirect to ").addChild (aSM.getRedirect ().getHref ()));
+                  {
+                    final String sRedirectHref = aSM.getRedirect ().getHref ();
+                    aLIDocTypeID.addChild (div ("Redirect to ").addChild (sRedirectHref)
+                                                               .addChild (_createWhitespaceBadge ("redirect URL",
+                                                                                                  sRedirectHref)));
+                  }
                   else
                     if (aSM.getServiceInformation () != null)
                     {
@@ -1148,7 +1193,12 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
 
                   final var aSM = aSSM.getServiceMetadata ();
                   if (aSM.getRedirect () != null)
-                    aLIDocTypeID.addChild (div ("Redirect to ").addChild (code (aSM.getRedirect ().getHref ())));
+                  {
+                    final String sRedirectHref = aSM.getRedirect ().getHref ();
+                    aLIDocTypeID.addChild (div ("Redirect to ").addChild (code (sRedirectHref))
+                                                               .addChild (_createWhitespaceBadge ("redirect URL",
+                                                                                                  sRedirectHref)));
+                  }
                   else
                   {
                     // For all processes
@@ -1524,7 +1574,10 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                         aLanguage.getDisplayLanguage (aDisplayLocale) +
                                                                         ")";
 
-                  aBCTable.addBodyRow ().addCell ("Name" + sLanguageName).addCell (aName.getName ());
+                  aBCTable.addBodyRow ()
+                          .addCell ("Name" + sLanguageName)
+                          .addCell (HCTextNode.createOnDemand (aName.getName ()),
+                                    _createWhitespaceBadge ("name", aName.getName ()));
                 }
 
                 // Country
@@ -1539,7 +1592,9 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                   final EFamFamFlagIcon eIcon = EFamFamFlagIcon.getFromIDOrNull (sCountryCode);
                   aBCTable.addBodyRow ()
                           .addCell ("Country")
-                          .addCell (span (sCountryName + " ").addChild (eIcon == null ? null : eIcon.getAsNode ()));
+                          .addCell (span (sCountryName + " ").addChild (eIcon == null ? null : eIcon.getAsNode ())
+                                                             .addChild (_createWhitespaceBadge ("country code",
+                                                                                                sCountryCode)));
                 }
 
                 // Geo info
@@ -1547,7 +1602,9 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                 {
                   aBCTable.addBodyRow ()
                           .addCell ("Geographical information")
-                          .addCell (HCExtHelper.nl2brList (aEntity.getGeoInfo ()));
+                          .addCell (new HCNodeList ().addChildren (HCExtHelper.nl2brList (aEntity.getGeoInfo ()))
+                                                     .addChild (_createWhitespaceBadge ("geographical information",
+                                                                                        aEntity.getGeoInfo ())));
                 }
                 // Additional IDs
                 if (aEntity.identifiers ().isNotEmpty ())
@@ -1560,7 +1617,11 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                   {
                     // Avoid empty rows
                     if (StringHelper.isNotEmpty (aItem.getScheme ()) || StringHelper.isNotEmpty (aItem.getValue ()))
-                      aIDTab.addBodyRow ().addCells (aItem.getScheme (), aItem.getValue ());
+                      aIDTab.addBodyRow ()
+                            .addCell (HCTextNode.createOnDemand (aItem.getScheme ()),
+                                      _createWhitespaceBadge ("identifier scheme", aItem.getScheme ()))
+                            .addCell (HCTextNode.createOnDemand (aItem.getValue ()),
+                                      _createWhitespaceBadge ("identifier value", aItem.getValue ()));
                   }
                   if (aIDTab.hasBodyRows ())
                     aBCTable.addBodyRow ().addCell ("Additional identifiers").addCell (aIDTab);
@@ -1571,7 +1632,9 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                   final HCUL aWebsites = new HCUL ();
                   for (final String sItem : aEntity.websiteURIs ())
                     if (StringHelper.isNotEmpty (sItem))
-                      aWebsites.addItem (div (HCA.createLinkedWebsite (sItem, HC_Target.BLANK)));
+                      aWebsites.addItem (div (HCA.createLinkedWebsite (sItem, HC_Target.BLANK)).addChild (
+                                                                                                          _createWhitespaceBadge ("website URL",
+                                                                                                                                  sItem)));
                   if (aWebsites.hasChildren ())
                     aBCTable.addBodyRow ().addCell ("Website URLs").addCell (aWebsites);
                 }
@@ -1587,10 +1650,14 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                     // Avoid empty rows
                     if (aItem.hasAnyElementSet ())
                       aContactTab.addBodyRow ()
-                                 .addCell (aItem.getType ())
-                                 .addCell (aItem.getName ())
-                                 .addCell (aItem.getPhoneNumber ())
-                                 .addCell (HCA_MailTo.createLinkedEmail (aItem.getEmail ()));
+                                 .addCell (HCTextNode.createOnDemand (aItem.getType ()),
+                                           _createWhitespaceBadge ("contact type", aItem.getType ()))
+                                 .addCell (HCTextNode.createOnDemand (aItem.getName ()),
+                                           _createWhitespaceBadge ("contact name", aItem.getName ()))
+                                 .addCell (HCTextNode.createOnDemand (aItem.getPhoneNumber ()),
+                                           _createWhitespaceBadge ("contact phone number", aItem.getPhoneNumber ()))
+                                 .addCell (HCA_MailTo.createLinkedEmail (aItem.getEmail ()),
+                                           _createWhitespaceBadge ("contact email address", aItem.getEmail ()));
                   }
                   if (aContactTab.hasBodyRows ())
                     aBCTable.addBodyRow ().addCell ("Contact points").addCell (aContactTab);
@@ -1599,7 +1666,9 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                 {
                   aBCTable.addBodyRow ()
                           .addCell ("Additional information")
-                          .addCell (HCExtHelper.nl2brList (aEntity.getAdditionalInfo ()));
+                          .addCell (new HCNodeList ().addChildren (HCExtHelper.nl2brList (aEntity.getAdditionalInfo ()))
+                                                     .addChild (_createWhitespaceBadge ("additional information",
+                                                                                        aEntity.getAdditionalInfo ())));
                 }
                 if (aEntity.hasRegistrationDate ())
                 {
