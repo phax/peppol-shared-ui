@@ -57,6 +57,7 @@ import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
+import com.helger.security.revocation.ERevocationCheckMode;
 import com.helger.smpclient.bdxr1.BDXRClientReadOnly;
 import com.helger.smpclient.bdxr2.BDXR2ClientReadOnly;
 import com.helger.smpclient.exception.SMPClientException;
@@ -236,6 +237,8 @@ public final class PeppolAPIHelper
       try
       {
         aSMPClient.httpClientSettings ().setSSLContextTrustAll ();
+        // Avoid warning down the line
+        aSMPClient.httpClientSettings ().setRevocationCheckMode (ERevocationCheckMode.NONE);
       }
       catch (final GeneralSecurityException ex)
       {
