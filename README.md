@@ -24,7 +24,7 @@ This project consists of the following modules, in dependency order:
 
 # News and Noteworthy
 
-v0.10.1 - work in progress
+v0.10.1 - 2026-08-31
 * Participant Information page now shows a "danger" badge, if a value read from the SMP contains leading and/or trailing whitespace characters
 
 v0.10.0 - 2026-08-19
