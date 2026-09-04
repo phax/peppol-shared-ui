@@ -24,6 +24,9 @@ This project consists of the following modules, in dependency order:
 
 # News and Noteworthy
 
+v0.10.2 - 2026-09-04
+* Updated to ph-oton 10.5.0
+
 v0.10.1 - 2026-08-31
 * Participant Information page now shows a "danger" badge, if a value read from the SMP contains leading and/or trailing whitespace characters
 
