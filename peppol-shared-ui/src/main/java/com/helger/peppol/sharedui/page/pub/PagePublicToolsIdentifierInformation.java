@@ -63,8 +63,6 @@ import com.helger.statistics.impl.StatisticsManager;
 import com.helger.url.SimpleURL;
 import com.helger.url.codec.URLCoder;
 
-
-
 /**
  * Verify identifiers according to some predefined rules.
  *

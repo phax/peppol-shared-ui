@@ -124,8 +124,8 @@ public final class PagePublicToolsDDD extends AbstractBootstrapWebPage <WebPageE
                                                                                      : em ("not found")));
             aUL.addItem (span ("Business Document ID: ").addChild (aDocDetails.hasBusinessDocumentID () ? code (aDocDetails.getBusinessDocumentID ())
                                                                                                         : em ("not found")));
-            aUL.addItem (span ("VESID: ").addChild (aDocDetails.hasVESID () ? code (aDocDetails.getVESID ()) : em (
-                                                                                                                   "not found")));
+            aUL.addItem (span ("VESID: ").addChild (aDocDetails.hasVESID () ? code (aDocDetails.getVESID ())
+                                                                            : em ("not found")));
             aNodeList.addChild (success ("DDD results:").addChild (aUL));
           }
           else

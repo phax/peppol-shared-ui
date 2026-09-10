@@ -61,7 +61,7 @@ public final class HCVESSelect extends HCExtSelect
         aAll.add (aEntry);
 
     final NaturalNumericOrderComparator aCS = new NaturalNumericOrderComparator (ComparatorHelper.getComparatorCollating (aDisplayLocale));
-    return aAll.getSortedInline ( (x, y) -> {
+    return aAll.getSortedInline ((x, y) -> {
       if (false)
         return x.getID ().compareTo (y.getID ());
       return aCS.compare (x.getDisplayName (), y.getDisplayName ());

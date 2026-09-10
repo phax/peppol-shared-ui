@@ -36,7 +36,6 @@ public interface ISMLConfiguration extends IHasID <String>, IHasDisplayName
   @NonNull
   ISMLInfo getSMLInfo ();
 
-
   default String getID ()
   {
     return getSMLInfo ().getID ();

@@ -70,7 +70,7 @@ public final class NiceNameManager
 
   public static void setAllToDefaults ()
   {
-    RW_LOCK.writeLocked ( () -> {
+    RW_LOCK.writeLocked (() -> {
       // setAll to clear and add all
       DOCTYPE_IDS.setAll (NiceNameDefaults.defaultDocTypes ());
       PROCESS_IDS.setAll (NiceNameDefaults.defaultProcesses ());
@@ -149,7 +149,7 @@ public final class NiceNameManager
     ValueEnforcer.notNull (aDocTypeIDRes, "DocTypeIDRes");
 
     final ICommonsOrderedMap <String, NiceNameEntry> aDocTypeIDs = readEntries (aDocTypeIDRes, true);
-    RW_LOCK.writeLocked ( () -> DOCTYPE_IDS.setAll (aDocTypeIDs));
+    RW_LOCK.writeLocked (() -> DOCTYPE_IDS.setAll (aDocTypeIDs));
     LOGGER.info ("Loaded " +
                  aDocTypeIDs.size () +
                  " document type nice name entries from '" +
@@ -162,7 +162,7 @@ public final class NiceNameManager
     ValueEnforcer.notNull (aProcessIDRes, "ProcessIDRes");
 
     final ICommonsOrderedMap <String, NiceNameEntry> aProcessIDs = readEntries (aProcessIDRes, false);
-    RW_LOCK.writeLocked ( () -> PROCESS_IDS.setAll (aProcessIDs));
+    RW_LOCK.writeLocked (() -> PROCESS_IDS.setAll (aProcessIDs));
     LOGGER.info ("Loaded " +
                  aProcessIDs.size () +
                  " process nice name entries from '" +

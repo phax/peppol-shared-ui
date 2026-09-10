@@ -203,24 +203,21 @@ public class PageSecureSMLConfiguration extends
 
     aForm.addFormGroup (new BootstrapFormGroup ().setLabelMandatory ("ID")
                                                  .setCtrl (new HCEdit (new RequestField (FIELD_ID,
-                                                                                         aSelectedObject != null
-                                                                                                                 ? aSelectedObject.getID ()
+                                                                                         aSelectedObject != null ? aSelectedObject.getID ()
                                                                                                                  : null)).setReadOnly (bEdit))
                                                  .setHelpText ("The internal ID of the SML configuration. This value cannot be edited.")
                                                  .setErrorList (aFormErrors.getListOfField (FIELD_ID)));
 
     aForm.addFormGroup (new BootstrapFormGroup ().setLabelMandatory ("Name")
                                                  .setCtrl (new HCEdit (new RequestField (FIELD_DISPLAY_NAME,
-                                                                                         aSelectedObject != null
-                                                                                                                 ? aSelectedObject.getDisplayName ()
+                                                                                         aSelectedObject != null ? aSelectedObject.getDisplayName ()
                                                                                                                  : null)))
                                                  .setHelpText ("The name of the SML configuration. This is for informational purposes only and has no effect on the functionality.")
                                                  .setErrorList (aFormErrors.getListOfField (FIELD_DISPLAY_NAME)));
 
     aForm.addFormGroup (new BootstrapFormGroup ().setLabelMandatory ("DNS Zone")
                                                  .setCtrl (new HCEdit (new RequestField (FIELD_DNS_ZONE,
-                                                                                         aSelectedObject != null
-                                                                                                                 ? aSelectedObject.getSMLInfo ()
+                                                                                         aSelectedObject != null ? aSelectedObject.getSMLInfo ()
                                                                                                                                   .getDNSZone ()
                                                                                                                  : null)))
                                                  .setHelpText (new HCTextNode ("The name of the DNS Zone that this SML is working upon (e.g. "),
@@ -230,8 +227,7 @@ public class PageSecureSMLConfiguration extends
 
     aForm.addFormGroup (new BootstrapFormGroup ().setLabelMandatory ("Management Service URL")
                                                  .setCtrl (new HCEdit (new RequestField (FIELD_MANAGEMENT_ADDRESS_URL,
-                                                                                         aSelectedObject != null
-                                                                                                                 ? aSelectedObject.getSMLInfo ()
+                                                                                         aSelectedObject != null ? aSelectedObject.getSMLInfo ()
                                                                                                                                   .getManagementServiceURL ()
                                                                                                                  : null)))
                                                  .setHelpText ("The service URL where the SML management application is running on including the host name. It must not contain the suffixes to manage SMPs or participants!")
@@ -239,8 +235,7 @@ public class PageSecureSMLConfiguration extends
 
     aForm.addFormGroup (new BootstrapFormGroup ().setLabelMandatory ("URL suffix to manage SMPs")
                                                  .setCtrl (new HCEdit (new RequestField (FIELD_URL_SUFFIX_MANAGE_SMP,
-                                                                                         aSelectedObject != null
-                                                                                                                 ? aSelectedObject.getSMLInfo ()
+                                                                                         aSelectedObject != null ? aSelectedObject.getSMLInfo ()
                                                                                                                                   .getURLSuffixManageSMP ()
                                                                                                                  : SMLInfo.DEFAULT_SUFFIX_MANAGE_SMP)))
                                                  .setHelpText ("This suffix is appended to the Management Service URL. If may be empty or alternatively it must start with a slash ('/').")
@@ -248,8 +243,7 @@ public class PageSecureSMLConfiguration extends
 
     aForm.addFormGroup (new BootstrapFormGroup ().setLabelMandatory ("URL suffix to manage Participants")
                                                  .setCtrl (new HCEdit (new RequestField (FIELD_URL_SUFFIX_MANAGE_PARTICIPANT,
-                                                                                         aSelectedObject != null
-                                                                                                                 ? aSelectedObject.getSMLInfo ()
+                                                                                         aSelectedObject != null ? aSelectedObject.getSMLInfo ()
                                                                                                                                   .getURLSuffixManageParticipant ()
                                                                                                                  : SMLInfo.DEFAULT_SUFFIX_MANAGE_PARTICIPANT)))
                                                  .setHelpText ("This suffix is appended to the Management Service URL. If may be empty or alternatively it must start with a slash ('/').")
@@ -257,26 +251,23 @@ public class PageSecureSMLConfiguration extends
 
     aForm.addFormGroup (new BootstrapFormGroup ().setLabel ("Client Certificate required?")
                                                  .setCtrl (new HCCheckBox (new RequestFieldBoolean (FIELD_CLIENT_CERTIFICATE_REQUIRED,
-                                                                                                    aSelectedObject !=
-                                                                                                                                       null ? aSelectedObject.getSMLInfo ()
-                                                                                                                                                             .isClientCertificateRequired ()
-                                                                                                                                            : DEFAULT_CLIENT_CERTIFICATE_REQUIRED)))
+                                                                                                    aSelectedObject != null ? aSelectedObject.getSMLInfo ()
+                                                                                                                                             .isClientCertificateRequired ()
+                                                                                                                            : DEFAULT_CLIENT_CERTIFICATE_REQUIRED)))
                                                  .setHelpText ("Check this if this SML requires a client certificate for access. Both Peppol production SML and SMK require a client certificate. Only a locally running SML software may not require a client certificate.")
                                                  .setErrorList (aFormErrors.getListOfField (FIELD_CLIENT_CERTIFICATE_REQUIRED)));
 
     aForm.addFormGroup (new BootstrapFormGroup ().setLabelMandatory ("SMP API type")
                                                  .setCtrl (new SMPAPITypeSelect (new RequestField (FIELD_SMP_API_TYPE,
-                                                                                                   aSelectedObject !=
-                                                                                                                       null ? aSelectedObject.getSMPAPIType ()
-                                                                                                                                             .getID ()
-                                                                                                                            : null),
+                                                                                                   aSelectedObject != null ? aSelectedObject.getSMPAPIType ()
+                                                                                                                                            .getID ()
+                                                                                                                           : null),
                                                                                  aDisplayLocale))
                                                  .setErrorList (aFormErrors.getListOfField (FIELD_SMP_API_TYPE)));
 
     aForm.addFormGroup (new BootstrapFormGroup ().setLabelMandatory ("SMP identifier type")
                                                  .setCtrl (new SMPIdentifierTypeSelect (new RequestField (FIELD_SMP_ID_TYPE,
-                                                                                                          aSelectedObject !=
-                                                                                                                             null ? aSelectedObject.getSMPIdentifierType ()
+                                                                                                          aSelectedObject != null ? aSelectedObject.getSMPIdentifierType ()
                                                                                                                                                    .getID ()
                                                                                                                                   : null),
                                                                                         aDisplayLocale))
@@ -284,16 +275,14 @@ public class PageSecureSMLConfiguration extends
 
     aForm.addFormGroup (new BootstrapFormGroup ().setLabel ("Production SML?")
                                                  .setCtrl (new HCCheckBox (new RequestFieldBoolean (FIELD_PRODUCTION,
-                                                                                                    aSelectedObject !=
-                                                                                                                      null ? aSelectedObject.isProduction ()
-                                                                                                                           : true)))
+                                                                                                    aSelectedObject != null ? aSelectedObject.isProduction ()
+                                                                                                                            : true)))
                                                  .setHelpText ("Check this if this SML is a production SML. Don't check e.g. for SMK.")
                                                  .setErrorList (aFormErrors.getListOfField (FIELD_PRODUCTION)));
 
     aForm.addFormGroup (new BootstrapFormGroup ().setLabelMandatory ("Query priority")
                                                  .setCtrl (new HCAutoNumeric (new RequestField (FIELD_PRIORITY,
-                                                                                                aSelectedObject != null
-                                                                                                                        ? aSelectedObject.getPriority ()
+                                                                                                aSelectedObject != null ? aSelectedObject.getPriority ()
                                                                                                                         : ISMLConfiguration.PRIO_DEFAULT),
                                                                               aDisplayLocale).setDecimalPlaces (0)
                                                                                              .addClass (CBootstrapCSS.W_25))
@@ -404,16 +393,16 @@ public class PageSecureSMLConfiguration extends
       if (bEdit)
       {
         aSMLConfigurationMgr.updateSMLConfiguration (aSelectedObject.getID (),
-                                            sDisplayName,
-                                            sDNSZoneLC,
-                                            sManagementAddressURL,
-                                            sURLSuffixManageSMP,
-                                            sURLSuffixManageParticipant,
-                                            bClientCertificateRequired,
-                                            eSMPAPIType,
-                                            eSMPIdentifierType,
-                                            bProduction,
-                                            nPriority);
+                                                     sDisplayName,
+                                                     sDNSZoneLC,
+                                                     sManagementAddressURL,
+                                                     sURLSuffixManageSMP,
+                                                     sURLSuffixManageParticipant,
+                                                     bClientCertificateRequired,
+                                                     eSMPAPIType,
+                                                     eSMPIdentifierType,
+                                                     bProduction,
+                                                     nPriority);
         aWPEC.postRedirectGetInternal (success ("The SML configuration '" +
                                                 sDisplayName +
                                                 "' was successfully edited."));
@@ -421,16 +410,16 @@ public class PageSecureSMLConfiguration extends
       else
       {
         aSMLConfigurationMgr.createSMLConfiguration (sID,
-                                            sDisplayName,
-                                            sDNSZoneLC,
-                                            sManagementAddressURL,
-                                            sURLSuffixManageSMP,
-                                            sURLSuffixManageParticipant,
-                                            bClientCertificateRequired,
-                                            eSMPAPIType,
-                                            eSMPIdentifierType,
-                                            bProduction,
-                                            nPriority);
+                                                     sDisplayName,
+                                                     sDNSZoneLC,
+                                                     sManagementAddressURL,
+                                                     sURLSuffixManageSMP,
+                                                     sURLSuffixManageParticipant,
+                                                     bClientCertificateRequired,
+                                                     eSMPAPIType,
+                                                     eSMPIdentifierType,
+                                                     bProduction,
+                                                     nPriority);
         aWPEC.postRedirectGetInternal (success ("The new SML configuration '" +
                                                 sDisplayName +
                                                 "' was successfully created."));

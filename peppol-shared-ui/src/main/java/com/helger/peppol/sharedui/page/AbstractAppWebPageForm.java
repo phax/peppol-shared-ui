@@ -25,8 +25,6 @@ import com.helger.base.name.IHasDisplayName;
 import com.helger.photon.bootstrap5.pages.AbstractBootstrapWebPageForm;
 import com.helger.photon.uicore.page.WebPageExecutionContext;
 
-
-
 /**
  * Abstract implementation of {@link AbstractBootstrapWebPageForm} for this program.
  *

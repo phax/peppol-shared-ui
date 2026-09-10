@@ -93,8 +93,8 @@ final class SMPExceptionHandler implements IExceptionCallback <Exception>, IHCBo
         m_aHCNode = error ().addChild ("The SMP server responsed with an HTTP Redirect Code (" +
                                        nStatusCode +
                                        ") which is not allowed according to Peppol SMP specification.")
-                            .addChild (StringHelper.isEmpty (sRedirectLocation) ? null : div (
-                                                                                              " The redirect points to ").addChild (code (sRedirectLocation)));
+                            .addChild (StringHelper.isEmpty (sRedirectLocation) ? null
+                                                                                : div (" The redirect points to ").addChild (code (sRedirectLocation)));
       }
       else
       {

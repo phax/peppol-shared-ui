@@ -62,6 +62,6 @@ public final class PeppolSharedConfig extends AbstractGlobalSingleton
   public static void setConfig (@NonNull final IConfig aConfig)
   {
     ValueEnforcer.notNull (aConfig, "Config");
-    RW_LOCK.writeLocked ( () -> s_aConfig = aConfig);
+    RW_LOCK.writeLocked (() -> s_aConfig = aConfig);
   }
 }

@@ -79,7 +79,7 @@ public final class SMLConfigurationManager extends AbstractPhotonMapBasedWALDAO 
                                                               bProduction,
                                                               nPriority);
 
-    m_aRWLock.writeLocked ( () -> { internalCreateItem (aSMLConfig); });
+    m_aRWLock.writeLocked (() -> { internalCreateItem (aSMLConfig); });
     AuditHelper.onAuditCreateSuccess (SMLConfiguration.OT,
                                       sSMLInfoID,
                                       sDisplayName,
@@ -187,7 +187,7 @@ public final class SMLConfigurationManager extends AbstractPhotonMapBasedWALDAO 
   @ReturnsMutableCopy
   public ICommonsList <ISMLConfiguration> getAllSorted ()
   {
-    return getAll ().getSortedInline ( (c1, c2) -> {
+    return getAll ().getSortedInline ((c1, c2) -> {
       // Higher priority before lower
       int ret = c2.getPriority () - c1.getPriority ();
       if (ret == 0)

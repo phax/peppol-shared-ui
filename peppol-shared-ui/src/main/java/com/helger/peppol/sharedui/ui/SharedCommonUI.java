@@ -44,7 +44,7 @@ public final class SharedCommonUI
   {
     RequestParameterManager.getInstance ().setParameterHandler (new RequestParameterHandlerURLPathNamed ());
 
-    BootstrapDataTables.setConfigurator ( (aLEC, aTable, aDataTables) -> {
+    BootstrapDataTables.setConfigurator ((aLEC, aTable, aDataTables) -> {
       final IRequestWebScopeWithoutResponse aRequestScope = aLEC.getRequestScope ();
       aDataTables.setAutoWidth (false)
                  .setLengthMenu (LENGTH_MENU)

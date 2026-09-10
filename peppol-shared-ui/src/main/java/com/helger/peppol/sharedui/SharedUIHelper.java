@@ -27,8 +27,6 @@ import com.helger.peppol.sharedui.config.SharedUIConfig;
 import com.helger.peppol.smp.ISMPTransportProfile;
 import com.helger.peppolid.peppol.pidscheme.EPredefinedParticipantIdentifierScheme;
 
-
-
 /**
  * Misc utility methods
  *

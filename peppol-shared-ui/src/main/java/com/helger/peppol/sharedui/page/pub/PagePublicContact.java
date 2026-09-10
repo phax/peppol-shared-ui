@@ -70,22 +70,49 @@ public final class PagePublicContact extends AbstractAppWebPage
   }
 
   // Must only contain lowercase values
-  private static final String [] SPAM_KEYS = { "Get Yours Here:", "boostleadgeneration.com", "dogloverclub.store",
-                                               "idgod.ch", "magicmat.shop", "medicopostura.com", "oakley sunglasses",
-                                               "ray-ban sunglasses", "topfakeid.com", "www.untouchableiptv.com",
-                                               "//www.alecpow.com", "//bit.ly", "//bloggybro.com", "//cutt.ly",
-                                               "//digitalsy.org.uk", "//earningradar.com", "//fixhacksite.com",
-                                               "//geekboy.co", "//getcontent.rocks", "//jgmbh.de", "//magly.space",
-                                               "//screenshot.photos", "//seoclerkspro.com", "//shipped-order.com",
-                                               "//socialvideoschedule.com ", "//speed-seo.net/",
-                                               "//talkwithcustomer.com", "//talkwithwebvisitors.com",
-                                               "//thecanadianreport.ca", "//yazing.com",
-                                               "//www.ads-that-stay-up-forever.xyz", "//www.alecpow.com",
-                                               "//www.biglep.com", "//www.electronicdomains.com", "//www.follmex.",
-                                               "//www.godlikeproductions.com", "//www.interactivewise.com",
-                                               "//www.speed-seo.net", "//www.talkwithcustomer.com",
-                                               "//www.talkwithwebvisitors.com", "//www.targeted-visitors-4yoursite.xyz",
-                                               "//www.thepricer.org", "//www.vidnami.com",
+  private static final String [] SPAM_KEYS = { "Get Yours Here:",
+                                               "boostleadgeneration.com",
+                                               "dogloverclub.store",
+                                               "idgod.ch",
+                                               "magicmat.shop",
+                                               "medicopostura.com",
+                                               "oakley sunglasses",
+                                               "ray-ban sunglasses",
+                                               "topfakeid.com",
+                                               "www.untouchableiptv.com",
+                                               "//www.alecpow.com",
+                                               "//bit.ly",
+                                               "//bloggybro.com",
+                                               "//cutt.ly",
+                                               "//digitalsy.org.uk",
+                                               "//earningradar.com",
+                                               "//fixhacksite.com",
+                                               "//geekboy.co",
+                                               "//getcontent.rocks",
+                                               "//jgmbh.de",
+                                               "//magly.space",
+                                               "//screenshot.photos",
+                                               "//seoclerkspro.com",
+                                               "//shipped-order.com",
+                                               "//socialvideoschedule.com ",
+                                               "//speed-seo.net/",
+                                               "//talkwithcustomer.com",
+                                               "//talkwithwebvisitors.com",
+                                               "//thecanadianreport.ca",
+                                               "//yazing.com",
+                                               "//www.ads-that-stay-up-forever.xyz",
+                                               "//www.alecpow.com",
+                                               "//www.biglep.com",
+                                               "//www.electronicdomains.com",
+                                               "//www.follmex.",
+                                               "//www.godlikeproductions.com",
+                                               "//www.interactivewise.com",
+                                               "//www.speed-seo.net",
+                                               "//www.talkwithcustomer.com",
+                                               "//www.talkwithwebvisitors.com",
+                                               "//www.targeted-visitors-4yoursite.xyz",
+                                               "//www.thepricer.org",
+                                               "//www.vidnami.com",
                                                "//www.zerocost-ad-posting.xyz" };
 
   private static boolean _isSpamBody (@NonNull final String sTopic)
@@ -106,7 +133,7 @@ public final class PagePublicContact extends AbstractAppWebPage
     final String sRecaptchWebKey = SharedUIConfig.getRecaptchaWebKey ();
     final String sRecaptchSecretKey = SharedUIConfig.getRecaptchaSecretKey ();
     final boolean bRecaptchaEnabled = StringHelper.isNotEmpty (sRecaptchWebKey) &&
-      StringHelper.isNotEmpty (sRecaptchSecretKey);
+                                      StringHelper.isNotEmpty (sRecaptchSecretKey);
 
     aNodeList.addChild (p ("If you have general questions concerning Peppol technology, you may contact me using the form below. Please be aware, that I run this page on a voluntary basis and that the answers you may receive are my personal answers and not official OpenPeppol answers."));
 

@@ -296,7 +296,7 @@ public class PageSecurePeppolSendAS4 extends AbstractBootstrapWebPage <WebPageEx
                                                                       .payload (aAS4PayloadBytes)
                                                                       .smpClient (aSMPClient)
                                                                       .endpointURLConsumer (aEndpointURL::set)
-                                                                      .certificateConsumer ( (cert, dt, res) -> {
+                                                                      .certificateConsumer ((cert, dt, res) -> {
                                                                         aEndpointCert.set (cert);
                                                                         aEndpointCertCheck.set (res);
                                                                       })
@@ -307,9 +307,9 @@ public class PageSecurePeppolSendAS4 extends AbstractBootstrapWebPage <WebPageEx
                                                                         aResponseBytes.set (aResponseMsg.getResponseContent ());
                                                                         aResponseStatusLine.set (aResponseMsg.getResponseStatusLine ());
                                                                       })
-                                                                      .signalMsgConsumer ( (signalMsg,
-                                                                                            mmd,
-                                                                                            state) -> aReceivedSignalMsg.set (signalMsg))
+                                                                      .signalMsgConsumer ((signalMsg,
+                                                                                           mmd,
+                                                                                           state) -> aReceivedSignalMsg.set (signalMsg))
                                                                       .sendMessageAndCheckForReceipt (aSendEx::set);
 
           LOGGER.info ("Sending Peppol AS4 message resulted in " + eResult);
