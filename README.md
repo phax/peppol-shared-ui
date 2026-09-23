@@ -24,6 +24,9 @@ This project consists of the following modules, in dependency order:
 
 # News and Noteworthy
 
+v0.10.3 - 2026-09-23
+* Updated to ph-oton-bootstrap5 0.9.5
+
 v0.10.2 - 2026-09-04
 * Updated to ph-oton 10.5.0
 
