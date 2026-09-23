@@ -26,24 +26,24 @@ import com.helger.base.tostring.ToStringGenerator;
 import com.helger.collection.CollectionHelper;
 import com.helger.collection.commons.ICommonsList;
 import com.helger.peppolid.IProcessIdentifier;
-import com.helger.peppolid.peppol.EPeppolCodeListItemState;
+import com.helger.peppolid.codelist.ECodeListItemState;
 
 public final class NiceNameEntry
 {
   private final String m_sName;
-  private final EPeppolCodeListItemState m_eState;
+  private final ECodeListItemState m_eState;
   private final ICommonsList <IProcessIdentifier> m_aProcIDs;
   private final String m_sSpecialLabel;
 
   public NiceNameEntry (@NonNull @Nonempty final String sName,
-                        @NonNull final EPeppolCodeListItemState eState,
+                        @NonNull final ECodeListItemState eState,
                         @Nullable final ICommonsList <IProcessIdentifier> aProcIDs)
   {
     this (sName, eState, aProcIDs, null);
   }
 
   public NiceNameEntry (@NonNull @Nonempty final String sName,
-                        @NonNull final EPeppolCodeListItemState eState,
+                        @NonNull final ECodeListItemState eState,
                         @Nullable final ICommonsList <IProcessIdentifier> aProcIDs,
                         @Nullable final String sSpecialLabel)
   {
@@ -61,7 +61,7 @@ public final class NiceNameEntry
   }
 
   @NonNull
-  public EPeppolCodeListItemState getState ()
+  public ECodeListItemState getState ()
   {
     return m_eState;
   }

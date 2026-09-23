@@ -29,7 +29,7 @@ import com.helger.peppol.ui.types.nicename.NiceNameEntry;
 import com.helger.peppol.ui.types.nicename.NiceNameManager;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
-import com.helger.peppolid.peppol.EPeppolCodeListItemState;
+import com.helger.peppolid.codelist.ECodeListItemState;
 import com.helger.photon.bootstrap5.badge.BootstrapBadge;
 import com.helger.photon.bootstrap5.badge.EBootstrapBadgeType;
 
@@ -83,7 +83,7 @@ public final class NiceNameUI
   }
 
   @Nullable
-  public static BootstrapBadge createStateBadge (@NonNull final EPeppolCodeListItemState eState)
+  public static BootstrapBadge createStateBadge (@NonNull final ECodeListItemState eState)
   {
     if (eState.isRemoved ())
       return new BootstrapBadge (EBootstrapBadgeType.DANGER).addChild ("Identifier is removed");

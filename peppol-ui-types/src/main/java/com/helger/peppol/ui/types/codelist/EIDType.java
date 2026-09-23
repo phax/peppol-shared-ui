@@ -34,8 +34,8 @@ import com.helger.diagnostics.error.IError;
 import com.helger.diagnostics.error.SingleError;
 import com.helger.diagnostics.error.list.ErrorList;
 import com.helger.peppolid.CIdentifier;
+import com.helger.peppolid.codelist.ECodeListItemState;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
-import com.helger.peppolid.peppol.EPeppolCodeListItemState;
 import com.helger.peppolid.peppol.PeppolIdentifierHelper;
 import com.helger.peppolid.peppol.doctype.IPeppolDocumentTypeIdentifierParts;
 import com.helger.peppolid.peppol.doctype.IPeppolPredefinedDocumentTypeIdentifier;
@@ -209,7 +209,7 @@ public enum EIDType implements IHasID <String>, IHasDisplayName
                 aDetails.add (new KVPair ("In code list since version",
                                           aPredefined.getInitialRelease ().getAsString (false, true)));
 
-                final EPeppolCodeListItemState eState = aPredefined.getState ();
+                final ECodeListItemState eState = aPredefined.getState ();
                 if (eState.isDeprecated ())
                 {
                   aErrorList.add (_warn ("The issuing agency '" + sValue + "' is deprecated"));
@@ -221,9 +221,8 @@ public enum EIDType implements IHasID <String>, IHasDisplayName
                   if (eState.isRemoved ())
                     aErrorList.add (_warn ("The issuing agency '" + sValue + "' is targeted for removal"));
 
-                if (aPredefined instanceof EPredefinedParticipantIdentifierScheme)
+                if (aPredefined instanceof final EPredefinedParticipantIdentifierScheme ePredefined)
                 {
-                  final EPredefinedParticipantIdentifierScheme ePredefined = (EPredefinedParticipantIdentifierScheme) aPredefined;
                   aDetails.add (new KVPair ("Issuing agency name", ePredefined.getSchemeName ()));
                 }
               }
@@ -363,7 +362,7 @@ public enum EIDType implements IHasID <String>, IHasDisplayName
           aDetails.add (new KVPair ("In code list since version",
                                     aPredefined.getInitialRelease ().getAsString (false, true)));
 
-          final EPeppolCodeListItemState eState = aPredefined.getState ();
+          final ECodeListItemState eState = aPredefined.getState ();
           if (eState.isDeprecated ())
           {
             aErrorList.add (_warn ("The identifier value '" + sValue + "' is deprecated"));
@@ -489,7 +488,7 @@ public enum EIDType implements IHasID <String>, IHasDisplayName
                                   "' is not part of the official Peppol code list"));
         else
         {
-          final EPeppolCodeListItemState eState = aPredefined.getState ();
+          final ECodeListItemState eState = aPredefined.getState ();
           if (eState.isDeprecated ())
             aErrorList.add (_warn ("The identifier value '" + sValue + "' is deprecated"));
           else

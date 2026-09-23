@@ -63,6 +63,8 @@ import com.helger.datetime.format.PDTToString;
 import com.helger.datetime.helper.PDTFactory;
 import com.helger.datetime.xml.XMLOffsetDateTime;
 import com.helger.dns.ip.IPV4Addr;
+import com.helger.edelivery.smp.ESMPAPIType;
+import com.helger.edelivery.smp.ESMPTransportProfileState;
 import com.helger.html.hc.IHCNode;
 import com.helger.html.hc.ext.HCA_MailTo;
 import com.helger.html.hc.ext.HCExtHelper;
@@ -105,10 +107,8 @@ import com.helger.peppol.businesscard.helper.PDBusinessCardHelper;
 import com.helger.peppol.security.PeppolTrustStores;
 import com.helger.peppol.servicedomain.EPeppolNetwork;
 import com.helger.peppol.sharedui.page.AbstractAppWebPage;
-import com.helger.peppol.sml.ESMPAPIType;
 import com.helger.peppol.sml.ISMLInfo;
 import com.helger.peppol.smp.ESMPTransportProfile;
-import com.helger.peppol.smp.ESMPTransportProfileState;
 import com.helger.peppol.ui.CertificateUI;
 import com.helger.peppol.ui.feedbackcb.FeedbackCallbackAddToNode;
 import com.helger.peppol.ui.nicename.NiceNameUI;
@@ -167,8 +167,8 @@ import com.helger.smpclient.httpclient.SMPHttpClientSettings;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.smpclient.peppol.utils.W3CEndpointReferenceHelper;
 import com.helger.smpclient.redirect.ISMPFollowRedirectCallback;
-import com.helger.smpclient.url.PeppolNaptrURLProvider;
 import com.helger.smpclient.url.SMPDNSResolutionException;
+import com.helger.smpclient.url.dns.PeppolNaptrURLProvider;
 import com.helger.text.locale.country.CountryCache;
 import com.helger.text.locale.language.LanguageCache;
 import com.helger.url.SimpleURL;
@@ -293,26 +293,24 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
    * @return <code>null</code> if the value has neither leading nor trailing whitespace characters.
    */
   @Nullable
-  private IHCNode _createWhitespaceBadge (@NonNull final String sValueName, @Nullable final String... aValues)
+  private IHCNode _createWhitespaceBadge (@NonNull final String sValueName, @Nullable final String @Nullable... aValues)
   {
     for (final String sValue : aValues)
-    {
-      if (sValue.isBlank ())
-        continue;
-
-      final boolean bLeading = StringCount.getLeadingWhitespaceCount (sValue) > 0;
-      final boolean bTrailing = StringCount.getTrailingWhitespaceCount (sValue) > 0;
-      if (!bLeading && !bTrailing)
-        continue;
-
-      final String sWhat;
-      if (bLeading && bTrailing)
-        sWhat = "leading and trailing";
-      else
-        sWhat = bLeading ? "leading" : "trailing";
-      final String sText = "The " + sValueName + " contains " + sWhat + " whitespace characters";
-      return badgeDanger (sText).addClass (CBootstrapCSS.MS_2);
-    }
+      if (StringHelper.isNotBlank (sValue))
+      {
+        final boolean bLeading = StringCount.getLeadingWhitespaceCount (sValue) > 0;
+        final boolean bTrailing = StringCount.getTrailingWhitespaceCount (sValue) > 0;
+        if (bLeading || bTrailing)
+        {
+          final String sWhat;
+          if (bLeading && bTrailing)
+            sWhat = "leading and trailing";
+          else
+            sWhat = bLeading ? "leading" : "trailing";
+          final String sText = "The " + sValueName + " contains " + sWhat + " whitespace characters";
+          return badgeDanger (sText).addClass (CBootstrapCSS.MS_2);
+        }
+      }
 
     return null;
   }
@@ -321,8 +319,8 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                      final String sEndpointRef,
                                      final boolean bIsPeppol)
   {
-    aLIEndpoint.addChild (div ("Endpoint URL: ").addChild (StringHelper.isEmpty (sEndpointRef) ? em ("none")
-                                                                                               : code (sEndpointRef))
+    aLIEndpoint.addChild (div ("Endpoint URL: ").addChild (StringHelper.isEmpty (sEndpointRef) ? em ("none") : code (
+                                                                                                                     sEndpointRef))
                                                 .addChild (_createWhitespaceBadge ("endpoint URL", sEndpointRef)));
     if (bIsPeppol)
     {
@@ -564,8 +562,8 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
 
           aNodeList.addChild (error (div ("Failed to resolve participant ID " +
                                           sParticipantIDUriEncoded +
-                                          " for the provided network.")).addChild (bSMLAutoDetect ? null
-                                                                                                  : div ("Try selecting a different SML - maybe this helps")));
+                                          " for the provided network.")).addChild (bSMLAutoDetect ? null : div (
+                                                                                                                "Try selecting a different SML - maybe this helps")));
 
           // Audit failure
           AuditHelper.onAuditExecuteFailure ("participant-information",
@@ -885,7 +883,8 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                              {
                                                                                final HCUL aUL = new HCUL ();
                                                                                for (final var aExt : aExtensionList)
-                                                                                 if (aExt.getExtensionContent () != null)
+                                                                                 if (aExt.getExtensionContent () !=
+                                                                                     null)
                                                                                  {
                                                                                    final Object aAny = aExt.getExtensionContent ()
                                                                                                            .getAny ();
@@ -1207,7 +1206,10 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                       {
                         final IHCLI <?> aLIProcessID = aULProcessID.addItem ();
                         aLIProcessID.addChild (div ("Process ID: ").addChild (NiceNameUI.createProcessID (aDocTypeID,
-                                                                                                          SimpleProcessIdentifier.wrap (aProcess.getProcessIdentifier ()),
+                                                                                                          new SimpleProcessIdentifier (aProcess.getProcessIdentifier ()
+                                                                                                                                               .getScheme (),
+                                                                                                                                       aProcess.getProcessIdentifier ()
+                                                                                                                                               .getValue ()),
                                                                                                           true)));
                         final HCUL aULEndpoint = new HCUL ();
                         // For all endpoints of the process
@@ -1539,9 +1541,8 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
             else
             {
               final HCH4 aH4 = h4 ("Business Card contains " +
-                                   (aBC.businessEntities ().size () > 0 ? "1 entity"
-                                                                        : aBC.businessEntities ().size () +
-                                                                          " entities"));
+                                   (aBC.businessEntities ().size () > 0 ? "1 entity" : aBC.businessEntities ().size () +
+                                                                                       " entities"));
               if (bShowTime)
                 aH4.addChild (" ").addChild (_createTimingNode (aSWGetBC.getMillis ()));
               aNodeList.addChild (aH4);
@@ -1570,10 +1571,9 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                 for (final PDName aName : aEntity.names ())
                 {
                   final Locale aLanguage = LanguageCache.getInstance ().getLanguage (aName.getLanguageCode ());
-                  final String sLanguageName = aLanguage == null ? ""
-                                                                 : " (" +
-                                                                   aLanguage.getDisplayLanguage (aDisplayLocale) +
-                                                                   ")";
+                  final String sLanguageName = aLanguage == null ? "" : " (" +
+                                                                        aLanguage.getDisplayLanguage (aDisplayLocale) +
+                                                                        ")";
 
                   aBCTable.addBodyRow ()
                           .addCell ("Name" + sLanguageName)
@@ -1585,11 +1585,11 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                 {
                   final String sCountryCode = aEntity.getCountryCode ();
                   final Locale aCountryCode = CountryCache.getInstance ().getCountry (sCountryCode);
-                  final String sCountryName = aCountryCode == null ? sCountryCode
-                                                                   : aCountryCode.getDisplayCountry (aDisplayLocale) +
-                                                                     " (" +
-                                                                     sCountryCode +
-                                                                     ")";
+                  final String sCountryName = aCountryCode == null ? sCountryCode : aCountryCode.getDisplayCountry (
+                                                                                                                    aDisplayLocale) +
+                                                                                    " (" +
+                                                                                    sCountryCode +
+                                                                                    ")";
                   final EFamFamFlagIcon eIcon = EFamFamFlagIcon.getFromIDOrNull (sCountryCode);
                   aBCTable.addBodyRow ()
                           .addCell ("Country")
@@ -1819,14 +1819,14 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
                                                                                                       JQuery.idRef (sHelpFieldID)
                                                                                                             .show ()
                                                                                                             .val (aSuccessParam)))
-                                                                   .error (true ? null
-                                                                                : new JSAnonymousFunction (new CommonsArrayList <> (new JSParam ("jqXHR"),
-                                                                                                                                    new JSParam ("textStatus"),
-                                                                                                                                    new JSParam ("errorThrown")),
-                                                                                                           JSHtml.consoleLog (JSExpr.lit ("AJAX error occurred: ")
-                                                                                                                                    .plus (JSExpr.ref ("textStatus"))
-                                                                                                                                    .plus (" - Error thrown: ")
-                                                                                                                                    .plus (JSExpr.ref ("errorThrown")))))
+                                                                   .error (true ? null : new JSAnonymousFunction (
+                                                                                                                  new CommonsArrayList <> (new JSParam ("jqXHR"),
+                                                                                                                                           new JSParam ("textStatus"),
+                                                                                                                                           new JSParam ("errorThrown")),
+                                                                                                                  JSHtml.consoleLog (JSExpr.lit ("AJAX error occurred: ")
+                                                                                                                                           .plus (JSExpr.ref ("textStatus"))
+                                                                                                                                           .plus (" - Error thrown: ")
+                                                                                                                                           .plus (JSExpr.ref ("errorThrown")))))
                                                                    .build ();
         // Override global error handler - hack to avoid pop up if interrupted
         aForm.addChild (new HCScriptInline (JQuery.jQueryDocument ().off ("ajaxError")));

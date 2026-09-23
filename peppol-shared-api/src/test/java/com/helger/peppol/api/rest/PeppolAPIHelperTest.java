@@ -23,9 +23,9 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.helger.edelivery.smp.ESMPAPIType;
 import com.helger.peppol.businesscard.generic.PDBusinessCard;
 import com.helger.peppol.sml.ESML;
-import com.helger.peppol.sml.ESMPAPIType;
 import com.helger.peppol.ui.types.feedbackcb.FeedbackCallbackLog;
 import com.helger.peppol.ui.types.smp.SMPQueryParams;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;

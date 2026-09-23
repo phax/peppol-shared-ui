@@ -24,8 +24,8 @@ import com.helger.base.hashcode.HashCodeGenerator;
 import com.helger.base.state.EChange;
 import com.helger.base.tostring.ToStringGenerator;
 import com.helger.base.type.ObjectType;
+import com.helger.edelivery.smp.ESMPAPIType;
 import com.helger.peppol.sml.ESML;
-import com.helger.peppol.sml.ESMPAPIType;
 import com.helger.peppol.sml.SMLInfo;
 import com.helger.peppolid.factory.ESMPIdentifierType;
 
@@ -132,8 +132,7 @@ public final class SMLConfiguration implements ISMLConfiguration
   @NonNull
   public static SMLConfiguration createForPeppol (@NonNull final ESML eSML)
   {
-    @SuppressWarnings ("removal")
-    final boolean bIsProd = eSML == ESML.DIGIT_PRODUCTION || eSML == ESML.PEPPOL_PRODUCTION;
+    final boolean bIsProd = eSML == ESML.PEPPOL_PRODUCTION;
     return new SMLConfiguration (SMLInfo.builder (eSML).build (),
                                  ESMPAPIType.PEPPOL,
                                  ESMPIdentifierType.PEPPOL,

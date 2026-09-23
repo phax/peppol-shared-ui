@@ -23,8 +23,8 @@ import com.helger.collection.commons.CommonsArrayList;
 import com.helger.collection.commons.CommonsLinkedHashMap;
 import com.helger.collection.commons.ICommonsOrderedMap;
 import com.helger.hredelivery.commons.CHREDeliveryID;
+import com.helger.peppolid.codelist.ECodeListItemState;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
-import com.helger.peppolid.peppol.EPeppolCodeListItemState;
 
 /**
  * This class contains the default document type IDs and process IDs as defined in the Peppol code
@@ -61,21 +61,21 @@ public final class NiceNameDefaults
     final PeppolIdentifierFactory PIF = PeppolIdentifierFactory.INSTANCE;
     DEFAULT_DOCTYPES.put ("busdox-docid-qns::urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol5a:ver2.0:extended:e-fff:ver3.0::2.1",
                           new NiceNameEntry ("e-FFF 3.0 Invoice",
-                                             EPeppolCodeListItemState.DEPRECATED,
+                                             ECodeListItemState.DEPRECATED,
                                              new CommonsArrayList <> (PIF.createProcessIdentifierWithDefaultScheme ("urn:www.cenbii.eu:profile:bii05:ver1.0"))));
     DEFAULT_DOCTYPES.put ("busdox-docid-qns::urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2::CreditNote##urn:www.cenbii.eu:transaction:biitrns014:ver2.0:extended:urn:www.peppol.eu:bis:peppol5a:ver2.0:extended:e-fff:ver3.0::2.1",
                           new NiceNameEntry ("e-FFF 3.0 CreditNote",
-                                             EPeppolCodeListItemState.DEPRECATED,
+                                             ECodeListItemState.DEPRECATED,
                                              new CommonsArrayList <> (PIF.createProcessIdentifierWithDefaultScheme ("urn:www.cenbii.eu:profile:bii05:ver1.0"))));
 
     // Add Croatian Document Types as well
     DEFAULT_DOCTYPES.put ("busdox-docid-qns::urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:mfin.gov.hr:cius-2025:1.0#conformant#urn:mfin.gov.hr:ext-2025:1.0::2.1",
                           new NiceNameEntry ("HR eRacun Invoice Extension 2025 1.0",
-                                             EPeppolCodeListItemState.ACTIVE,
+                                             ECodeListItemState.ACTIVE,
                                              new CommonsArrayList <> (CHREDeliveryID.PROCESS_ID_HR_ERACUN)));
     DEFAULT_DOCTYPES.put ("busdox-docid-qns::urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2::CreditNote##urn:cen.eu:en16931:2017#compliant#urn:mfin.gov.hr:cius-2025:1.0#conformant#urn:mfin.gov.hr:ext-2025:1.0::2.1",
                           new NiceNameEntry ("HR eRacun CreditNote Extension 2025 1.0",
-                                             EPeppolCodeListItemState.ACTIVE,
+                                             ECodeListItemState.ACTIVE,
                                              new CommonsArrayList <> (CHREDeliveryID.PROCESS_ID_HR_ERACUN)));
   }
 

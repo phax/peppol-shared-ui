@@ -24,8 +24,8 @@ import org.jspecify.annotations.Nullable;
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.smpclient.url.ISMPURLProvider;
-import com.helger.smpclient.url.PeppolNaptrURLProvider;
 import com.helger.smpclient.url.SMPDNSResolutionException;
+import com.helger.smpclient.url.dns.PeppolNaptrURLProvider;
 
 /**
  * Specific helper classes to check if a Peppol Participant is registered in Peppol or not.

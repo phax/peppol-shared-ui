@@ -20,7 +20,7 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import com.helger.annotation.misc.ContainsSoftMigration;
-import com.helger.peppol.sml.ESMPAPIType;
+import com.helger.edelivery.smp.ESMPAPIType;
 import com.helger.peppol.sml.SMLInfo;
 import com.helger.peppolid.factory.ESMPIdentifierType;
 import com.helger.xml.microdom.IMicroElement;

@@ -26,16 +26,16 @@ import org.slf4j.LoggerFactory;
 import com.helger.annotation.concurrent.NotThreadSafe;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.state.ESuccess;
+import com.helger.edelivery.smp.ESMPAPIType;
 import com.helger.peppol.servicedomain.EPeppolNetwork;
-import com.helger.peppol.sml.ESMPAPIType;
 import com.helger.peppol.sml.ISMLInfo;
 import com.helger.peppol.ui.types.smlconfig.ISMLConfiguration;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.factory.IIdentifierFactory;
-import com.helger.smpclient.url.BDXLURLProvider;
 import com.helger.smpclient.url.ISMPURLProvider;
-import com.helger.smpclient.url.PeppolNaptrURLProvider;
 import com.helger.smpclient.url.SMPDNSResolutionException;
+import com.helger.smpclient.url.dns.BDXLURLProvider;
+import com.helger.smpclient.url.dns.PeppolNaptrURLProvider;
 
 /**
  * The collection of needed SMP query parameters

@@ -36,8 +36,8 @@ import com.helger.collection.commons.ICommonsOrderedMap;
 import com.helger.io.resource.IReadableResource;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
+import com.helger.peppolid.codelist.ECodeListItemState;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
-import com.helger.peppolid.peppol.EPeppolCodeListItemState;
 import com.helger.peppolid.peppol.PeppolIdentifierHelper;
 import com.helger.peppolid.peppol.doctype.IPeppolDocumentTypeIdentifierParts;
 import com.helger.peppolid.peppol.doctype.PeppolDocumentTypeIdentifierParts;
@@ -92,18 +92,18 @@ public final class NiceNameManager
       {
         String sID = eChild.getAttributeValue ("id");
         final String sName = eChild.getAttributeValue ("name");
-        EPeppolCodeListItemState eState = EPeppolCodeListItemState.getFromIDOrNull (eChild.getAttributeValue ("state"));
+        ECodeListItemState eState = ECodeListItemState.getFromIDOrNull (eChild.getAttributeValue ("state"));
         if (eState == null)
         {
           final String sDeprecated = eChild.getAttributeValue ("deprecated");
           if (sDeprecated != null)
           {
             // Legacy attribute is present
-            eState = StringParser.parseBool (sDeprecated, false) ? EPeppolCodeListItemState.DEPRECATED
-                                                                 : EPeppolCodeListItemState.ACTIVE;
+            eState = StringParser.parseBool (sDeprecated, false) ? ECodeListItemState.DEPRECATED
+                                                                 : ECodeListItemState.ACTIVE;
           }
           else
-            eState = EPeppolCodeListItemState.ACTIVE;
+            eState = ECodeListItemState.ACTIVE;
         }
 
         ICommonsList <IProcessIdentifier> aProcIDs = null;

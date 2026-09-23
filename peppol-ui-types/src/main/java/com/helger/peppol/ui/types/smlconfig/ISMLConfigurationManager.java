@@ -25,7 +25,7 @@ import com.helger.annotation.Nonempty;
 import com.helger.annotation.style.ReturnsMutableCopy;
 import com.helger.base.state.EChange;
 import com.helger.collection.commons.ICommonsList;
-import com.helger.peppol.sml.ESMPAPIType;
+import com.helger.edelivery.smp.ESMPAPIType;
 import com.helger.peppolid.factory.ESMPIdentifierType;
 
 /**

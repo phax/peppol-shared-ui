@@ -23,8 +23,8 @@ import com.helger.annotation.Nonempty;
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.string.StringHelper;
+import com.helger.edelivery.smp.ISMPTransportProfile;
 import com.helger.peppol.sharedui.config.SharedUIConfig;
-import com.helger.peppol.smp.ISMPTransportProfile;
 import com.helger.peppolid.peppol.pidscheme.EPredefinedParticipantIdentifierScheme;
 
 /**

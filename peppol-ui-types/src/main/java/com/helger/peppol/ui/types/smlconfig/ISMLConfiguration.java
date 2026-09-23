@@ -20,7 +20,7 @@ import org.jspecify.annotations.NonNull;
 
 import com.helger.base.id.IHasID;
 import com.helger.base.name.IHasDisplayName;
-import com.helger.peppol.sml.ESMPAPIType;
+import com.helger.edelivery.smp.ESMPAPIType;
 import com.helger.peppol.sml.ISMLInfo;
 import com.helger.peppolid.factory.ESMPIdentifierType;
 
