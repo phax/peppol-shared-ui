@@ -26,7 +26,7 @@
   </parent>
   <groupId>com.helger.peppol.ui</groupId>
   <artifactId>peppol-shared-ui-parent-pom</artifactId>
-  <version>0.10.4-SNAPSHOT</version>
+  <version>0.10.3-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>peppol-shared-ui-parent-pom</name>
   <description>Parent POM for shared Peppol UI components</description>
