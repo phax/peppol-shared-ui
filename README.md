@@ -24,6 +24,9 @@ This project consists of the following modules, in dependency order:
 
 # News and Noteworthy
 
+v0.11.1 - work in progress
+* The test sources are no longer published to Maven Central. They contained the two large sample invoices used by `ValidateLargeFilesFuncTest`
+
 v0.11.0 - 2026-09-23
 * Updated to peppol-commons 13.0.0
 

@@ -192,6 +192,19 @@
           </signaturesArtifacts>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <!-- Do not deploy the test sources. They contain the two large sample invoices
+               used by ValidateLargeFilesFuncTest, which make up ~83 of the 84 MB of test
+               sources without being usable by anyone. -->
+          <execution>
+            <id>attach-test-sources</id>
+            <phase>none</phase>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 </project>
