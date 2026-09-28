@@ -64,9 +64,9 @@
   
   <properties>
     <phase4.version>4.7.0</phase4.version>
-    <phive-rules.version>4.6.1</phive-rules.version>
+    <phive-rules.version>4.6.2</phive-rules.version>
     <phive-rules-legacy.version>4.6.1</phive-rules-legacy.version>
-    <ddd.version>0.9.0-SNAPSHOT</ddd.version>
+    <ddd.version>0.9.0</ddd.version>
   </properties>
   
   <dependencyManagement>
