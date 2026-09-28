@@ -21,7 +21,6 @@ import org.jspecify.annotations.NonNull;
 import com.helger.annotation.style.UsedViaReflection;
 import com.helger.config.IConfig;
 import com.helger.peppol.ui.types.config.PeppolSharedConfig;
-import com.helger.scope.singleton.AbstractGlobalSingleton;
 
 /**
  * This class provides access to the settings as contained in the
@@ -29,7 +28,7 @@ import com.helger.scope.singleton.AbstractGlobalSingleton;
  *
  * @author Philip Helger
  */
-public final class SharedValidationConfig extends AbstractGlobalSingleton
+public final class SharedValidationConfig
 {
   @Deprecated
   @UsedViaReflection
