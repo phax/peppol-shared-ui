@@ -66,7 +66,7 @@
     <phase4.version>4.7.0</phase4.version>
     <phive-rules.version>4.6.1</phive-rules.version>
     <phive-rules-legacy.version>4.6.1</phive-rules-legacy.version>
-    <ddd.version>0.8.10</ddd.version>
+    <ddd.version>0.9.0-SNAPSHOT</ddd.version>
   </properties>
   
   <dependencyManagement>
@@ -95,7 +95,7 @@
       <dependency>
         <groupId>com.helger.schedule</groupId>
         <artifactId>ph-schedule-parent-pom</artifactId>
-        <version>6.2.0</version>
+        <version>6.2.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
