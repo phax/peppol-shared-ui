@@ -63,8 +63,8 @@
   </developers>
   
   <properties>
-    <phase4.version>4.7.0</phase4.version>
-    <phive-rules.version>4.6.2</phive-rules.version>
+    <phase4.version>4.8.0</phase4.version>
+    <phive-rules.version>4.6.3</phive-rules.version>
     <phive-rules-legacy.version>4.6.1</phive-rules-legacy.version>
     <ddd.version>0.9.0</ddd.version>
   </properties>
@@ -123,7 +123,7 @@
       <dependency>
         <groupId>com.helger.peppol</groupId>
         <artifactId>peppol-commons-parent-pom</artifactId>
-        <version>13.1.0</version>
+        <version>13.1.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
