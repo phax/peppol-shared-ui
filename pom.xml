@@ -66,7 +66,7 @@
     <phase4.version>4.8.2</phase4.version>
     <phive-rules.version>4.6.3</phive-rules.version>
     <phive-rules-legacy.version>4.6.1</phive-rules-legacy.version>
-    <ddd.version>0.9.1</ddd.version>
+    <ddd.version>0.9.2</ddd.version>
   </properties>
   
   <dependencyManagement>
@@ -74,7 +74,7 @@
       <dependency>
         <groupId>com.helger.commons</groupId>
         <artifactId>ph-commons-parent-pom</artifactId>
-        <version>12.5.2</version>
+        <version>12.5.3</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
