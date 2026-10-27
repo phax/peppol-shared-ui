@@ -37,10 +37,7 @@ import com.helger.io.resource.IReadableResource;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.codelist.ECodeListItemState;
-import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.peppolid.peppol.PeppolIdentifierHelper;
-import com.helger.peppolid.peppol.doctype.IPeppolDocumentTypeIdentifierParts;
-import com.helger.peppolid.peppol.doctype.PeppolDocumentTypeIdentifierParts;
 import com.helger.peppolid.simple.process.SimpleProcessIdentifier;
 import com.helger.xml.microdom.IMicroDocument;
 import com.helger.xml.microdom.IMicroElement;
@@ -49,8 +46,6 @@ import com.helger.xml.microdom.serialize.MicroReader;
 @ThreadSafe
 public final class NiceNameManager
 {
-  private static final String PREFIX_WILDCARD = PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_PEPPOL_DOCTYPE_WILDCARD +
-                                                "::";
   private static final Logger LOGGER = LoggerFactory.getLogger (NiceNameManager.class);
 
   private static final SimpleReadWriteLock RW_LOCK = new SimpleReadWriteLock ();
@@ -90,7 +85,7 @@ public final class NiceNameManager
     {
       for (final IMicroElement eChild : aDoc.getDocumentElement ().getAllChildElements ("item"))
       {
-        String sID = eChild.getAttributeValue ("id");
+        final String sID = eChild.getAttributeValue ("id");
         final String sName = eChild.getAttributeValue ("name");
         ECodeListItemState eState = ECodeListItemState.getFromIDOrNull (eChild.getAttributeValue ("state"));
         if (eState == null)
@@ -115,30 +110,9 @@ public final class NiceNameManager
                                                        eItem.getAttributeValue ("value")));
         }
 
-        String sSpecialLabel = null;
-        if (sID.startsWith (PREFIX_WILDCARD))
-        {
-          // When loading wildcards, a special handling is needed
-          // Because the identifiers in the codelist are without "*" we need to
-          // add the "*" here, because the SMP entries need the "*" to be
-          // correct
-          sSpecialLabel = "Wildcard";
-
-          final IDocumentTypeIdentifier aDT = SimpleIdentifierFactory.INSTANCE.parseDocumentTypeIdentifier (sID);
-          final IPeppolDocumentTypeIdentifierParts aParts = PeppolDocumentTypeIdentifierParts.extractFromIdentifier (aDT);
-          if (aParts != null)
-          {
-            // Add the "*" to the Customization ID for the SMP
-            final PeppolDocumentTypeIdentifierParts aStarParts = new PeppolDocumentTypeIdentifierParts (aParts.getRootNS (),
-                                                                                                        aParts.getLocalName (),
-                                                                                                        aParts.getCustomizationID () +
-                                                                                                                                "*",
-                                                                                                        aParts.getVersion ());
-            sID = PREFIX_WILDCARD + aStarParts.getAsDocumentTypeIdentifierValue ();
-          }
-        }
-
-        ret.put (sID, new NiceNameEntry (sName, eState, aProcIDs, sSpecialLabel));
+        // PINT identifiers are stored as in the code list (without "*"), so that both exact and
+        // wildcard matches are resolved by getPintEnabledNiceNameEntry
+        ret.put (sID, new NiceNameEntry (sName, eState, aProcIDs));
       }
     }
     return ret;
