@@ -178,18 +178,34 @@ public final class NiceNameManager
     return aDocTypeID.getValue ().indexOf ('*') > 0;
   }
 
+  /**
+   * Get the nice name of a document type, resolving PINT wildcard identifiers to the entry without
+   * the "*". In contrast to {@link #getPintEnabledNiceNameEntry(IDocumentTypeIdentifier)} the name is
+   * returned unchanged.
+   *
+   * @param aDocTypeID
+   *        The document type identifier to resolve. May not be <code>null</code>.
+   * @return <code>null</code> if no nice name is present.
+   */
+  @Nullable
+  public static NiceNameEntry getPintResolvedNiceNameEntry (@NonNull final IDocumentTypeIdentifier aDocTypeID)
+  {
+    NiceNameEntry aNN = getDocTypeNiceName (aDocTypeID);
+    if (aNN == null && isPintDocType (aDocTypeID) && isWildcardDocType (aDocTypeID))
+    {
+      // Try version without the star
+      aNN = getDocTypeNiceName (StringRemove.removeAll (aDocTypeID.getURIEncoded (), '*'));
+    }
+    return aNN;
+  }
+
   @Nullable
   public static NiceNameEntry getPintEnabledNiceNameEntry (@NonNull final IDocumentTypeIdentifier aDocTypeID)
   {
     final boolean bIsPint = isPintDocType (aDocTypeID);
     final boolean bIsWildcard = isWildcardDocType (aDocTypeID);
 
-    NiceNameEntry aNN = getDocTypeNiceName (aDocTypeID);
-    if (aNN == null && bIsPint && bIsWildcard)
-    {
-      // Try version without the star
-      aNN = getDocTypeNiceName (StringRemove.removeAll (aDocTypeID.getURIEncoded (), '*'));
-    }
+    NiceNameEntry aNN = getPintResolvedNiceNameEntry (aDocTypeID);
     if (aNN != null && bIsPint)
     {
       // Append something to the name

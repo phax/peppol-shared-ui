@@ -53,6 +53,14 @@ public final class NiceNameManagerTest
     aNN = NiceNameManager.getPintEnabledNiceNameEntry (aWildcard);
     assertNotNull (aNN);
     assertEquals ("OM PINT Invoice v1.0 (PINT wildcard match)", aNN.getName ());
+
+    aNN = NiceNameManager.getPintResolvedNiceNameEntry (aExact);
+    assertNotNull (aNN);
+    assertEquals ("OM PINT Invoice v1.0", aNN.getName ());
+
+    aNN = NiceNameManager.getPintResolvedNiceNameEntry (aWildcard);
+    assertNotNull (aNN);
+    assertEquals ("OM PINT Invoice v1.0", aNN.getName ());
   }
 
   @Test
