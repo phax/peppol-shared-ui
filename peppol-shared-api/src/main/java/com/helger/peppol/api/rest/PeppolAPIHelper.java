@@ -40,6 +40,7 @@ import com.helger.edelivery.smp.ESMPAPIType;
 import com.helger.httpclient.HttpClientManager;
 import com.helger.httpclient.HttpClientSettings;
 import com.helger.httpclient.response.ResponseHandlerByteArray;
+import com.helger.httpclient.response.ResponseHandlerJsonObject;
 import com.helger.jaxb.GenericJAXBMarshaller;
 import com.helger.json.IJsonObject;
 import com.helger.peppol.businesscard.generic.PDBusinessCard;
@@ -219,6 +220,76 @@ public final class PeppolAPIHelper
       aMiniCallback.error ("Failed to parse BC:\n" + new String (aBCBytes, StandardCharsets.UTF_8));
     }
     return null;
+  }
+
+  /**
+   * Get the URL of the phoss SMP status API for the provided SMP. Disables all long running status
+   * checks on the SMP side.
+   *
+   * @param aSMPQueryParams
+   *        The SMP query parameters to use. May not be <code>null</code>.
+   * @return The status URL. Never <code>null</code>.
+   */
+  @NonNull
+  public static String getPhossSMPStatusURL (@NonNull final SMPQueryParams aSMPQueryParams)
+  {
+    final URI aSMPHostURI = aSMPQueryParams.getSMPHostURI ();
+    return StringHelper.trimEnd (aSMPHostURI.toString (), '/') + "/smp-status/?disable-long-running=true";
+  }
+
+  /**
+   * Try to retrieve the status JSON of a phoss SMP. This only works if the SMP is a phoss SMP and
+   * if it has the status API enabled.
+   *
+   * @param sLogPrefix
+   *        The log prefix to use. May not be <code>null</code>.
+   * @param aSMPQueryParams
+   *        The SMP query parameters to use. May not be <code>null</code>.
+   * @param aHCSModifier
+   *        An optional HTTP client settings modifier. May be <code>null</code>.
+   * @return <code>null</code> if the SMP is not a phoss SMP or if the status could not be
+   *         retrieved. If the SMP is a phoss SMP with a disabled status API, the returned object
+   *         contains only the key <code>status.enabled</code> with the value <code>false</code>.
+   */
+  @Nullable
+  public static IJsonObject retrievePhossSMPStatus (@NonNull final String sLogPrefix,
+                                                    @NonNull final SMPQueryParams aSMPQueryParams,
+                                                    @Nullable final Consumer <? super SMPHttpClientSettings> aHCSModifier)
+  {
+    final String sStatusURL = getPhossSMPStatusURL (aSMPQueryParams);
+    LOGGER.info (sLogPrefix + "Querying phoss SMP status from '" + sStatusURL + "'");
+
+    // Use SMP settings - e.g. don't follow redirect
+    final SMPHttpClientSettings aHCS = new SMPHttpClientSettings ();
+    if (aHCSModifier != null)
+      aHCSModifier.accept (aHCS);
+
+    IJsonObject ret;
+    try (final HttpClientManager aHttpClientMgr = HttpClientManager.create (aHCS))
+    {
+      final HttpGet aGet = new HttpGet (sStatusURL);
+      ret = aHttpClientMgr.execute (aGet, new ResponseHandlerJsonObject ());
+    }
+    catch (final Exception ex)
+    {
+      // Most likely not a phoss SMP
+      LOGGER.info (sLogPrefix +
+                   "Failed to query phoss SMP status from '" +
+                   sStatusURL +
+                   "' - " +
+                   ex.getClass ().getName () +
+                   " - " +
+                   ex.getMessage ());
+      ret = null;
+    }
+
+    // Check if the JSON looks like a phoss SMP status
+    if (ret != null && !ret.containsKey ("version.smp") && !ret.containsKey ("status.enabled"))
+    {
+      LOGGER.info (sLogPrefix + "The JSON returned from '" + sStatusURL + "' is not a phoss SMP status");
+      ret = null;
+    }
+    return ret;
   }
 
   private static void _customizeSMPClient (@NonNull final AbstractGenericSMPClient <?> aSMPClient,

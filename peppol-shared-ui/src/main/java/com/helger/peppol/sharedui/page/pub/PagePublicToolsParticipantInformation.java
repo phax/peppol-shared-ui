@@ -96,6 +96,7 @@ import com.helger.html.jscode.html.JSHtml;
 import com.helger.http.EHttpMethod;
 import com.helger.jaxb.GenericJAXBMarshaller;
 import com.helger.jaxb.validation.DoNothingValidationEventHandler;
+import com.helger.json.IJsonObject;
 import com.helger.peppol.api.rest.PeppolAPIHelper;
 import com.helger.peppol.businesscard.generic.PDBusinessCard;
 import com.helger.peppol.businesscard.generic.PDBusinessEntity;
@@ -432,6 +433,109 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
     return div ("SML used: ").addChild (code (aSMLInfo.getDisplayName () + " / " + aSMLInfo.getDNSZone ()))
                              .addChild (" ")
                              .addChild (bProdSML ? badgeSuccess ("production SML") : badgeWarn ("test SML"));
+  }
+
+  @NonNull
+  private static String _getCleanDNSZone (@NonNull final String sDNSZone)
+  {
+    return StringHelper.trimEnd (sDNSZone.trim (), '.').toLowerCase (Locale.US);
+  }
+
+  /**
+   * Show the non-sensitive parts of the status of a phoss SMP.
+   *
+   * @param aHeaderUL
+   *        The list to add the items to. May not be <code>null</code>.
+   * @param aStatus
+   *        The status JSON as retrieved from the SMP. May not be <code>null</code>.
+   * @param aSMLInfo
+   *        The SML used for the query. May not be <code>null</code>.
+   * @param aTimingNode
+   *        The optional timing node to show. May be <code>null</code>.
+   */
+  private void _addPhossSMPStatus (@NonNull final HCUL aHeaderUL,
+                                   @NonNull final IJsonObject aStatus,
+                                   @NonNull final ISMLInfo aSMLInfo,
+                                   @Nullable final IHCNode aTimingNode)
+  {
+    final HCDiv aSoftwareDiv = div ("SMP software: ");
+    if (!aStatus.getAsBoolean ("status.enabled", true))
+    {
+      // phoss SMP with disabled status API
+      aHeaderUL.addItem (aSoftwareDiv.addChild (code ("phoss SMP"))
+                                     .addChild (" ")
+                                     .addChild (badgeInfo ("status API is disabled"))
+                                     .addChild (" ")
+                                     .addChild (aTimingNode));
+      return;
+    }
+
+    aSoftwareDiv.addChild (code (aStatus.getAsString ("smp.application", "phoss SMP")));
+    final String sVersion = aStatus.getAsString ("version.smp");
+    if (StringHelper.isNotEmpty (sVersion))
+      aSoftwareDiv.addChild (" version ").addChild (code (sVersion));
+    if ("test".equals (aStatus.getAsString ("smp.mode")))
+      aSoftwareDiv.addChild (" ").addChild (badgeWarn ("runs in test mode"));
+    aSoftwareDiv.addChild (" ").addChild (aTimingNode);
+
+    final BootstrapButton aToggle = new BootstrapButton (EBootstrapButtonType.DEFAULT,
+                                                         EBootstrapButtonSize.SMALL).addChild ("Toggle phoss SMP Details")
+                                                                                    .addClass (CBootstrapCSS.MS_3);
+    aSoftwareDiv.addChild (aToggle);
+    final HCLI aSoftwareItem = aHeaderUL.addAndReturnItem (aSoftwareDiv);
+
+    final HCUL aDetailsUL = new HCUL ();
+    aSoftwareItem.addChild (aDetailsUL);
+    BootstrapCollapseHelper.makeCollapsible (aToggle, aDetailsUL);
+
+    final String sSMPID = aStatus.getAsString ("smp.id");
+    if (StringHelper.isNotEmpty (sSMPID))
+      aDetailsUL.addItem (div ("SMP ID: ").addChild (code (sSMPID)));
+
+    final String sRestType = aStatus.getAsString ("smp.resttype");
+    if (StringHelper.isNotEmpty (sRestType))
+      aDetailsUL.addItem (div ("REST API type: ").addChild (code (sRestType)));
+
+    final String sIdentifierType = aStatus.getAsString ("smp.identifiertype");
+    if (StringHelper.isNotEmpty (sIdentifierType))
+      aDetailsUL.addItem (div ("Identifier type: ").addChild (code (sIdentifierType)));
+
+    // SML integration
+    {
+      final HCDiv aSMLDiv = div ("SML integration: ");
+      if (aStatus.getAsBoolean ("smp.sml.enabled", false))
+      {
+        aSMLDiv.addChild (badgeSuccess ("enabled"));
+        final String sSMPDNSZone = aStatus.getAsString ("smp.sml.dnszone");
+        if (StringHelper.isNotEmpty (sSMPDNSZone))
+        {
+          aSMLDiv.addChild (" - DNS zone: ").addChild (code (sSMPDNSZone));
+          if (StringHelper.isNotEmpty (aSMLInfo.getDNSZone ()) &&
+              !_getCleanDNSZone (sSMPDNSZone).equals (_getCleanDNSZone (aSMLInfo.getDNSZone ())))
+            aSMLDiv.addChild (" ").addChild (badgeDanger ("differs from the SML used for this query"));
+        }
+      }
+      else
+        aSMLDiv.addChild (badgeWarn ("disabled"));
+      aDetailsUL.addItem (aSMLDiv);
+    }
+
+    // Peppol Directory integration
+    {
+      final HCDiv aPDDiv = div ("Peppol Directory integration: ");
+      if (aStatus.getAsBoolean ("smp.pd.enabled", false))
+      {
+        aPDDiv.addChild (badgeSuccess ("enabled"));
+        final String sPDHostName = aStatus.getAsString ("smp.pd.hostname");
+        if (StringHelper.isNotEmpty (sPDHostName))
+          aPDDiv.addChild (" - host: ").addChild (code (sPDHostName));
+        aPDDiv.addChild (" - automatic Business Card updates: ")
+              .addChild (code (aStatus.getAsBoolean ("smp.pd.auto-update", false) ? "yes" : "no"));
+      }
+      else
+        aPDDiv.addChild (badgeWarn ("disabled"));
+      aDetailsUL.addItem (aPDDiv);
+    }
   }
 
   private void _queryParticipant (@NonNull final WebPageExecutionContext aWPEC,
@@ -799,6 +903,20 @@ public class PagePublicToolsParticipantInformation extends AbstractAppWebPage
       final Wrapper <BDXRClientReadOnly> aBDXR1Client = new Wrapper <> ();
       final Wrapper <BDXR2ClientReadOnly> aBDXR2Client = new Wrapper <> ();
       final Consumer <? super SMPHttpClientSettings> aHCSModifier = hcs -> hcs.setUserAgent (m_sUserAgent);
+
+      // Show additional information, if the SMP is a phoss SMP
+      {
+        final StopWatch aSWStatus = StopWatch.createdStarted ();
+        final IJsonObject aPhossSMPStatus = PeppolAPIHelper.retrievePhossSMPStatus ("",
+                                                                                    aSMPQueryParams,
+                                                                                    aHCSModifier);
+        aSWStatus.stop ();
+        if (aPhossSMPStatus != null)
+          _addPhossSMPStatus (aHeaderUL,
+                              aPhossSMPStatus,
+                              aSMPQueryParams.getSMLInfo (),
+                              bShowTime ? _createTimingNode (aSWStatus.getMillis ()) : null);
+      }
 
       {
         final Consumer <GenericJAXBMarshaller <?>> aSMPMarshallerCustomizer = m -> {
