@@ -24,7 +24,7 @@ This project consists of the following modules, in dependency order:
 
 # News and Noteworthy
 
-v0.11.3 - work in progress
+v0.11.3 - 2026-11-05
 * Fixed the nice name resolution of PINT exact match document types when the mapping is read from an XML file (e.g. in phoss SMP)
 * Added `NiceNameManager.getPintResolvedNiceNameEntry` to resolve PINT wildcard document types without changing the name
 * The Participant information page shows non-sensitive details of the SMP (version, SMP ID, SML and Peppol Directory integration), if it is a phoss SMP with the status API enabled
