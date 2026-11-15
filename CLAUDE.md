@@ -33,6 +33,8 @@ Modules listed in dependency order (each depends on those above it):
 5. **peppol-shared-as4** — AS4 message transmission UI pages
 6. **peppol-shared-validation** — Document validation UI: VES registry, validation controllers and configuration
 
+In addition, **peppol-shared-ui-bom** is a Bill of Materials (BOM) with the managed versions of all the modules above. It uses `com.helger:parent-pom` as its parent (not this project's parent POM), so every new module must be added to it manually.
+
 ## Key Dependencies
 
 - **ph-oton** (photon) — Proprietary web UI framework (Bootstrap 4 variant)

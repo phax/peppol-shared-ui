@@ -63,71 +63,103 @@
   </developers>
   
   <properties>
-    <phase4.version>4.9.0</phase4.version>
-    <phive-rules.version>4.6.4</phive-rules.version>
-    <phive-rules-legacy.version>4.6.1</phive-rules-legacy.version>
-    <ddd.version>0.9.3</ddd.version>
+    <phive-rules.version>4.7.0</phive-rules.version>
+    <phive-rules-legacy.version>4.6.2</phive-rules-legacy.version>
+    <ddd.version>0.9.4</ddd.version>
+    <phase4.version>4.9.1</phase4.version>
   </properties>
   
   <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>com.helger.commons</groupId>
-        <artifactId>ph-commons-parent-pom</artifactId>
-        <version>12.6.0</version>
+        <artifactId>ph-commons-bom</artifactId>
+        <version>12.7.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.helger.masterdata</groupId>
-        <artifactId>ph-masterdata-parent-pom</artifactId>
-        <version>8.2.1</version>
+        <artifactId>ph-masterdata-bom</artifactId>
+        <version>8.2.2</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.helger</groupId>
         <artifactId>ph-css-parent-pom</artifactId>
-        <version>8.4.0</version>
+        <version>8.4.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.helger.schedule</groupId>
-        <artifactId>ph-schedule-parent-pom</artifactId>
-        <version>6.2.1</version>
+        <artifactId>ph-schedule-bom</artifactId>
+        <version>6.2.2</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.helger.web</groupId>
-        <artifactId>ph-web-parent-pom</artifactId>
-        <version>11.5.0</version>
+        <artifactId>ph-web-bom</artifactId>
+        <version>11.5.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.helger.photon</groupId>
-        <artifactId>ph-oton-parent-pom</artifactId>
-        <version>10.8.0</version>
+        <artifactId>ph-oton-bom</artifactId>
+        <version>10.8.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
-        <groupId>com.helger.photon</groupId>
-        <artifactId>ph-oton-bootstrap5-parent-pom</artifactId>
+        <groupId>com.helger.photon.icon</groupId>
+        <artifactId>ph-oton-icon-bom</artifactId>
         <version>1.0.2</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
-        <groupId>com.helger.peppol</groupId>
-        <artifactId>peppol-commons-parent-pom</artifactId>
-        <version>13.2.2</version>
+        <groupId>com.helger.photon</groupId>
+        <artifactId>ph-oton-bootstrap5-bom</artifactId>
+        <version>1.0.3</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+      <dependency>
+        <groupId>com.helger.peppol</groupId>
+        <artifactId>peppol-commons-bom</artifactId>
+        <version>13.2.3</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.helger.phive</groupId>
+        <artifactId>phive-bom</artifactId>
+        <version>12.3.0</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.glassfish.jaxb</groupId>
+        <artifactId>jaxb-bom</artifactId>
+        <version>4.0.9</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
       
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junit4.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>jakarta.servlet</groupId>
+        <artifactId>jakarta.servlet-api</artifactId>
+        <version>${jakarta.servlet-api.version}</version>
+      </dependency>
       <dependency>
         <groupId>es.moki.ratelimitj</groupId>
         <artifactId>ratelimitj-inmemory</artifactId>
@@ -168,6 +200,7 @@
   </dependencyManagement>
   
   <modules>
+    <module>peppol-shared-ui-bom</module>
     <module>peppol-ui-types</module>
     <module>peppol-ui</module>
     <module>peppol-shared-api</module>

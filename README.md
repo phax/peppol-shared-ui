@@ -15,6 +15,7 @@ peppol-shared-ui is part of my Peppol solution stack. See https://github.com/pha
 As the UI framework used is proprietory (ph-oton) and the users are limited and the version is pre 1.0 I decided to not to spend too much effort in documenting all the detailed changes. Expect this to start after 1.0.
 
 This project consists of the following modules, in dependency order:
+* `peppol-shared-ui-bom` - the Bill of Materials (BOM) with the managed versions of all artifacts of this project (since v0.11.4)
 * `peppol-ui-types` - general UI related data types
 * `peppol-ui` - general UI related help classes etc.
 * `peppol-shared-api` - a set of commonly provided APIs around Peppol
@@ -22,7 +23,28 @@ This project consists of the following modules, in dependency order:
 * `peppol-shared-as4` - shared UI components related to AS4 message transmission
 * `peppol-shared-validation` - shared UI components related to document validation
 
+# Maven usage
+
+Use the following code in your `dependencyManagement` section to use it as a BOM:
+
+```xml
+<dependency>
+  <groupId>com.helger.peppol.ui</groupId>
+  <artifactId>peppol-shared-ui-bom</artifactId>
+  <version>x.y.z</version>
+  <type>pom</type>
+  <scope>import</scope>
+</dependency>
+```
+
+Note: prior to v0.11.4 there was no dedicated BOM and `peppol-shared-ui-parent-pom` had to be imported instead, which also carries the build configuration of this project.
+
 # News and Noteworthy
+
+v0.11.4 - 2026-11-15
+* Added the new module `peppol-shared-ui-bom` as a Maven BOM (Bill of Materials) for all peppol-shared-ui artifacts.
+  Use it instead of `peppol-shared-ui-parent-pom` when importing the managed versions
+* Importing the dedicated BOMs of the dependencies instead of their parent POMs
 
 v0.11.3 - 2026-11-05
 * Fixed the nice name resolution of PINT exact match document types when the mapping is read from an XML file (e.g. in phoss SMP)
